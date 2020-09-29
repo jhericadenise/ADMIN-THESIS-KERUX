@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Kerux - Admin</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_enrollment">Enrollment</string>
+    <string name="title_manageAcc">Manage Accounts</string>
+    <string name="title_QM">Queue Manager</string>
+    <string name="title_doc">Doctor</string>
+    <string name="title_dept">Hospital Department</string>
+    <string name="title_uname">Username: </string>
+    <string name="title_name">Name: </string>
+    <string name="title_password">Password: </string>
+    <string name="title_confirmPass">Confirm Password: </string>
+    <string name="title_goBack">Go Back</string>
+    <string name="title_register">Register</string>
+    <string name="login">Login</string>
+    <string name="enrolledQM">Enrolled Queue Manager</string>
+    <string name="enrolledDoctor">Enrolled Doctor</string>
+    <string name="enrolledDept">Enrolled Hospital Department</string>
+    <string name="logout">Logout</string>
+    <string name="blocking">Block Existing Page</string>
+    <string name="audit">Audit Reports</string>
+    <string name="statistic">Statistic Reports</string>
+    <string name="rating">Rating Reports</string>
+    <string name="generateAudit">Generate Audit Reports</string>
+    <string name="viewAudit">View Audit Reports</string>
+    <string name="generateStatistic">Generate Statistic Reports</string>
+    <string name="viewStatistic">View Statistic Reports</string>
+    <string name="generateRating">Generate Rating Reports</string>
+    <string name="attempt">Attempts Remaining: </string>
+    <string name="prc">PRC License No: </string>
+    <string name="roomNo">Room No: </string>
+    <string name="schedule">Schedule: </string>
+    <string name="clinicChoices">Choose Clinic: </string>
+    <string name="enrolLQm">Enroll Queue Manager</string>
+    <string name="uneroll">Unenroll</string>
+    <string name="displayDept">Display</string>
+    <string name="listAccount">View Enrolled Accounts</string>
+    <string name="blockPriv">Block Privileges</string>
+    <string name="viewBlockedUser">View Blocked Users</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+
+</resources>
