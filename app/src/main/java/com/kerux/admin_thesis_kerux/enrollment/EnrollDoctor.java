@@ -43,10 +43,11 @@ import java.util.Map;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility {
 
-    private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://10.0.2.2:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
-    private static String urlDocTypeSpinner = "http://10.0.2.2:89/kerux/doctorTypeSpinner.php";
-    private EditText doctorName;
+    private static String urlClinicSpinner = "http://192.168.1.11:89/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://192.168.1.11:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
+    private static String urlDocTypeSpinner = "http://192.168.1.11:89/kerux/doctorTypeSpinner.php";
+    private EditText doctorFName;
+    private EditText doctorLName;
     private EditText roomNo;
     private EditText schedule1;
     private EditText schedule2;
@@ -59,9 +60,9 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
     private Spinner spinnerDocType;
     private Spinner spinnerDep;
     private Spinner spinnerClinic;
-    private ListView docList;
+/*    private ListView docList;
     private ListAdapter listAdapter;
-    Button docDisplayList;
+    Button docDisplayList;*/
 
     ConnectionClass connectionClass;
 
@@ -94,7 +95,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         });
         Button bttnBack = findViewById(R.id.bttnBackDoc);
         Button bttnEnrollDoc = findViewById(R.id.bttnEnrollDoc);
-        doctorName = (EditText) findViewById(R.id.txtboxDocFName );
+        doctorFName = (EditText) findViewById(R.id.txtboxDocFName);
+        doctorLName = (EditText) findViewById(R.id.txtboxDocLName);
         roomNo = (EditText) findViewById(R.id.txtboxRoomNo);
         schedule1 = (EditText) findViewById(R.id.txtboxSched1);
         schedule2 = (EditText) findViewById(R.id.txtboxSched2);
@@ -121,7 +123,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
             public void onClick(View v) {
                 EnrollDoctor.DoEnrollDoc doenroll = new EnrollDoctor.DoEnrollDoc();
                 doenroll.execute();
-                doctorName.getText().clear();
+                /*doctorFName.getText().clear();*/
             }
         });
 
@@ -170,7 +172,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         docType.execute();
 
     }
-    //deleting a record in the database
+    /*//deleting a record in the database
     public void unenrollDoctor(String name){
 
         Connection con = connectionClass.CONN();
@@ -182,7 +184,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
     public void goBack() {
         Intent intent = new Intent(this, EnrollmentPage.class);
         startActivity(intent);
@@ -191,7 +193,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
     public boolean checkDeptRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
-        String docName = doctorName.getText().toString();
+        String docFName = doctorFName.getText().toString();
 
         if(con != null){ //means that we have a valid db connection
             try{//inserting records; called INSERT_REC from DBUtility.java
@@ -199,7 +201,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
                 //prevent threat in any web app
                 String query = VALIDATION_DEPT;
                 PreparedStatement ps = con.prepareStatement(query);
-                ps.setString(1, docName);
+                ps.setString(1, docFName);
 
                 ResultSet rs=ps.executeQuery();
                 if(rs.next()){
@@ -222,7 +224,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         boolean isSuccess = false;
         boolean hasRecord = false;
         String message = "";
-        String docName = doctorName.getText().toString();
+        String docFName = doctorFName.getText().toString();
+        String docLName = doctorLName.getText().toString();
         String roomNum = roomNo.getText().toString();
         String sched1 = schedule1.getText().toString();
         String sched2 = schedule2.getText().toString();
@@ -249,7 +252,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
             PreparedStatement ps1 = null;
             try {
                 ps1 = con.prepareStatement(VALIDATION_DOCTOR);
-                ps1.setString(1, docName);
+                ps1.setString(1, docFName);
 
                 ResultSet rs = ps1.executeQuery();
 
@@ -261,10 +264,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
                 e.printStackTrace();
             }
 
-            if (docName.trim().equals("") || roomNum.trim().equals("") || sched1.trim().equals("") || sched2.trim().equals("") ) {
+            if (docFName.trim().equals("") || docLName.trim().equals("") || roomNum.trim().equals("") || sched1.trim().equals("") || sched2.trim().equals("") ) {
                 message = "Please enter all fields....";
             }
-            else if ( !docName.matches("^[A-Za-z]+$")) {
+            else if ( !docFName.matches("^[A-Za-z]+$") || !docLName.matches("^[A-Za-z]+$")) {
                 message = "Check format";
             }
             else if (hasRecord){
@@ -296,14 +299,17 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
                         }
                         String query = INSERT_DOCTOR;
                         PreparedStatement ps = con.prepareStatement(query);
-                        ps.setString(1, docName);
-                        ps.setString(2, String.valueOf(docType));
-                        ps.setString(3, String.valueOf(dept));
-                        ps.setString(4, roomNum);
-                        ps.setString(5, sched1);
-                        ps.setString(6, sched2);
-                        ps.setString(7, docDays);
-                        ps.setString(8, status);
+
+                        ps.setString(1, String.valueOf(docType));
+                        ps.setString(2, docFName);
+                        ps.setString(3, docLName);
+                        ps.setString(4, String.valueOf(dept));
+                        ps.setString(5, String.valueOf(clinic));
+                        ps.setString(6, roomNum);
+                        ps.setString(7, sched1);
+                        ps.setString(8, sched2);
+                        ps.setString(9, docDays);
+                        ps.setString(10, status);
 
                         ps.execute();
                         con.close();
