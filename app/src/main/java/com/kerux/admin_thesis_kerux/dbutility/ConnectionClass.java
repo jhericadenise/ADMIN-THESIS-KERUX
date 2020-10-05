@@ -28,7 +28,7 @@ public class ConnectionClass implements DBUtility{
         Connection conn = null;
         String ConnURL = null;
         try{
-            Class.forName(sec.decrypt(driverName));
+            Class.forName(driverName);
             conn= DriverManager.getConnection(url,un,password);
         }catch(SQLException se){
             Log.e("ERROR", se.getMessage());

@@ -43,7 +43,8 @@ import java.util.Map;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility {
 
-    private static String urlDeptSpinner = "http://192.168.1.11/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
+    private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://10.0.2.2:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
     private static String urlDocTypeSpinner = "http://10.0.2.2:89/kerux/doctorTypeSpinner.php";
     private EditText doctorName;
     private EditText roomNo;
@@ -56,7 +57,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
     private CheckBox friday;
     private CheckBox saturday;
     private Spinner spinnerDocType;
-    private Spinner spinnerDepType;
+    private Spinner spinnerDep;
+    private Spinner spinnerClinic;
     private ListView docList;
     private ListAdapter listAdapter;
     Button docDisplayList;
@@ -92,7 +94,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         });
         Button bttnBack = findViewById(R.id.bttnBackDoc);
         Button bttnEnrollDoc = findViewById(R.id.bttnEnrollDoc);
-        doctorName = (EditText) findViewById(R.id.txtboxDocName);
+        doctorName = (EditText) findViewById(R.id.txtboxDocFName );
         roomNo = (EditText) findViewById(R.id.txtboxRoomNo);
         schedule1 = (EditText) findViewById(R.id.txtboxSched1);
         schedule2 = (EditText) findViewById(R.id.txtboxSched2);
@@ -103,9 +105,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         friday = (CheckBox) findViewById(R.id.cBoxFriday);
         saturday = (CheckBox) findViewById(R.id.cBoxSat);
         spinnerDocType = (Spinner) findViewById(R.id.spinnerDocType);
-        spinnerDepType = (Spinner) findViewById(R.id.spinnerDepType);
-        docList = (ListView) findViewById(R.id.listEnrolledDoc);
-        docDisplayList = (Button) findViewById(R.id.bttnDisplayDoc);
+        spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
+        spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
+       /* docList = (ListView) findViewById(R.id.listEnrolledDoc);
+        docDisplayList = (Button) findViewById(R.id.bttnDisplayDoc);*/
 
         bttnBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -122,14 +125,14 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
             }
         });
 
-        docDisplayList.setOnClickListener(new View.OnClickListener() {
+       /* docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EnrollDoctor.ListDoctor docListDisp = new EnrollDoctor.ListDoctor();
                 docListDisp.execute();
             }
-        });
-        docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        });*/
+   /*     docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -158,8 +161,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
                 alert.show();
             }
 
-        });
-        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDepType, "Name");
+        });*/
+        Downloader clinic = new Downloader(EnrollDoctor.this, urlClinicSpinner, spinnerClinic, "clinicName");
+        clinic.execute();
+        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name");
         dep.execute();
         Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType");
         docType.execute();
@@ -229,7 +234,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         String cboxSat = saturday.getText().toString();
         String docDays="";
         int docType = (int)spinnerDocType.getSelectedItemId();
-        int depType = (int)spinnerDepType.getSelectedItemId();
+        int dept = (int)spinnerDep.getSelectedItemId();
+        int clinic = (int)spinnerClinic.getSelectedItemId();
         String status = "Active";
 
         @Override
@@ -292,7 +298,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
                         PreparedStatement ps = con.prepareStatement(query);
                         ps.setString(1, docName);
                         ps.setString(2, String.valueOf(docType));
-                        ps.setString(3, String.valueOf(depType));
+                        ps.setString(3, String.valueOf(dept));
                         ps.setString(4, roomNum);
                         ps.setString(5, sched1);
                         ps.setString(6, sched2);
@@ -323,6 +329,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         }
 
     }
+/*
 
     private class ListDoctor extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
@@ -372,5 +379,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
             docList.setAdapter(listAdapter);
         }
     }
+*/
 
 }

@@ -9,6 +9,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,7 +51,9 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
     private EditText deptName;
     private ListView deptList;
     private ListAdapter listAdapter;
+    private Spinner spinnerClinic;
     Button deptDisplayList;
+    private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
 
@@ -88,9 +93,10 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
 
         Button bttnBack = findViewById(R.id.bttnBackDept);
         Button bttnEnrollDept = findViewById(R.id.bttnEnrollDept);
-        deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
+        spinnerClinic = (Spinner) findViewById(R.id.clinicSpinner);
+        /*deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);*/
         deptName = (EditText)findViewById(R.id.txtboxDeptName);
-        deptList = (ListView) findViewById(R.id.listEnrolledDept);
+       /* deptList = (ListView) findViewById(R.id.listEnrolledDept);*/
 
         //going back to the previous page
         bttnBack.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +114,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                 deptName.getText().clear();
             }
         });
-
+/*
         deptDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +151,9 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                 alert.show();
             }
 
-        });
+        });*/
+        Downloader dep = new Downloader(EnrollDept.this, urlClinicSpinner, spinnerClinic, "clinicName");
+        dep.execute();
     }
 
     //deleting a record in the database
@@ -198,6 +206,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         String Status = "Active";
         String timeStamp = timeStamp();
         boolean hasRecord = false;
+        int clinicName = (int)spinnerClinic.getSelectedItemId();
 
         @Override
         protected void onPreExecute() {
@@ -209,7 +218,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
             PreparedStatement ps = null;
             try {
                 ps = con.prepareStatement(VALIDATION_DEPT);
-                ps.setString(1, depName);
+                ps.setInt (1, clinicName);
+                ps.setString(2, depName);
 
                 ResultSet rs=ps.executeQuery();
 
@@ -243,16 +253,17 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                         String query = INSERT_DEPT;
                         PreparedStatement ps1 = con.prepareStatement(query);
                         ps1.setString(1, depName);
-                        ps1.setString(2, Status);
+                        /*ps1.setString(2, String.valueOf(clinicName));*/
+                        ps1.setInt(2, clinicName);
+                        ps1.setString(3, Status);
 
                         ps1.executeUpdate();
 
-                        String queryJoin = "insert into department_enrollment (Admin_ID, Department_ID) "+
-                                "SELECT '"+session.getusername()+"', Department_ID from Department order by Department_ID DESC LIMIT 1;";
-
+                      /*  String queryJoin = "insert into department_enrollment (Admin_ID, Department_ID, Clinic_ID) "+
+                                "SELECT '"+session.getusername () +"', Department_ID, Clinic_ID from Department order by Department_ID DESC LIMIT 1;";
 
                         Statement stmt2 = con.createStatement();
-                        stmt2.executeUpdate(queryJoin);
+                        stmt2.executeUpdate(queryJoin);*/
                         con.close();
                         message = "ADDED SUCCESSFULLY!";
                     }
@@ -261,6 +272,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                 {
                     isSuccess = false;
                     message = "Exceptions"+ex;
+                    Log.d("ex", ex.getMessage () + " Jheca");
                 }
             }
             return message;
@@ -279,7 +291,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
 
     }
 
-    //function for displaying the enrolled department
+  /*  //function for displaying the enrolled department
     private class ListDept extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
@@ -327,6 +339,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         protected void onPostExecute(String s) {
             deptList.setAdapter(listAdapter);
         }
-    }
+    }*/
 }
 
