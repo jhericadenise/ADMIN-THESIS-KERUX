@@ -3,7 +3,7 @@
 $host='127.0.0.1';
 $username='root';
 $pwd='';
-$db="keruxdb2";
+$db="kerux";
 
 $con=mysqli_connect($host,$username,$pwd,$db) or die('Unable to connect');
 

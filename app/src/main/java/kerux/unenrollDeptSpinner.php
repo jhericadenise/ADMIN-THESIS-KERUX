@@ -3,7 +3,7 @@
 $host='127.0.0.1';
 $username='root';
 $pwd='';
-$db="kerux";
+$db="keruxdb";
 
 $con=mysqli_connect($host,$username,$pwd,$db) or die('Unable to connect');
 
@@ -12,7 +12,7 @@ if(mysqli_connect_error($con))
     echo "Failed to Connect to Database ".mysqli_connect_error();
 }
 
-$query=mysqli_query($con,"SELECT * FROM doctor_type");
+$query=mysqli_query($con,"SELECT * FROM department");
 
 if($query)
 {

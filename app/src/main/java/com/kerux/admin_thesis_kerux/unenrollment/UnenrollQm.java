@@ -70,7 +70,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 return false;
             }
         } );
-        qmDisplayList = (Button) findViewById(R.id.bttnDisplayQM);
+      /*  qmDisplayList = (Button) findViewById(R.id.bttnDisplayQM);
         qmList = (ListView) findViewById(R.id.listEnrolledQm);
 
         qmDisplayList.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +110,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 alert.show();
             }
 
-        });
+        });*/
     }
 
     //deleting a record in the database
@@ -132,7 +132,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         Intent intent = new Intent(this, EnrollmentPage.class);
         startActivity(intent);
     }
-
+/*
     //Displaying the list of enrolled queue manager in the database
     private class ListQM extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
@@ -181,5 +181,5 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         protected void onPostExecute(String s) {
             qmList.setAdapter(listAdapter);
         }
-    }
+    }*/
 }

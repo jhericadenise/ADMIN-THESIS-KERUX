@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -26,6 +25,7 @@ import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,10 +39,14 @@ import java.util.List;
 import java.util.Map;
 
 public class UnenrollDept extends AppCompatActivity implements DBUtility {
+
     ConnectionClass connectionClass;
-    private ListView deptList;
-    private ListAdapter listAdapter;
-    Button deptDisplayList;
+    private Spinner spinnerEnrolledDept;
+    private Spinner spinnerClinic;
+    private Spinner spinnerReasonRevoke;
+    private static String urlDeptSpinner = "http://192.168.1.11:89/kerux/unenrollDeptSpinner.php";
+    private static String urlClinicSpinner = "http://192.168.1.11:89/kerux/clinicSpinner.php";
+    private static String urlReasonSpinner = "http://192.168.1.11:89/kerux/reasonRevokeSpinner.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,109 +75,64 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
                 return false;
             }
         } );
-        deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
-        deptList = (ListView) findViewById(R.id.listEnrolledDept);
 
-        deptDisplayList.setOnClickListener(new View.OnClickListener() {
+        Button unenrollDept = findViewById ( R.id.bttnUnenrollDept );
+        unenrollDept.setOnClickListener ( new View.OnClickListener () {
             @Override
             public void onClick(View v) {
-                ListDept deptListdisp = new ListDept();
-                deptListdisp.execute();
+                unenrollDept( String.valueOf ( v ) );
             }
-        });
+        } );
 
-        deptList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Button showRecords = findViewById ( R.id.bttnShow );
+        showRecords.setOnClickListener ( new View.OnClickListener () {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onClick(View v) {
 
-                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(position)));
-                Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
-                //Dialog box, for unenrolling
-                AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDept.this);
-                builder.setMessage("Unenroll Department?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length()-1);
+            }
+        } );
 
-                                Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDept(name);
-                                ListDept deptListdisp = new ListDept();
-                                deptListdisp.execute();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+        spinnerEnrolledDept = (Spinner) findViewById(R.id.spinnerEnrolledDept);
+        spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
+        spinnerClinic.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener () {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                Downloader dep = new Downloader( UnenrollDept.this, urlDeptSpinner, spinnerEnrolledDept, "Name");
+                dep.execute();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
             }
 
         });
+
+        spinnerReasonRevoke = (Spinner) findViewById(R.id.spinnerReason);
+
+        Downloader clinic = new Downloader(UnenrollDept.this, urlClinicSpinner, spinnerClinic, "clinicName");
+        clinic.execute();
+        Downloader reason = new Downloader(UnenrollDept.this, urlReasonSpinner, spinnerReasonRevoke, "reason");
+        reason.execute();
     }
+
+    public void showRecords(){
+
+    }
+
     //deleting a record in the database
     public void unenrollDept(String name){
-
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(UNENROLL_DEPT);
             ps.setString(1, name);
             ps.executeUpdate();
+            Toast.makeText(getBaseContext(),"Unenrolled",Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-      //function for displaying the enrolled department
-    private class ListDept extends AsyncTask<String, String, String> {
-        Connection con = connectionClass.CONN();
-        boolean isSuccess = false;
-        String message = "";
-
-        @Override
-        protected void onPreExecute() {
-            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
-            super.onPreExecute();
-        }
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-                //listview, list the names of all enrolled department
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_LIST_DEPT);
-                ResultSetMetaData rsmd = rset.getMetaData();
-
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>> ();
-
-                while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String> ();
-                    datanum.put("A", rset.getString(1).toString());
-                    data.add(datanum);
-                }
-
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblDeptList};
-                listAdapter = new SimpleAdapter (UnenrollDept.this, data,
-                        R.layout.list_dept_template, fromwhere, viewswhere);
-
-                while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
-                }
-                message = "ADDED SUCCESSFULLY!";
-            } catch (Exception ex) {
-                isSuccess = false;
-                message = "Exceptions" + ex;
-            }
-            return message;
-        }
-        @Override
-        protected void onPostExecute(String s) {
-            deptList.setAdapter(listAdapter);
-        }
-    }
 }

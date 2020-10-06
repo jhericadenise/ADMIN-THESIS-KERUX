@@ -49,6 +49,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
     private ListAdapter listAdapter;
     Button docDisplayList;
 
+
     ConnectionClass connectionClass;
 
     @Override
@@ -79,10 +80,12 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
             }
         });
         Button bttnBack = findViewById(R.id.bttnBackDoc);
+/*
         docList = (ListView) findViewById(R.id.listEnrolledDoc);
         docDisplayList = (Button) findViewById(R.id.bttnDisplayDoc);
 
-
+*/
+/*
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +122,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
                 alert.show();
             }
 
-        });
+        });*/
     }
     //deleting a record in the database
     public void unenrollDoctor(String name){
@@ -139,8 +142,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
         startActivity(intent);
     }
 
-/*
-    public boolean checkDocRecord() {
+
+   /* public boolean checkDocRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
         String docFName = doctorFName.getText().toString();
@@ -165,9 +168,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
             }
         }
         return hasExistingDept;
-    }
-*/
-
+    }*/
+/*
     private class ListDoctor extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
@@ -216,6 +218,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
         protected void onPostExecute(String s) {
             docList.setAdapter(listAdapter);
         }
-    }
+    }*/
 
 }

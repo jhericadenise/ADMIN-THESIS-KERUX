@@ -52,4 +52,8 @@
     <string name="unenrollDept">Unenroll Department</string>
     <string name="unenrollQM">Unenroll Queue Manager</string>
     <string name="unenrollDoctor">Unenroll Doctor</string>
+    <string name="reason">Reason for Revoking Privilege</string>
+    <string name="show">Show</string>
+    <string name="choose">Choose to Show</string>
+
 </resources>

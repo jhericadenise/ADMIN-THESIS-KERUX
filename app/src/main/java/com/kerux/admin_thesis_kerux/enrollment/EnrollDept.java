@@ -40,7 +40,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
 
     private EditText deptName;
     private Spinner spinnerClinic;
-    private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
+    private static String urlClinicSpinner = "http://192.168.1.11:89/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
 
@@ -182,7 +182,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                         String query = INSERT_DEPT;
                         PreparedStatement ps1 = con.prepareStatement(query);
                         ps1.setString(1, depName);
-                        /*ps1.setString(2, String.valueOf(clinicName));*/
                         ps1.setInt(2, clinicName);
                         ps1.setString(3, Status);
 

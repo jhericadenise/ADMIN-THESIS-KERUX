@@ -178,7 +178,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
 
                 while (rset.next()) {
                     Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", sec.decrypt ( rset.getString(1).toString()));
+                    datanum.put("A", sec.decrypt(rset.getString(1).toString()) + rset.getString(2).toString());
                     data.add(datanum);
                 }
 
