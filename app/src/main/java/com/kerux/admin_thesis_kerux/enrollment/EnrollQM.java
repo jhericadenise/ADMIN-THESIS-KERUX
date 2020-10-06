@@ -106,9 +106,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility {
                 qmPw.setText(generateString(12));
             }
         });
-        Downloader clinic = new Downloader(EnrollQM.this, urlClinicSpinner, spinnerClinic, "Clinic_ID");
+        Downloader clinic = new Downloader(EnrollQM.this, urlClinicSpinner, spinnerClinic, "clinicName");
         clinic.execute();
-        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Department_ID");
+        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Name");
         dep.execute();
     }
 

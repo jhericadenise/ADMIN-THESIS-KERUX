@@ -18,6 +18,9 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDept;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollQm;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -59,10 +62,16 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
         Button bttnQM = findViewById(R.id.bttnQm);
         Button bttnDept = findViewById(R.id.bttnDept);
         Button bttnDoctor = findViewById(R.id.bttnDoctor);
+        Button bttnUnenrollDept = findViewById(R.id.bttnUnenrollDept);
+        Button bttnUnenrollQm = findViewById(R.id.bttnUnenrollQm);
+        Button bttnUnenrollDoc = findViewById(R.id.bttnUnenrollDoc);
 
         bttnQM.setOnClickListener(this);
         bttnDept.setOnClickListener(this);
         bttnDoctor.setOnClickListener(this);
+        bttnUnenrollDept.setOnClickListener(this);
+        bttnUnenrollQm.setOnClickListener(this);
+        bttnUnenrollDoc.setOnClickListener(this);
     }
 
     @Override
@@ -79,6 +88,18 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
             case R.id.bttnDept:
                 Intent intent3 = new Intent(this, EnrollDept.class);
                 startActivity(intent3);
+                break;
+            case R.id.bttnUnenrollDept:
+                Intent intent4 = new Intent(this, UnenrollDept.class);
+                startActivity (intent4);
+                break;
+            case R.id.bttnUnenrollQm:
+                Intent intent5 = new Intent(this, UnenrollQm.class);
+                startActivity (intent5);
+                break;
+            case R.id.bttnUnenrollDoc:
+                Intent intent6 = new Intent(this, UnenrollDoc.class);
+                startActivity (intent6);
                 break;
         }
     }

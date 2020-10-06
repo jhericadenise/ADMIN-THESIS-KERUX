@@ -1,23 +1,19 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,24 +31,15 @@ import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class EnrollDept extends AppCompatActivity implements DBUtility {
 
     private EditText deptName;
-    private ListView deptList;
-    private ListAdapter listAdapter;
     private Spinner spinnerClinic;
-    Button deptDisplayList;
     private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
@@ -94,9 +81,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         Button bttnBack = findViewById(R.id.bttnBackDept);
         Button bttnEnrollDept = findViewById(R.id.bttnEnrollDept);
         spinnerClinic = (Spinner) findViewById(R.id.clinicSpinner);
-        /*deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);*/
         deptName = (EditText)findViewById(R.id.txtboxDeptName);
-       /* deptList = (ListView) findViewById(R.id.listEnrolledDept);*/
 
         //going back to the previous page
         bttnBack.setOnClickListener(new View.OnClickListener() {
@@ -114,67 +99,11 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
                 deptName.getText().clear();
             }
         });
-/*
-        deptDisplayList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ListDept deptListdisp = new ListDept();
-                deptListdisp.execute();
-            }
-        });
-        deptList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(position)));
-                Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
-                //Dialog box, for unenrolling
-                AlertDialog.Builder builder = new AlertDialog.Builder(EnrollDept.this);
-                builder.setMessage("Unenroll Department?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length()-1);
-
-                                Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDept(name);
-                                ListDept deptListdisp = new ListDept();
-                                deptListdisp.execute();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-
-        });*/
         Downloader dep = new Downloader(EnrollDept.this, urlClinicSpinner, spinnerClinic, "clinicName");
         dep.execute();
     }
 
-    //deleting a record in the database
-    public void unenrollDept(String name){
-
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-        try {
-            ps = con.prepareStatement(UNENROLL_DEPT);
-            ps.setString(1, name);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Check if it has the same record
-/*    public boolean checkDeptRecord() {
-        boolean hasExistingAdmin = false;
-
-    }*/
 
     /*when goBack button is clicked, it will be redirected to the page stated in the function*/
     public void goBack() {
@@ -290,55 +219,5 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         }
 
     }
-
-  /*  //function for displaying the enrolled department
-    private class ListDept extends AsyncTask<String, String, String> {
-        Connection con = connectionClass.CONN();
-        boolean isSuccess = false;
-        String message = "";
-
-        @Override
-        protected void onPreExecute() {
-            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
-            super.onPreExecute();
-        }
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-                //listview, list the names of all enrolled department
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_LIST_DEPT);
-                ResultSetMetaData rsmd = rset.getMetaData();
-
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>>();
-
-                while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", rset.getString(1).toString());
-                    data.add(datanum);
-                }
-
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblDeptList};
-                listAdapter = new SimpleAdapter(EnrollDept.this, data,
-                        R.layout.list_dept_template, fromwhere, viewswhere);
-
-                while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
-                }
-                message = "ADDED SUCCESSFULLY!";
-            } catch (Exception ex) {
-                isSuccess = false;
-                message = "Exceptions" + ex;
-            }
-            return message;
-        }
-        @Override
-        protected void onPostExecute(String s) {
-            deptList.setAdapter(listAdapter);
-        }
-    }*/
 }
 

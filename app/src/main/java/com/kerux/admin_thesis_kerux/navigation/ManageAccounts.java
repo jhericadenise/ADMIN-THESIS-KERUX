@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.security.Security;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -165,6 +166,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
         @Override
         protected String doInBackground(String... strings) {
             try {
+                Security sec = new Security ();
                 //listview, list the names of all enrolled department
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
@@ -176,7 +178,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
 
                 while (rset.next()) {
                     Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", rset.getString(1).toString());
+                    datanum.put("A", sec.decrypt ( rset.getString(1).toString()));
                     data.add(datanum);
                 }
 

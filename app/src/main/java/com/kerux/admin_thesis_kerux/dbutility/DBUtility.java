@@ -7,15 +7,15 @@ public interface DBUtility {
     String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
     String SELECT_LIST_DEPT = "select distinct Name from department WHERE Status = 'Active'";
-    String SELECT_LIST_DOC = "select distinct Name from doctor WHERE Status = 'Active'";
-    String SELECT_LIST_QM = "select distinct Name from queuemanager WHERE Status = 'Active'";
+    String SELECT_LIST_DOC = "select FirstName, LastName from doctor WHERE Status = 'Active'";
+    String SELECT_LIST_QM = "select FirstName, LastName from queuemanager WHERE Status = 'Active'";
     String SELECT_ACCOUNTS_LIST = "select distinct name from patient WHERE Status = 'Active'";
     String SELECT_BLOCKED_USERS = "select distinct name from patient WHERE Status = 'Blocked'";
     String SELECT_ADMIN_LOGIN = "select admin_id, username, password from admin where username = ? AND password = ?";
 
-    String INSERT_DOCTOR = "insert into doctor (Name, DoctorType_ID, Department_ID, " +
+    String INSERT_DOCTOR = "insert into doctor (DoctorType_ID, Clinic_ID, FirstName, LastName, Department_ID, " +
             "RoomNo, Schedule1, Schedule2, Days, Status) values " +
-            "(?,?,?,?,?,?,?,?)";
+            "(?,?,?,?,?,?,?,?,?,?)";
     String INSERT_DEPT = "insert into department (Name, Clinic_ID, Status) values (?,?,?)";
     String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?)";
@@ -24,8 +24,8 @@ public interface DBUtility {
     String VALIDATION_DOCTOR = "Select * from doctor where name = ? AND Status = 'Active'";
     String VALIDATION_QM = "Select * from queuemanager where name = ? AND Status = 'Active'";
 
-    String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Unenrolled' WHERE Name = ?";
-    String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Unenrolled' WHERE Name = ?";
+    String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Unenrolled' WHERE FirstName = ?";
+    String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Unenrolled' WHERE FirstName = ? AND LastName = ?";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Unenrolled' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE Name = ?";
 }

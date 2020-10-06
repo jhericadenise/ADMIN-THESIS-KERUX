@@ -48,5 +48,8 @@
     <string name="thursday">Thursday</string>
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
-
+    <string name="revoke">Revoke Privileges</string>
+    <string name="unenrollDept">Unenroll Department</string>
+    <string name="unenrollQM">Unenroll Queue Manager</string>
+    <string name="unenrollDoctor">Unenroll Doctor</string>
 </resources>
