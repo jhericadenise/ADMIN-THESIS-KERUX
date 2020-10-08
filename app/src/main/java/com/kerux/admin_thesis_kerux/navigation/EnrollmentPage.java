@@ -62,9 +62,9 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
         Button bttnQM = findViewById(R.id.bttnQm);
         Button bttnDept = findViewById(R.id.bttnDept);
         Button bttnDoctor = findViewById(R.id.bttnDoctor);
-        Button bttnUnenrollDept = findViewById(R.id.bttnUnenrollDept);
+        Button bttnUnenrollDept = findViewById(R.id.bttnDisplayDept);
         Button bttnUnenrollQm = findViewById(R.id.bttnUnenrollQm);
-        Button bttnUnenrollDoc = findViewById(R.id.bttnUnenrollDoc);
+        Button bttnUnenrollDoc = findViewById(R.id.bttnDisplayDoc);
 
         bttnQM.setOnClickListener(this);
         bttnDept.setOnClickListener(this);
@@ -89,7 +89,7 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
                 Intent intent3 = new Intent(this, EnrollDept.class);
                 startActivity(intent3);
                 break;
-            case R.id.bttnUnenrollDept:
+            case R.id.bttnDisplayDept:
                 Intent intent4 = new Intent(this, UnenrollDept.class);
                 startActivity (intent4);
                 break;
@@ -97,7 +97,7 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
                 Intent intent5 = new Intent(this, UnenrollQm.class);
                 startActivity (intent5);
                 break;
-            case R.id.bttnUnenrollDoc:
+            case R.id.bttnDisplayDoc:
                 Intent intent6 = new Intent(this, UnenrollDoc.class);
                 startActivity (intent6);
                 break;

@@ -45,55 +45,50 @@ import java.util.Map;
 
 public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
 
+    ConnectionClass connectionClass;
     private ListView docList;
     private ListAdapter listAdapter;
     Button docDisplayList;
 
-
-    ConnectionClass connectionClass;
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_unenroll_doctor);
-        connectionClass = new ConnectionClass(); //create ConnectionClass
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate ( savedInstanceState );
+        setContentView ( R.layout.activity_unenroll_doctor );
+        connectionClass = new ConnectionClass (); //create ConnectionClass
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        BottomNavigationView navigation = (BottomNavigationView) findViewById ( R.id.nav_view );
+        navigation.setOnNavigationItemSelectedListener ( new BottomNavigationView.OnNavigationItemSelectedListener () {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
+                switch (item.getItemId ()) {
                     case R.id.navigation_dashboard:
-                        Intent a = new Intent( UnenrollDoc.this, MainActivity.class);
-                        startActivity(a);
+                        Intent a = new Intent ( UnenrollDoc.this, MainActivity.class );
+                        startActivity ( a );
                         break;
                     case R.id.navigation_enrollment:
-                        Intent b = new Intent(UnenrollDoc.this, EnrollmentPage.class);
-                        startActivity(b);
+                        Intent b = new Intent ( UnenrollDoc.this, EnrollmentPage.class );
+                        startActivity ( b );
                         break;
                     case R.id.navigation_accounts:
-                        Intent c = new Intent(UnenrollDoc.this, ManageAccounts.class);
-                        startActivity(c);
+                        Intent c = new Intent ( UnenrollDoc.this, ManageAccounts.class );
+                        startActivity ( c );
                         break;
                 }
                 return false;
             }
-        });
-        Button bttnBack = findViewById(R.id.bttnBackDoc);
-/*
-        docList = (ListView) findViewById(R.id.listEnrolledDoc);
+        } );
         docDisplayList = (Button) findViewById(R.id.bttnDisplayDoc);
+        docList = (ListView) findViewById(R.id.listEnrolledDoc);
 
-*/
-/*
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnenrollDoc.ListDoctor docListDisp = new UnenrollDoc.ListDoctor();
-                docListDisp.execute();
+                UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
+                docListdisp.execute();
             }
         });
-       docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -108,9 +103,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
                                 String name = selectedFromList.substring(3, selectedFromList.length()-1);
 
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDoctor(name);
-                                UnenrollDoc.ListDoctor docListDisp = new UnenrollDoc.ListDoctor();
-                                docListDisp.execute();
+                                unenrollDoc(name);
+                                UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
+                                docListdisp.execute();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -122,28 +117,23 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
                 alert.show();
             }
 
-        });*/
+        });
     }
     //deleting a record in the database
-    public void unenrollDoctor(String name){
+    public void unenrollDoc(String name){
 
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
-            ps = con.prepareStatement(UNENROLL_DOCTOR);
+            ps = con.prepareStatement(UNENROLL_DEPT);
             ps.setString(1, name);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    public void goBack() {
-        Intent intent = new Intent(this, EnrollmentPage.class);
-        startActivity(intent);
-    }
 
-
-   /* public boolean checkDocRecord() {
+  /*  public boolean checkDocRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
         String docFName = doctorFName.getText().toString();
@@ -169,8 +159,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
         }
         return hasExistingDept;
     }*/
-/*
-    private class ListDoctor extends AsyncTask<String, String, String> {
+
+    //function for displaying the enrolled department
+    private class ListDoc extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
@@ -184,7 +175,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
-                Security sec = new Security ();
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
                 ResultSet rset = st.executeQuery(SELECT_LIST_DOC);
@@ -195,11 +185,13 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
 
                 while (rset.next()) {
                     Map<String, String> datanum = new HashMap<String, String> ();
-                    datanum.put("A", rset.getString(1).toString() + " " + rset.getString(2).toString());
+                    datanum.put("A", rset.getString(1).toString() + " "
+                            + rset.getString(2).toString()  + " " + rset.getString(3).toString());
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A"};
+                String[] fromwhere = {"A", "B"};
+
                 int[] viewswhere = {R.id.lblDocList};
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
                         R.layout.list_doc_template, fromwhere, viewswhere);
@@ -218,6 +210,5 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
         protected void onPostExecute(String s) {
             docList.setAdapter(listAdapter);
         }
-    }*/
-
+    }
 }

@@ -31,9 +31,9 @@ import java.sql.SQLException;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility {
 
-    private static String urlClinicSpinner = "http://192.168.1.11:89/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://192.168.1.11:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
-    private static String urlDocTypeSpinner = "http://192.168.1.11:89/kerux/doctorTypeSpinner.php";
+    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
+    private static String urlDocTypeSpinner = "http://192.168.1.13:89/kerux/doctorTypeSpinner.php";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -127,14 +127,16 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
         String docFName = doctorFName.getText().toString();
+        String docLName = doctorLName.getText().toString();
 
         if(con != null){ //means that we have a valid db connection
             try{//inserting records; called INSERT_REC from DBUtility.java
                 // use of parameterized query such as PreparedStatement prevents SQL injection which is considered a way to
                 //prevent threat in any web app
-                String query = VALIDATION_DEPT;
+                String query = VALIDATION_DOCTOR;
                 PreparedStatement ps = con.prepareStatement(query);
                 ps.setString(1, docFName);
+                ps.setString(2, docLName);
 
                 ResultSet rs=ps.executeQuery();
                 if(rs.next()){

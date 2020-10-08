@@ -53,7 +53,7 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
             JSONArray ja=new JSONArray(data);
             JSONObject jo=null;
 
-            for (int i=0;i<ja.length();i++)
+            for (int i=0; i<ja.length(); i++)
             {
                 jo=ja.getJSONObject(i);
                 String name=jo.getString(columnName);
