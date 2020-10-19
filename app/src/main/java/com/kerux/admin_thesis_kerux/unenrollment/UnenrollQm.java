@@ -111,6 +111,14 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
 
         });
+        Button bttnDept = findViewById(R.id.bttnUnenrollDept);
+        bttnDept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent5 = new Intent(UnenrollQm.this, UnenrollDept.class);
+                startActivity(intent5);
+            }
+        });
     }
 
     //deleting a record in the database

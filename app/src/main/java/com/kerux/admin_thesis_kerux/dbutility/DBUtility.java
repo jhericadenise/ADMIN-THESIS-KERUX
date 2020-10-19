@@ -18,6 +18,10 @@ public interface DBUtility {
     String SELECT_BLOCKED_USERS = "select distinct FirstName, LastName from patient WHERE Status = 'Blocked'";
     String SELECT_ADMIN_LOGIN = "select admin_id, username, password from admin where username = ? AND password = ?";
 
+    String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status ='Unenrolled' AND Clinic_ID = ?";
+    String SELECT_UNENROLLED_DOC = "SELECT * from doctor where Status = 'Inactive'";
+    String SELECT_UNENROLLED_QM = "SELECT * from queuemanager where Status = 'Inactive' AND Clinic_ID = ?";
+
     String SELECT_DEPT = "select name from department where status = 'Active' AND Clinic_ID = ?";
 
     String INSERT_DOCTOR = "insert into doctor (DoctorType_ID, Clinic_ID, FirstName, LastName, Department_ID, " +
@@ -32,7 +36,7 @@ public interface DBUtility {
     String VALIDATION_QM = "Select * from queuemanager where name = ? AND Status = 'Active'";
 
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";
-    String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Inactive' WHERE FirstName = ? AND LastName = ?";
+    String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Inactive' WHERE FirstName = ?";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Inactive' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE FirstName = ?";
 }

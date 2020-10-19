@@ -83,7 +83,6 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         deptList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 final String selectedFromList = String.valueOf((deptList.getItemAtPosition(2)));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling

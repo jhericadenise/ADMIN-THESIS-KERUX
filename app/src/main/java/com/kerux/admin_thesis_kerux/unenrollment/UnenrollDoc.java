@@ -100,10 +100,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length()-1);
+                                String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
+                                /*String lastName = selectedFromList.substring(3, selectedFromList.length()-2);*/
 
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDoc(name);
+                                unenrollDoc(firstName);
                                 UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
                                 docListdisp.execute();
                             }
@@ -118,21 +119,58 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
             }
 
         });
+            Button bttnQM = findViewById(R.id.bttnUnenrollQM);
+            bttnQM.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkDoctorList();
+                    Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
+                    startActivity(intent5);
+                }
+            });
+
     }
     //deleting a record in the database
-    public void unenrollDoc(String name){
+    public void unenrollDoc(String firstName){
 
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
-            ps = con.prepareStatement(UNENROLL_DEPT);
-            ps.setString(1, name);
+            ps = con.prepareStatement(UNENROLL_DOCTOR);
+            ps.setString(1, firstName);
+            /*ps.setString(2, lastName);*/
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public boolean checkDoctorList(){
+        boolean allInactiveRec = false;
+        Connection con = connectionClass.CONN();
+        String docStatus = "Inactive";
+
+        if(con != null){ //means that we have a valid db connection
+            try{//inserting records; called INSERT_REC from DBUtility.java
+                // use of parameterized query such as PreparedStatement prevents SQL injection which is considered a way to
+                //prevent threat in any web app
+                String query = SELECT_UNENROLLED_DOC;
+                PreparedStatement ps = con.prepareStatement(query);
+                ps.setString(1, docStatus);
+
+                ResultSet rs=ps.executeQuery();
+                if(rs.next()){
+                    allInactiveRec=true;
+                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
+                }
+            } catch(SQLException sqle){
+                System.err.println(sqle.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return allInactiveRec;
+    }
   /*  public boolean checkDocRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
@@ -185,12 +223,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
 
                 while (rset.next()) {
                     Map<String, String> datanum = new HashMap<String, String> ();
-                    datanum.put("A", rset.getString(1).toString() + " "
-                            + rset.getString(2).toString()  + " " + rset.getString(3).toString());
+                    datanum.put("A", rset.getString(1).toString());
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A", "B"};
+                String[] fromwhere = {"A"};
 
                 int[] viewswhere = {R.id.lblDocList};
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
