@@ -3,12 +3,11 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,12 +17,12 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
-import com.kerux.admin_thesis_kerux.navigation.MainActivity;
-import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
+import com.kerux.admin_thesis_kerux.navigation.MainActivity;
+import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,17 +35,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
-    private ListView qmList;
-    private ListAdapter listAdapter;
-    Button qmDisplayList;
+public class UnenrollDept extends AppCompatActivity implements DBUtility {
     ConnectionClass connectionClass;
+    private ListView deptList;
+    private ListAdapter listAdapter;
+    Button deptDisplayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
-        setContentView ( R.layout.activity_unenroll_qm);
+        setContentView ( R.layout.activity_unenroll_dept );
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById ( R.id.nav_view );
@@ -55,50 +54,50 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId ()) {
                     case R.id.navigation_dashboard:
-                        Intent a = new Intent ( UnenrollQm.this, MainActivity.class );
+                        Intent a = new Intent ( UnenrollDept.this, MainActivity.class );
                         startActivity ( a );
                         break;
                     case R.id.navigation_enrollment:
-                        Intent b = new Intent ( UnenrollQm.this, EnrollmentPage.class );
+                        Intent b = new Intent ( UnenrollDept.this, EnrollmentPage.class );
                         startActivity ( b );
                         break;
                     case R.id.navigation_accounts:
-                        Intent c = new Intent ( UnenrollQm.this, ManageAccounts.class );
+                        Intent c = new Intent ( UnenrollDept.this, ManageAccounts.class );
                         startActivity ( c );
                         break;
                 }
                 return false;
             }
         } );
-        qmDisplayList = (Button) findViewById(R.id.bttnDisplayQm);
-        qmList = (ListView) findViewById(R.id.listEnrolledQm);
+        deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
+        deptList = (ListView) findViewById(R.id.listEnrolledDept);
 
-        qmDisplayList.setOnClickListener(new View.OnClickListener() {
+        deptDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
-                qmListdisp.execute();
+                ListDept deptListdisp = new ListDept();
+                deptListdisp.execute();
             }
         });
 
-        qmList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        deptList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                final String selectedFromList = String.valueOf((qmList.getItemAtPosition(position)));
+                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(2)));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
-                AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollQm.this);
-                builder.setMessage("Unenroll Queue Manager?")
+                AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDept.this);
+                builder.setMessage("Unenroll Department?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length()-1);
-
+                                String name = selectedFromList.substring(2, selectedFromList.length()-3);
+                               /* String clinicName = selectedFromList.substring(1, selectedFromList.length()-1);
+                                String status = selectedFromList.substring(3, selectedFromList.length()-1);*/
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollQM (name);
-                                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
-                                qmListdisp.execute();
+                                unenrollDept(name);
+                                ListDept deptListdisp = new ListDept();
+                                deptListdisp.execute();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -111,38 +110,25 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
 
         });
-        Button bttnDept = findViewById(R.id.bttnUnenrollDept);
-        bttnDept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent5 = new Intent(UnenrollQm.this, UnenrollDept.class);
-                startActivity(intent5);
-            }
-        });
     }
-
     //deleting a record in the database
-    public void unenrollQM(String name){
+    public void unenrollDept(String name){
 
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
-            ps = con.prepareStatement(UNENROLL_QM);
+            ps = con.prepareStatement(UNENROLL_DEPT);
             ps.setString(1, name);
+/*            ps.setString(2, name);
+            ps.setString(3, status);*/
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    //go back to the previous page
-    public void goBack() {
-        Intent intent = new Intent(this, EnrollmentPage.class);
-        startActivity(intent);
-    }
-
-    //Displaying the list of enrolled queue manager in the database
-    private class ListQM extends AsyncTask<String, String, String> {
+    //function for displaying the enrolled department
+    private class ListDept extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
@@ -156,29 +142,37 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
+                deptList = (ListView) findViewById(R.id.listEnrolledDept);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_LIST_QM);
+                ResultSet rset = st.executeQuery(SELECT_LIST_DEPT);
                 ResultSetMetaData rsmd = rset.getMetaData();
 
                 List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>>();
+                data = new ArrayList<Map<String, String>> ();
 
                 while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", rset.getString(1).toString());
+                    HashMap<String, String> datanum = new HashMap<String, String>();
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+
+                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
+                            "\n" + rset.getString(2).toString() +"\n \n"
+                    + "STATUS" +"\n" + rset.getString(3).toString());*/
+
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblQMList};
-                listAdapter = new SimpleAdapter(UnenrollQm.this, data,
-                        R.layout.list_qm_template, fromwhere, viewswhere);
+
+                /*int[] viewswhere = {R.id.lblDeptList};*/
+                listAdapter = new SimpleAdapter (UnenrollDept.this, data,
+                        R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
                 while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
+                    result += rset.getString(2) + "\n";
                 }
-                message = "ADDED SUCCESSFULLY!";
+                message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
                 message = "Exceptions" + ex;
@@ -187,7 +181,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         }
         @Override
         protected void onPostExecute(String s) {
-            qmList.setAdapter(listAdapter);
+            deptList.setAdapter(listAdapter);
         }
     }
+
 }

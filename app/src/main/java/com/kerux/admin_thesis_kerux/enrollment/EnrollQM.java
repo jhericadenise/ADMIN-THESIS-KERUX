@@ -38,8 +38,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility {
     private Spinner spinnerDept;
     Button generatePass;
     ConnectionClass connectionClass;
-    private static String urlClinicSpinner = "http://10.0.2.2:89/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://10.0.2.2:89/kerux/departmentSpinner.php";
+    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,9 +106,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility {
                 qmPw.setText(generateString(12));
             }
         });
-        Downloader clinic = new Downloader(EnrollQM.this, urlClinicSpinner, spinnerClinic, "Clinic_ID");
+        Downloader clinic = new Downloader(EnrollQM.this, urlClinicSpinner, spinnerClinic, "clinicName");
         clinic.execute();
-        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Department_ID");
+        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Name");
         dep.execute();
     }
 

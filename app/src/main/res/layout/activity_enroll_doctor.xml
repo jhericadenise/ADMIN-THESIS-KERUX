@@ -305,7 +305,7 @@
         app:layout_constraintVertical_bias="0.105" />
 
     <Spinner
-        android:id="@+id/spinnerDocClinicName"
+        android:id="@+id/spinnerClinic"
         android:layout_width="240dp"
         android:layout_height="35dp"
         app:layout_constraintBottom_toBottomOf="parent"

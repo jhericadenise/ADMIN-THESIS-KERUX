@@ -18,6 +18,9 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDept;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollQm;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,7 +34,7 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enrollment_page);
-        connectionClass=new ConnectionClass(); //create ConnectionClass
+        connectionClass = new ConnectionClass(); //create ConnectionClass
         TextView titleDate = (TextView) findViewById(R.id.txtEnrollDate);
         titleDate.setText(giveDate());
 
@@ -59,10 +62,16 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
         Button bttnQM = findViewById(R.id.bttnQm);
         Button bttnDept = findViewById(R.id.bttnDept);
         Button bttnDoctor = findViewById(R.id.bttnDoctor);
+        /*Button bttnUnenrollDept = findViewById(R.id.bttnDisplayDept);*/
+        /*Button bttnUnenrollQm = findViewById(R.id.bttnUnenrollQm);*/
+        Button bttnUnenrollDoc = findViewById(R.id.bttnDisplayDoc);
 
         bttnQM.setOnClickListener(this);
         bttnDept.setOnClickListener(this);
         bttnDoctor.setOnClickListener(this);
+        /*bttnUnenrollDept.setOnClickListener(this);*/
+        /*bttnUnenrollQm.setOnClickListener(this);*/
+        bttnUnenrollDoc.setOnClickListener(this);
     }
 
     @Override
@@ -79,6 +88,18 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
             case R.id.bttnDept:
                 Intent intent3 = new Intent(this, EnrollDept.class);
                 startActivity(intent3);
+                break;
+          /*  case R.id.bttnDisplayDept:
+                Intent intent4 = new Intent(this, UnenrollDept.class);
+                startActivity (intent4);
+                break;*/
+        /*    case R.id.bttnUnenrollQm:
+                Intent intent5 = new Intent(this, UnenrollQm.class);
+                startActivity (intent5);
+                break;*/
+            case R.id.bttnDisplayDoc:
+                Intent intent6 = new Intent(this, UnenrollDoc.class);
+                startActivity (intent6);
                 break;
         }
     }

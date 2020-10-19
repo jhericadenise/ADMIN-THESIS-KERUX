@@ -36,7 +36,7 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
 
-        if(integer==1)
+        if(integer>=1)
         {
             ArrayAdapter adapter=new ArrayAdapter(c,android.R.layout.simple_list_item_1,names);
             sp.setAdapter(adapter);
@@ -53,11 +53,12 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
             JSONArray ja=new JSONArray(data);
             JSONObject jo=null;
 
-            for (int i=0;i<ja.length();i++)
+            for (int i=0; i<ja.length(); i++)
             {
                 jo=ja.getJSONObject(i);
                 String name=jo.getString(columnName);
                 names.add(name);
+
             }
 
             return 1;

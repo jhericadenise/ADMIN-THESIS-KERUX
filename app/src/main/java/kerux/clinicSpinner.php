@@ -12,7 +12,7 @@ if(mysqli_connect_error($con))
     echo "Failed to Connect to Database ".mysqli_connect_error();
 }
 
-$query=mysqli_query($con,"SELECT * FROM doctor");
+$query=mysqli_query($con,"SELECT * FROM clinic");
 
 if($query)
 {
