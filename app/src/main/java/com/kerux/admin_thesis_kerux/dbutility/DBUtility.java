@@ -1,10 +1,15 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
-    String jdbcUrl ="jdbc:mysql://192.168.1.13/keruxdb";//jdbc:mysql://192.168.1.1/keruxdb
-    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+//    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+//    String jdbcUrl ="jdbc:mysql://192.168.1.13/keruxdb";//jdbc:mysql://192.168.1.1/keruxdb
+//    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
+//    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+
+    String jdbcDriverName = "com.mysql.jdbc.Driver";
+    String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
+    String dbUserName = "KeruxAdmin";
+    String dbPassword = "admin";
 
     String SELECT_LIST_DEPT = "SELECT clinic.clinicName, department.Name, department.Status from clinic " +
             "INNER JOIN department ON " +
@@ -18,9 +23,9 @@ public interface DBUtility {
     String SELECT_BLOCKED_USERS = "select distinct FirstName, LastName from patient WHERE Status = 'Blocked'";
     String SELECT_ADMIN_LOGIN = "select admin_id, username, password from admin where username = ? AND password = ?";
 
-    String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status ='Unenrolled' AND Clinic_ID = ?";
-    String SELECT_UNENROLLED_DOC = "SELECT * from doctor where Status = 'Inactive'";
-    String SELECT_UNENROLLED_QM = "SELECT * from queuemanager where Status = 'Inactive' AND Clinic_ID = ?";
+    String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status =?";
+    String SELECT_UNENROLLED_DOC = "SELECT * from doctor where Status = ?";
+    String SELECT_UNENROLLED_QM = "SELECT * from queuemanager where Status = ?";
 
     String SELECT_DEPT = "select name from department where status = 'Active' AND Clinic_ID = ?";
 

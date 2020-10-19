@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -123,9 +124,13 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
             bttnQM.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    checkDoctorList();
-                    Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
-                    startActivity(intent5);
+                    if(checkDoctorList()) {
+                        Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
+                        startActivity(intent5);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
@@ -148,7 +153,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
     public boolean checkDoctorList(){
         boolean allInactiveRec = false;
         Connection con = connectionClass.CONN();
-        String docStatus = "Inactive";
+        String docStatus = "Active";
 
         if(con != null){ //means that we have a valid db connection
             try{//inserting records; called INSERT_REC from DBUtility.java
@@ -160,8 +165,12 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility {
 
                 ResultSet rs=ps.executeQuery();
                 if(rs.next()){
+                    Log.d("WENT HERE", "DIDNT GO IN");
+                }
+                else{
+                    Log.d("WENT HERE", "WENT IN");
                     allInactiveRec=true;
-                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
+
                 }
             } catch(SQLException sqle){
                 System.err.println(sqle.getMessage());

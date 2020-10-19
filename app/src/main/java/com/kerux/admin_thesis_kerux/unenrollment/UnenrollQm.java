@@ -9,6 +9,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -115,8 +116,13 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         bttnDept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent5 = new Intent(UnenrollQm.this, UnenrollDept.class);
-                startActivity(intent5);
+                if(checkQMList()) {
+                    Intent intent5 = new Intent(UnenrollQm.this, UnenrollDept.class);
+                    startActivity(intent5);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Department, Must UNENROLL all Queue Managers to proceed.", Toast.LENGTH_LONG).show();
+
+                }
             }
         });
     }
@@ -133,6 +139,37 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkQMList(){
+        boolean allInactiveRec = false;
+        Connection con = connectionClass.CONN();
+        String docStatus = "Active";
+
+        if(con != null){ //means that we have a valid db connection
+            try{//inserting records; called INSERT_REC from DBUtility.java
+                // use of parameterized query such as PreparedStatement prevents SQL injection which is considered a way to
+                //prevent threat in any web app
+                String query = SELECT_UNENROLLED_QM;
+                PreparedStatement ps = con.prepareStatement(query);
+                ps.setString(1, docStatus);
+
+                ResultSet rs=ps.executeQuery();
+                if(rs.next()){
+                    Log.d("WENT HERE", "DIDNT GO IN");
+                }
+                else{
+                    Log.d("WENT HERE", "WENT IN");
+                    allInactiveRec=true;
+
+                }
+            } catch(SQLException sqle){
+                System.err.println(sqle.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return allInactiveRec;
     }
 
     //go back to the previous page
