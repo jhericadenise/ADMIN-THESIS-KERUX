@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".navigation.ManageAccounts"></activity>
-        <activity android:name=".navigation.MainActivity">
+        <activity android:name=".email.SendMailActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

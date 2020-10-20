@@ -2,30 +2,28 @@ package com.kerux.admin_thesis_kerux.enrollment;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
-import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.navigation.MainActivity;
-import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.R;
-import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
+import com.kerux.admin_thesis_kerux.navigation.MainActivity;
+import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
@@ -40,7 +38,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
 
     private EditText deptName;
     private Spinner spinnerClinic;
-    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
+    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
 

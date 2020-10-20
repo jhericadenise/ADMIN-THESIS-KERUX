@@ -17,6 +17,7 @@
     <string name="title_register">Register</string>
     <string name="title_deptName">Department</string>
     <string name="title_clinic">Clinic</string>
+    <string name="title_statistics">Statistics</string>
     <string name="login">Login</string>
     <string name="enrolledQM">Enrolled Queue Manager</string>
     <string name="enrolledDoctor">Enrolled Doctor</string>

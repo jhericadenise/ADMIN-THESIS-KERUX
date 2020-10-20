@@ -1,15 +1,15 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-//    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
-//    String jdbcUrl ="jdbc:mysql://192.168.1.13/keruxdb";//jdbc:mysql://192.168.1.1/keruxdb
-//    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-//    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+    String jdbcUrl ="jdbc:mysql://192.168.1.13/keruxdb";//jdbc:mysql://192.168.1.1/keruxdb
+    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
+    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
-    String jdbcDriverName = "com.mysql.jdbc.Driver";
+/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
     String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
     String dbUserName = "KeruxAdmin";
-    String dbPassword = "admin";
+    String dbPassword = "admin";*/
 
     String SELECT_LIST_DEPT = "SELECT clinic.clinicName, department.Name, department.Status from clinic " +
             "INNER JOIN department ON " +
