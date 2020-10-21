@@ -2,11 +2,16 @@ package com.kerux.admin_thesis_kerux.enrollment;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,20 +19,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.kerux.admin_thesis_kerux.R;
+import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
+import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.email.SendMailTask;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
-import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.security.Security;
-import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
-import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Random;
 
-public class EnrollQM extends AppCompatActivity implements DBUtility {
+public class EnrollQM extends AppCompatActivity implements DBUtility, NavigationView.OnNavigationItemSelectedListener {
 
     private EditText qmFirstName;
     private EditText qmLastName;
@@ -41,50 +48,46 @@ public class EnrollQM extends AppCompatActivity implements DBUtility {
     private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
     private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php";
 
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_qm);
         connectionClass = new ConnectionClass(); //create ConnectionClass
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
-                        Intent a = new Intent(EnrollQM.this, MainActivity.class);
-                        startActivity(a);
-                        break;
-                    case R.id.navigation_enrollment:
-                        Intent b = new Intent(EnrollQM.this, EnrollmentPage.class);
-                        startActivity(b);
-                        break;
-                    case R.id.navigation_accounts:
-                        Intent c = new Intent(EnrollQM.this, ManageAccounts.class);
-                        startActivity(c);
-                        break;
-                }
-                return false;
-            }
-        });
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
 
-        Button bttnBack = findViewById(R.id.bttnQMgoback);
+        /*setSupportActionBar(toolbar);*/
+
+        //Hide or show login or logout
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.nav_logout).setVisible(false);
+
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(EnrollQM.this);
+        navigationView.setCheckedItem(R.id.nav_enrollment_qm);
+
+
+
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
         spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
         spinnerDept = (Spinner) findViewById(R.id.spinnerDept);
-
-        bttnBack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                goBack();
-            }
-        });
 
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
                 doenroll.execute();
+                sendEmail();
                 qmFirstName.getText().clear();
                 qmLastName.getText().clear();
                 qmUname.getText().clear();
@@ -127,6 +130,65 @@ public class EnrollQM extends AppCompatActivity implements DBUtility {
     public void goBack() {
         Intent intent = new Intent(this, EnrollmentPage.class);
         startActivity(intent);
+    }
+    private void sendEmail() {
+        String email = qmEmail.getText().toString().trim();
+        String subject = "Kerux Queue Manager Enrollment Credentials";
+        String message = "Good day!\n" +
+                "We've successfully enrolled you as a Queue Manager\n\n\n" +
+                "Here are your credentials" + "\n\nUsername: " + qmUname.getText().toString().trim() +
+                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n\n Thank you!";
+
+        SendMailTask sm = new SendMailTask(this, email, subject, message);
+        sm.execute();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
+
+    }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.nav_dashboard:
+                Intent intent3 = new Intent(EnrollQM.this, MainActivity.class);
+                startActivity(intent3);
+                break;
+            case R.id.nav_enrollment:
+                Intent intent = new Intent(EnrollQM.this, EnrollmentPage.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_enrollment_dept:
+                Intent intent1 = new Intent(EnrollQM.this, EnrollDept.class);
+                startActivity(intent1);
+                break;
+            case R.id.nav_enrollment_doctor:
+                Intent intent2 = new Intent(EnrollQM.this, EnrollDoctor.class);
+                startActivity(intent2);
+                break;
+            case R.id.nav_enrollment_qm:
+                break;
+            case R.id.nav_revoke:
+                Intent intent4 = new Intent(EnrollQM.this, UnenrollDoc.class);
+                startActivity(intent4);
+                break;
+            case R.id.nav_accounts:
+                Intent intent5 = new Intent(EnrollQM.this, ManageAccounts.class);
+                startActivity(intent5);
+                break;
+
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 
     //Enrolling or adding the record to the database for the queue manager

@@ -1,14 +1,10 @@
 package com.kerux.admin_thesis_kerux.unenrollment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,9 +16,6 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
-import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
-import com.kerux.admin_thesis_kerux.navigation.MainActivity;
-import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,33 +35,13 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     private ListAdapter listAdapter;
     Button deptDisplayList;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_unenroll_dept );
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById ( R.id.nav_view );
-        navigation.setOnNavigationItemSelectedListener ( new BottomNavigationView.OnNavigationItemSelectedListener () {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId ()) {
-                    case R.id.navigation_dashboard:
-                        Intent a = new Intent ( UnenrollDept.this, MainActivity.class );
-                        startActivity ( a );
-                        break;
-                    case R.id.navigation_enrollment:
-                        Intent b = new Intent ( UnenrollDept.this, EnrollmentPage.class );
-                        startActivity ( b );
-                        break;
-                    case R.id.navigation_accounts:
-                        Intent c = new Intent ( UnenrollDept.this, ManageAccounts.class );
-                        startActivity ( c );
-                        break;
-                }
-                return false;
-            }
-        } );
         deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
         deptList = (ListView) findViewById(R.id.listEnrolledDept);
 

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Kerux - Admin</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="title_home">Home</string>
     <string name="title_enrollment">Enrollment</string>
@@ -56,5 +58,4 @@
     <string name="reason">Reason for Revoking Privilege</string>
     <string name="show">Show</string>
     <string name="choose">Choose to Show</string>
-
 </resources>

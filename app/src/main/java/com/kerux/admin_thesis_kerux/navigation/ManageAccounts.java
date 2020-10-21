@@ -3,11 +3,16 @@ package com.kerux.admin_thesis_kerux.navigation;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,7 +26,11 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
+import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
+import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ManageAccounts extends AppCompatActivity implements DBUtility {
+public class ManageAccounts extends AppCompatActivity implements DBUtility, NavigationView.OnNavigationItemSelectedListener {
 
     ConnectionClass connectionClass;
     private ListAdapter listAdapterAccounts;
@@ -45,6 +54,10 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
     private ListView blockedList;
     Button displayAccounts;
     Button displayBlocked;
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +71,25 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
         String i = getIntent().getStringExtra("username");
         TextView adminName = (TextView) findViewById(R.id.txtAccAdmin);
         adminName.setText(i);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
-                        Intent a = new Intent(ManageAccounts.this, MainActivity.class);
-                        startActivity(a);
-                        break;
-                    case R.id.navigation_enrollment:
-                        Intent b = new Intent(ManageAccounts.this, EnrollmentPage.class);
-                        startActivity(b);
-                        break;
-                    case R.id.navigation_accounts:
-                        Intent c = new Intent(ManageAccounts.this, ManageAccounts.class);
-                        startActivity(c);
-                        break;
-                }
-                return false;
-            }
-        });
+        /*setSupportActionBar(toolbar);*/
+
+        //Hide or show login or logout
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.nav_logout).setVisible(false);
+
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(ManageAccounts.this);
+        navigationView.setCheckedItem(R.id.nav_accounts);
+
+
         accountsList = (ListView) findViewById(R.id.listAccounts);
         displayAccounts = (Button) findViewById(R.id.bttnViewAcc);
         blockedList = (ListView) findViewById(R.id.listBlocked);
@@ -150,6 +160,53 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
         return sdf.format(cal.getTime());
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.nav_dashboard:
+                Intent intent = new Intent(ManageAccounts.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_enrollment:
+                Intent intent1 = new Intent(ManageAccounts.this, EnrollmentPage.class);
+                startActivity(intent1);
+                break;
+            case R.id.nav_enrollment_dept:
+                Intent intent5 = new Intent(ManageAccounts.this, EnrollDept.class);
+                startActivity(intent5);
+                break;
+            case R.id.nav_enrollment_doctor:
+                Intent intent2 = new Intent(ManageAccounts.this, EnrollDoctor.class);
+                startActivity(intent2);
+                break;
+            case R.id.nav_enrollment_qm:
+                Intent intent3 = new Intent(ManageAccounts.this, EnrollQM.class);
+                startActivity(intent3);
+                break;
+            case R.id.nav_revoke:
+                Intent intent4 = new Intent(ManageAccounts.this, UnenrollDoc.class);
+                startActivity(intent4);
+                break;
+            case R.id.nav_accounts:
+                break;
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     //function for displaying the enrolled user - patient

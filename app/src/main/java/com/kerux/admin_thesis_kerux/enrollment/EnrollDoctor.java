@@ -5,8 +5,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,21 +20,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.kerux.admin_thesis_kerux.R;
+import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
+import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
-import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.security.Security;
-import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
-import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EnrollDoctor extends AppCompatActivity implements DBUtility {
+public class EnrollDoctor extends AppCompatActivity implements DBUtility, NavigationView.OnNavigationItemSelectedListener {
 
     private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
     private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
@@ -51,34 +57,34 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
 
     ConnectionClass connectionClass;
 
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_doctor);
         connectionClass = new ConnectionClass(); //create ConnectionClass
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
-                        Intent a = new Intent(EnrollDoctor.this, MainActivity.class);
-                        startActivity(a);
-                        break;
-                    case R.id.navigation_enrollment:
-                        Intent b = new Intent(EnrollDoctor.this, EnrollmentPage.class);
-                        startActivity(b);
-                        break;
-                    case R.id.navigation_accounts:
-                        Intent c = new Intent(EnrollDoctor.this, ManageAccounts.class);
-                        startActivity(c);
-                        break;
-                }
-                return false;
-            }
-        });
-        Button bttnBack = findViewById(R.id.bttnBackDoc);
+        /*setSupportActionBar(toolbar);*/
+
+        //Hide or show login or logout
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.nav_logout).setVisible(false);
+
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(EnrollDoctor.this);
+        navigationView.setCheckedItem(R.id.nav_enrollment_doctor);
+
+
         Button bttnEnrollDoc = findViewById(R.id.bttnEnrollDoc);
         doctorFName = (EditText) findViewById(R.id.txtboxDocFName);
         doctorLName = (EditText) findViewById(R.id.txtboxDocLName);
@@ -95,11 +101,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
         spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
         spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
 
-        bttnBack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                goBack();
-            }
-        });
 
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +151,55 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility {
             }
         }
         return hasExistingDept;
+    }
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        switch (menuItem.getItemId()){
+            case R.id.nav_dashboard:
+                Intent intent2 = new Intent(EnrollDoctor.this, MainActivity.class);
+                startActivity(intent2);
+                break;
+            case R.id.nav_enrollment:
+                Intent intent = new Intent(EnrollDoctor.this, EnrollmentPage.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_enrollment_dept:
+                Intent intent1 = new Intent(EnrollDoctor.this, EnrollDept.class);
+                startActivity(intent1);
+                break;
+            case R.id.nav_enrollment_doctor:
+                break;
+            case R.id.nav_enrollment_qm:
+                Intent intent3 = new Intent(EnrollDoctor.this, EnrollQM.class);
+                startActivity(intent3);
+                break;
+            case R.id.nav_revoke:
+                Intent intent4 = new Intent(EnrollDoctor.this, UnenrollDoc.class);
+                startActivity(intent4);
+                break;
+            case R.id.nav_accounts:
+                Intent intent5 = new Intent(EnrollDoctor.this, ManageAccounts.class);
+                startActivity(intent5);
+                break;
+
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 
 

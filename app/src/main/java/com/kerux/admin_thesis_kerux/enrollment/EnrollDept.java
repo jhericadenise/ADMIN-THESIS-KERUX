@@ -5,9 +5,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +30,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class EnrollDept extends AppCompatActivity implements DBUtility {
+public class EnrollDept extends AppCompatActivity implements DBUtility, NavigationView.OnNavigationItemSelectedListener {
 
     private EditText deptName;
     private Spinner spinnerClinic;
@@ -43,6 +49,10 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
     ConnectionClass connectionClass;
 
     private KeruxSession session;
+
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,39 +64,28 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         TextView titleDate = (TextView) findViewById(R.id.txtDateDep);
         titleDate.setText(giveDate());
         connectionClass=new ConnectionClass(); //create ConnectionClass
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
-                        Intent a = new Intent(EnrollDept.this, MainActivity.class);
-                        startActivity(a);
-                        break;
-                    case R.id.navigation_enrollment:
-                        Intent b = new Intent(EnrollDept.this, EnrollmentPage.class);
-                        startActivity(b);
-                        break;
-                    case R.id.navigation_accounts:
-                        Intent c = new Intent(EnrollDept.this, ManageAccounts.class);
-                        startActivity(c);
-                        break;
-                }
-                return false;
-            }
-        });
 
-        Button bttnBack = findViewById(R.id.bttnBackDept);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
+
+        /*setSupportActionBar(toolbar);*/
+
+        //Hide or show login or logout
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.nav_logout).setVisible(false);
+
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(EnrollDept.this);
+        navigationView.setCheckedItem(R.id.nav_enrollment_dept);
+
         Button bttnEnrollDept = findViewById(R.id.bttnEnrollDept);
         spinnerClinic = (Spinner) findViewById(R.id.clinicSpinner);
         deptName = (EditText)findViewById(R.id.txtboxDeptName);
-
-        //going back to the previous page
-        bttnBack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                goBack();
-            }
-        });
 
         //what the button of enroll dept will do when its clicked
         bttnEnrollDept.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +120,52 @@ public class EnrollDept extends AppCompatActivity implements DBUtility {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         return sdf.format(calendar.getTime());
+    }
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.nav_dashboard:
+                Intent intent = new Intent(EnrollDept.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_enrollment:
+                Intent intent1 = new Intent(EnrollDept.this, EnrollmentPage.class);
+                startActivity(intent1);
+                break;
+            case R.id.nav_enrollment_dept:
+                break;
+            case R.id.nav_enrollment_doctor:
+                Intent intent2 = new Intent(EnrollDept.this, EnrollDoctor.class);
+                startActivity(intent2);
+                break;
+            case R.id.nav_enrollment_qm:
+                Intent intent3 = new Intent(EnrollDept.this, EnrollQM.class);
+                startActivity(intent3);
+                break;
+            case R.id.nav_revoke:
+                Intent intent4 = new Intent(EnrollDept.this, UnenrollDoc.class);
+                startActivity(intent4);
+                break;
+            case R.id.nav_accounts:
+                Intent intent5 = new Intent(EnrollDept.this, ManageAccounts.class);
+                startActivity(intent5);
+                break;
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     /*Function class for enrolling the department in to the db, inserting the records in the db*/

@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".navigation.ManageAccounts"></activity>
-        <activity android:name=".email.SendMailActivity">
+        <activity android:name=".navigation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,6 +27,10 @@
         <activity android:name=".unenrollment.UnenrollDept" />
         <activity android:name=".unenrollment.UnenrollQm" />
         <activity android:name=".unenrollment.UnenrollDoc" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
         <!--    <activity
                 android:name=".navigation.MainActivity"
                 android:label="@string/app_name"></activity>-->

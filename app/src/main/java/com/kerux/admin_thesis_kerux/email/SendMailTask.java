@@ -16,7 +16,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SendMailTask extends AsyncTask{
+public class SendMailTask extends AsyncTask<Void,Void,Void>{
     public static final String EMAIL ="keruxapp@gmail.com";
     public static final String PASSWORD ="letstalkkeruxcsb1120";
 
@@ -25,6 +25,7 @@ public class SendMailTask extends AsyncTask{
     private String email;
     private String subject;
     private String message;
+
     private ProgressDialog progressDialog;
     public SendMailTask(Context context, String email, String subject, String message){
         this.context = context;
@@ -40,7 +41,7 @@ public class SendMailTask extends AsyncTask{
     }
 
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected Void doInBackground(Void... params) {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "465");
@@ -66,6 +67,7 @@ public class SendMailTask extends AsyncTask{
         return null;
     }
 
+    @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         progressDialog.dismiss();
