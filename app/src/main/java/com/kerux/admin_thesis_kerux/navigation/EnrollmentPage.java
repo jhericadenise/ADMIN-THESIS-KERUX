@@ -44,11 +44,11 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
         TextView titleDate = (TextView) findViewById(R.id.txtEnrollDate);
         titleDate.setText(giveDate());
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_ep);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();

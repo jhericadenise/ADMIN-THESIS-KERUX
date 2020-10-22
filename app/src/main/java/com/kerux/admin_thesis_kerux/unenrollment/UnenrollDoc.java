@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kerux.admin_thesis_kerux.R;
@@ -32,6 +33,7 @@ import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,6 +50,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
 
     ConnectionClass connectionClass;
     private ListView docList;
+    private Spinner spinnerReason;
     private ListAdapter listAdapter;
     Button docDisplayList;
 
@@ -55,17 +58,19 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
     NavigationView navigationView;
     Toolbar toolbar;
 
+    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_unenroll_doctor );
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_unenroll_doc);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();
@@ -81,6 +86,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
 
         docDisplayList = (Button) findViewById(R.id.bttnUnenrollDoc);
         docList = (ListView) findViewById(R.id.listEnrolledDoc);
+        spinnerReason = (Spinner) findViewById(R.id.spinnerReason);
 
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +140,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
                     }
                 }
             });
+
+        Downloader dep = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReason, "reason");
+        dep.execute();
 
     }
     //deleting a record in the database

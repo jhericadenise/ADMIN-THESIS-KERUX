@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_main);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();

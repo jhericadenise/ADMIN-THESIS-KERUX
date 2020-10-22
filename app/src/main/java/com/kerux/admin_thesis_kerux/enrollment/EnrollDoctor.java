@@ -66,11 +66,11 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility, Naviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_doctor);
         connectionClass = new ConnectionClass(); //create ConnectionClass
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_doc);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();

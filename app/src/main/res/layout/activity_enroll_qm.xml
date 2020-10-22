@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kerux.admin_thesis_kerux.enrollment.EnrollQM">
+    tools:context="com.kerux.admin_thesis_kerux.enrollment.EnrollQM"
+    android:id="@+id/drawer_layout_enroll_qm">
 
     <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
@@ -221,7 +222,6 @@
         android:id="@+id/txtboxQMFname"
         android:layout_width="219dp"
         android:layout_height="38dp"
-        android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

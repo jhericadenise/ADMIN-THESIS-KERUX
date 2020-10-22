@@ -58,11 +58,11 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, Navigation
         setContentView(R.layout.activity_enroll_qm);
         connectionClass = new ConnectionClass(); //create ConnectionClass
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_enroll_qm);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();

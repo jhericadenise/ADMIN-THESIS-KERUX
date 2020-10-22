@@ -71,11 +71,11 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility, Navi
         String i = getIntent().getStringExtra("username");
         TextView adminName = (TextView) findViewById(R.id.txtAccAdmin);
         adminName.setText(i);
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout_accounts);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        /*setSupportActionBar(toolbar);*/
+        setSupportActionBar(toolbar);
 
         //Hide or show login or logout
         Menu menu = navigationView.getMenu();
