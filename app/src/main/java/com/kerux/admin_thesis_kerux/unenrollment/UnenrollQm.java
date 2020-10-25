@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +20,8 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
+import com.kerux.admin_thesis_kerux.navigation.MainActivity;
+import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,11 +41,15 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     Button qmDisplayList;
     ConnectionClass connectionClass;
 
+    DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_unenroll_qm);
         connectionClass = new ConnectionClass (); //create ConnectionClass
+
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         qmDisplayList = (Button) findViewById(R.id.bttnDisplayQm);
         qmList = (ListView) findViewById(R.id.listEnrolledQm);
@@ -98,6 +105,47 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 }
             }
         });
+    }
+
+    public void ClickMenu (View view){
+        //open drawer
+        MainActivity.openDrawer(drawerLayout);
+    }
+
+    public void ClickLogo (View view){
+        //Close drawer
+        MainActivity.closeDrawer(drawerLayout);
+    }
+
+    public void ClickDashboard(View view){
+        //Redirect activity to dashboard
+        MainActivity.redirectActivity(this, MainActivity.class);
+    }
+
+    public void ClickManageAccounts(View view){
+        //Redirect activity to manage accounts
+        MainActivity.redirectActivity(this, ManageAccounts.class);
+    }
+
+    public void ClickEnrollment(View view){
+        //Recreate activity
+        MainActivity.redirectActivity(this, EnrollmentPage.class);
+    }
+
+    public void ClickRevoke(View view){
+        //redirect activity to revoke page
+        MainActivity.redirectActivity(this, UnenrollDoc.class);
+    }
+
+    public void ClickLogout(View view){
+        MainActivity.logout(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //close drawer
+        MainActivity.closeDrawer(drawerLayout);
     }
 
     //deleting a record in the database

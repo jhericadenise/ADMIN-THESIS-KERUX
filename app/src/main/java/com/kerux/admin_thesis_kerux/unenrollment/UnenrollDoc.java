@@ -4,17 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -27,9 +20,6 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
-import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
-import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
-import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
@@ -46,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UnenrollDoc  extends AppCompatActivity implements DBUtility, NavigationView.OnNavigationItemSelectedListener {
+public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
     ConnectionClass connectionClass;
     private ListView docList;
@@ -55,8 +45,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
     Button docDisplayList;
 
     DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
+
 
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
 
@@ -66,23 +55,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
         setContentView ( R.layout.activity_unenroll_doctor );
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
-        drawerLayout = findViewById(R.id.drawer_layout_unenroll_doc);
-        navigationView = findViewById(R.id.nav_view);
-        toolbar = findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-
-        //Hide or show login or logout
-        Menu menu = navigationView.getMenu();
-        menu.findItem(R.id.nav_logout).setVisible(false);
-
-        navigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView.setNavigationItemSelectedListener(UnenrollDoc.this);
-        navigationView.setCheckedItem(R.id.nav_revoke);
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         docDisplayList = (Button) findViewById(R.id.bttnUnenrollDoc);
         docList = (ListView) findViewById(R.id.listEnrolledDoc);
@@ -95,6 +68,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
                 docListdisp.execute();
             }
         });
+
 
         docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -110,9 +84,10 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
                             public void onClick(DialogInterface dialog, int id) {
                                 String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
                                 /*String lastName = selectedFromList.substring(3, selectedFromList.length()-2);*/
+                                String reason = ((Spinner)findViewById(R.id.spinnerReason)).getSelectedItem().toString();
 
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDoc(firstName);
+                                unenrollDoc(firstName, reason);
                                 UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
                                 docListdisp.execute();
                             }
@@ -145,16 +120,66 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
         dep.execute();
 
     }
-    //deleting a record in the database
-    public void unenrollDoc(String firstName){
 
+    public void ClickMenu (View view){
+        //open drawer
+        MainActivity.openDrawer(drawerLayout);
+    }
+
+    public void ClickLogo (View view){
+        //Close drawer
+        MainActivity.closeDrawer(drawerLayout);
+    }
+
+    public void ClickDashboard(View view){
+        //Redirect activity to dashboard
+        MainActivity.redirectActivity(this, MainActivity.class);
+    }
+
+    public void ClickManageAccounts(View view){
+        //Redirect activity to manage accounts
+        MainActivity.redirectActivity(this, ManageAccounts.class);
+    }
+
+    public void ClickEnrollment(View view){
+        //Recreate activity
+        MainActivity.redirectActivity(this, EnrollmentPage.class);
+    }
+
+    public void ClickRevoke(View view){
+        //redirect activity to revoke page
+        MainActivity.redirectActivity(this, UnenrollDoc.class);
+    }
+
+    public void ClickLogout(View view){
+        MainActivity.logout(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //close drawer
+        MainActivity.closeDrawer(drawerLayout);
+    }
+
+    //deleting a record in the database
+    public void unenrollDoc(String firstName, String reason){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
+
+        String query = UNENROLL_DOC_REASON;
+        PreparedStatement ps1 = null;
+
         try {
             ps = con.prepareStatement(UNENROLL_DOCTOR);
             ps.setString(1, firstName);
             /*ps.setString(2, lastName);*/
+
+            ps1 = con.prepareStatement(query);
+            ps1.setString(1, reason);
+
             ps.executeUpdate();
+            ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -190,54 +215,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility, Naviga
         }
         return allInactiveRec;
     }
-    @Override
-    public void onBackPressed() {
 
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else{
-            super.onBackPressed();
-        }
-
-    }
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-        switch (menuItem.getItemId()){
-            case R.id.nav_dashboard:
-                Intent intent4 = new Intent(UnenrollDoc.this, MainActivity.class);
-                startActivity(intent4);
-                break;
-            case R.id.nav_enrollment:
-                Intent intent = new Intent(UnenrollDoc.this, EnrollmentPage.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_enrollment_dept:
-                Intent intent1 = new Intent(UnenrollDoc.this, EnrollDept.class);
-                startActivity(intent1);
-                break;
-            case R.id.nav_enrollment_doctor:
-                Intent intent2 = new Intent(UnenrollDoc.this, EnrollDoctor.class);
-                startActivity(intent2);
-                break;
-            case R.id.nav_enrollment_qm:
-                Intent intent3 = new Intent(UnenrollDoc.this, EnrollQM.class);
-                startActivity(intent3);
-                break;
-            case R.id.nav_revoke:
-                break;
-            case R.id.nav_accounts:
-                Intent intent5 = new Intent(UnenrollDoc.this, ManageAccounts.class);
-                startActivity(intent5);
-                break;
-
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-
-        return true;
-    }
   /*  public boolean checkDocRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();

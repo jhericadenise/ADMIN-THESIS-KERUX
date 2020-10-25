@@ -42,6 +42,7 @@ public interface DBUtility {
 
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";
     String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Inactive' WHERE FirstName = ?";
+    String UNENROLL_DOC_REASON = "INSERT INTO doctor (Reason_revoke) values (?)";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Inactive' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE FirstName = ?";
 }
