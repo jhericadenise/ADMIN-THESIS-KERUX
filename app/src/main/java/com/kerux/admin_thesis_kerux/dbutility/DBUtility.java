@@ -1,15 +1,15 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+  /*  String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
     String jdbcUrl ="jdbc:mysql://192.168.1.13/keruxdb";//jdbc:mysql://192.168.1.1/keruxdb
     String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==*/
 
-/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
+    String jdbcDriverName = "com.mysql.jdbc.Driver";
     String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
-    String dbUserName = "KeruxAdmin";
-    String dbPassword = "admin";*/
+    String dbUserName = "keruxAdmin";
+    String dbPassword = "admin";
 
     String SELECT_LIST_DEPT = "SELECT clinic.clinicName, department.Name, department.Status from clinic " +
             "INNER JOIN department ON " +
@@ -42,7 +42,7 @@ public interface DBUtility {
 
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";
     String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Inactive' WHERE FirstName = ?";
-    String UNENROLL_DOC_REASON = "INSERT INTO doctor (Reason_revoke) values (?)";
+    String UNENROLL_DOC_REASON = "UPDATE doctor SET doctor.Reasonrevoke_id=(SELECT reason_revoke.reasonrevoke_id FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.firstname=?";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Inactive' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE FirstName = ?";
 }

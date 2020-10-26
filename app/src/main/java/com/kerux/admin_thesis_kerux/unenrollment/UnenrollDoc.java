@@ -47,7 +47,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     DrawerLayout drawerLayout;
 
 
-    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
+    private static String urlReasonSpinner = "http://10.70.0.17:8081/kerux/reasonSpinner.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,9 +177,12 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
             ps1 = con.prepareStatement(query);
             ps1.setString(1, reason);
+            ps1.setString(2, firstName);
 
             ps.executeUpdate();
-            ps.execute();
+            ps1.executeUpdate();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

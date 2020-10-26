@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -63,19 +64,20 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         deptList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(2)));
-                Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
+//                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(position)));
+                final String selectedFromList =  getDeptString(String.valueOf((deptList.getItemAtPosition(position))));
+//                Toast.makeText(getApplicationContext(),selected,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDept.this);
                 builder.setMessage("Unenroll Department?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(2, selectedFromList.length()-3);
+//                                String name = selectedFromList.substring(2, selectedFromList.length()-3);
                                /* String clinicName = selectedFromList.substring(1, selectedFromList.length()-1);
                                 String status = selectedFromList.substring(3, selectedFromList.length()-1);*/
-                                Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDept(name);
+                                Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
+                                unenrollDept(selectedFromList);
                                 ListDept deptListdisp = new ListDept();
                                 deptListdisp.execute();
                             }
@@ -147,6 +149,16 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getDeptString(String rowFromListView){
+        String name = rowFromListView.substring(1, rowFromListView.length()-1);
+
+        String deptString=name.replaceAll(".+second=", "");
+
+        Log.d("DEPTSTRING:", deptString);
+
+        return deptString;
     }
 
     //function for displaying the enrolled department

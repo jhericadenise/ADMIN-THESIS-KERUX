@@ -30,9 +30,9 @@ import java.sql.SQLException;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
-    private static String urlDocTypeSpinner = "http://192.168.1.13:89/kerux/doctorTypeSpinner.php";
+    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://10.70.0.17:8081/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
+    private static String urlDocTypeSpinner = "http://10.70.0.17:8081/kerux/doctorTypeSpinner.php";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -88,6 +88,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         Downloader clinic = new Downloader(EnrollDoctor.this, urlClinicSpinner, spinnerClinic, "clinicName");
         clinic.execute();
+
         Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name");
         dep.execute();
         Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType");

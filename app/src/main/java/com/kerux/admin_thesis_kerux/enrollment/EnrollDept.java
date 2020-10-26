@@ -36,7 +36,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
     private EditText deptName;
     private Spinner spinnerClinic;
-    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
+    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
 

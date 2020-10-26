@@ -38,8 +38,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private Spinner spinnerDept;
     Button generatePass;
     ConnectionClass connectionClass;
-    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php";
+    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
+    private static String urlDeptSpinner = "http://10.70.0.17:8081/kerux/departmentSpinner.php";
 
     DrawerLayout drawerLayout;
 
