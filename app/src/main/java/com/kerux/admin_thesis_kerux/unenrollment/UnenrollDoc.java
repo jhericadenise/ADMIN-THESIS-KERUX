@@ -46,7 +46,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
     DrawerLayout drawerLayout;
 
-
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
 
     @Override
@@ -64,7 +63,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
+                ListDoc docListdisp = new ListDoc();
                 docListdisp.execute();
             }
         });
@@ -74,7 +73,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final String selectedFromList = String.valueOf((docList.getItemAtPosition(position)));
+                final String selectedFromList = getDocString(String.valueOf(docList.getItemAtPosition(position)));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDoc.this);
@@ -87,8 +86,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                                 String reason = ((Spinner)findViewById(R.id.spinnerReason)).getSelectedItem().toString();
 
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollDoc(firstName, reason);
-                                UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
+                                unenrollDoc(selectedFromList, reason);
+                                ListDoc docListdisp = new ListDoc();
                                 docListdisp.execute();
                             }
                         })
@@ -102,21 +101,21 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             }
 
         });
-            Button bttnQM = findViewById(R.id.bttnUnenrollQM);
-            bttnQM.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(checkDoctorList()) {
-                        Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
-                        startActivity(intent5);
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
-                    }
+        Button bttnQM = findViewById(R.id.bttnUnenrollQM);
+        bttnQM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkDoctorList()) {
+                    Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
+                    startActivity(intent5);
                 }
-            });
+                else{
+                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
-        Downloader dep = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReason, "reason");
+        Downloader dep = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReason, "Reason");
         dep.execute();
 
     }
@@ -177,9 +176,12 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
             ps1 = con.prepareStatement(query);
             ps1.setString(1, reason);
+            ps1.setString(2, firstName);
 
             ps.executeUpdate();
-            ps.execute();
+            ps1.executeUpdate();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -243,6 +245,17 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         return hasExistingDept;
     }*/
 
+    public String getDocString(String rowFromListView){
+        String name = rowFromListView.substring(1, rowFromListView.length()-1);
+
+        String docString1=name.replaceAll("third=", "");
+        String docString2=docString1.replaceAll(",.+", "");
+        Log.d("DOCSTRING:", docString2);
+
+        return docString2;
+    }
+
+
     //function for displaying the enrolled department
     private class ListDoc extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
@@ -256,8 +269,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         }
         @Override
         protected String doInBackground(String... strings) {
-            try {
-                //listview, list the names of all enrolled department
+            //listview, list the names of all enrolled department
+            try{
+                docList = (ListView) findViewById(R.id.listEnrolledDoc);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
                 ResultSet rset = st.executeQuery(SELECT_LIST_DOC);
@@ -267,21 +281,24 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 data = new ArrayList<Map<String, String>> ();
 
                 while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String> ();
-                    datanum.put("A", rset.getString(1).toString());
+                    HashMap<String, String> datanum = new HashMap<String, String>();
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+                    datanum.put("fourth", rset.getString(4).toString());
+/*                    datanum.put("fifth", rset.getString(5).toString());
+                    datanum.put("sixth", rset.getString(6).toString());*/
                     data.add(datanum);
                 }
-
-                String[] fromwhere = {"A"};
-
-                int[] viewswhere = {R.id.lblDocList};
+                /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
-                        R.layout.list_doc_template, fromwhere, viewswhere);
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL});
 
                 while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
+                    result += rset.getString(1) + "\n";
                 }
-                message = "ADDED SUCCESSFULLY!";
+                message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
                 message = "Exceptions" + ex;

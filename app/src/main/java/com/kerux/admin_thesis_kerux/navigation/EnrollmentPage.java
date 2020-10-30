@@ -60,14 +60,6 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
                 Intent intent3 = new Intent(this, EnrollDept.class);
                 startActivity(intent3);
                 break;
-          /*  case R.id.bttnDisplayDept:
-                Intent intent4 = new Intent(this, UnenrollDept.class);
-                startActivity (intent4);
-                break;*/
-        /*    case R.id.bttnUnenrollQm:
-                Intent intent5 = new Intent(this, UnenrollQm.class);
-                startActivity (intent5);
-                break;*/
             case R.id.bttnUnenrollDoc:
                 Intent intent6 = new Intent(this, UnenrollDoc.class);
                 startActivity (intent6);

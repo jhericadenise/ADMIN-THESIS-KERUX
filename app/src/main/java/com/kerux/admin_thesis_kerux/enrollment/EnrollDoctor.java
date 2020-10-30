@@ -88,6 +88,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         Downloader clinic = new Downloader(EnrollDoctor.this, urlClinicSpinner, spinnerClinic, "clinicName");
         clinic.execute();
+
         Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name");
         dep.execute();
         Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType");
@@ -177,6 +178,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         boolean isSuccess = false;
         boolean hasRecord = false;
         String message = "";
+        int reason = 0;
         String docFName = doctorFName.getText().toString();
         String docLName = doctorLName.getText().toString();
         String roomNum = roomNo.getText().toString();
@@ -196,7 +198,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         @Override
         protected void onPreExecute() {
-                super.onPreExecute();
+            super.onPreExecute();
         }
 
         @Override
@@ -255,14 +257,15 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
                         ps.setInt (1, docType);
                         ps.setInt (2, clinic);
-                        ps.setString(3, docFName);
-                        ps.setString(4, docLName);
-                        ps.setInt (5, dept);
-                        ps.setString(6, roomNum);
-                        ps.setString(7, sched1);
-                        ps.setString(8, sched2);
-                        ps.setString(9, docDays);
-                        ps.setString(10, status);
+                        ps.setInt(3, reason);
+                        ps.setString(4, docFName);
+                        ps.setString(5, docLName);
+                        ps.setInt (6, dept);
+                        ps.setString(7, roomNum);
+                        ps.setString(8, sched1);
+                        ps.setString(9, sched2);
+                        ps.setString(10, docDays);
+                        ps.setString(11, status);
 
                         ps.execute();
                         con.close();
@@ -273,7 +276,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                     message = "Exceptions" + ex;
                 }
             }
-                return message;
+            return message;
         }
 
         @Override

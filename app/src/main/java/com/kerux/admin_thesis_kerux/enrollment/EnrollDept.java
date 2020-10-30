@@ -145,6 +145,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         String timeStamp = timeStamp();
         boolean hasRecord = false;
         int clinicName = (int)spinnerClinic.getSelectedItemId();
+        int reason = 0;
 
         @Override
         protected void onPreExecute() {
@@ -190,9 +191,10 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                         //inserting data of department to the database
                         String query = INSERT_DEPT;
                         PreparedStatement ps1 = con.prepareStatement(query);
-                        ps1.setString(1, depName);
-                        ps1.setInt(2, clinicName);
-                        ps1.setString(3, Status);
+                        ps1.setInt(1, clinicName);
+                        ps1.setInt(2, reason);
+                        ps1.setString(3, depName);
+                        ps1.setString(4, Status);
 
                         ps1.executeUpdate();
 

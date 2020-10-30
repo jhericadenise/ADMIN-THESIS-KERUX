@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".navigation.ManageAccounts"></activity>
+        <activity android:name=".reports.GenerateRatingReportsActivity"></activity>
+        <activity android:name=".reports.GenerateAuditReportsActivity" />
+        <activity android:name=".reports.ViewAuditReportsActivity" />
+        <activity android:name=".reports.GenerateStatReportsActivity" />
+        <activity android:name=".reports.ViewStatReportsActivity" />
+        <activity android:name=".navigation.ManageAccounts" />
         <activity android:name=".navigation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,9 +36,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <!--    <activity
-                android:name=".navigation.MainActivity"
-                android:label="@string/app_name"></activity>-->
     </application>
 
 </manifest>

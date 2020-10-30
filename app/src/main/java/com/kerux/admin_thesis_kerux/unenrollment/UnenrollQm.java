@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kerux.admin_thesis_kerux.R;
@@ -22,6 +23,7 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,9 +41,13 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     private ListView qmList;
     private ListAdapter listAdapter;
     Button qmDisplayList;
+    private Spinner spinnerQMReason;
     ConnectionClass connectionClass;
 
     DrawerLayout drawerLayout;
+
+    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        spinnerQMReason = (Spinner) findViewById(R.id.spinnerQMReason);
 
         qmDisplayList = (Button) findViewById(R.id.bttnDisplayQm);
         qmList = (ListView) findViewById(R.id.listEnrolledQm);
@@ -66,7 +73,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final String selectedFromList = String.valueOf((qmList.getItemAtPosition(position)));
+                final String selectedFromList = getQMString(String.valueOf((qmList.getItemAtPosition(position))));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollQm.this);
@@ -74,10 +81,12 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length()-1);
+                                String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
 
+                                String reason = ((Spinner)findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
+                                Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollQM (name);
+                                unenrollQM (selectedFromList, reason);
                                 UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
                                 qmListdisp.execute();
                             }
@@ -105,6 +114,9 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 }
             }
         });
+
+        Downloader qm = new Downloader(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason");
+        qm.execute();
     }
 
     public void ClickMenu (View view){
@@ -148,19 +160,29 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    //deleting a record in the database
-    public void unenrollQM(String name){
+    public void unenrollQM(String firstName, String reason){
 
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
+
+        String query = UNENROLL_QM_REASON;
+        PreparedStatement ps1 = null;
+
         try {
             ps = con.prepareStatement(UNENROLL_QM);
-            ps.setString(1, name);
+            ps.setString(1, firstName);
+
+            ps1 = con.prepareStatement(query);
+            ps1.setString(1, reason);
+            ps1.setString(2, firstName);
+
             ps.executeUpdate();
+            ps1.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    //deleting a record in the database
 
     public boolean checkQMList(){
         boolean allInactiveRec = false;
@@ -199,6 +221,17 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         startActivity(intent);
     }
 
+
+    public String getQMString(String rowFromListView){
+        String name = rowFromListView.substring(1, rowFromListView.length()-1);
+
+        String qmString1=name.replaceAll("third=", "");
+        String qmString2=qmString1.replaceAll(",.+", "");
+        Log.d("QMSTRING:", qmString2);
+
+        return qmString2;
+    }
+
     //Displaying the list of enrolled queue manager in the database
     private class ListQM extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
@@ -224,17 +257,18 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
                 while (rset.next()) {
                     Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", rset.getString(1).toString());
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+                    datanum.put("fourth", rset.getString(4).toString());
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblQMList};
-                listAdapter = new SimpleAdapter(UnenrollQm.this, data,
-                        R.layout.list_qm_template, fromwhere, viewswhere);
-
+                listAdapter = new SimpleAdapter (UnenrollQm.this, data,
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL});
                 while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
+                    result += rset.getString(2).toString();
                 }
                 message = "ADDED SUCCESSFULLY!";
             } catch (Exception ex) {

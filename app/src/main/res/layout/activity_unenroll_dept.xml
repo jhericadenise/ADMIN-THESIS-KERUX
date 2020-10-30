@@ -12,78 +12,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/unenrolldep" />
+
         <Button
             android:id="@+id/bttnDisplayDept"
-            android:layout_width="196dp"
-            android:layout_height="52dp"
-            android:text="@string/displayDept"
+            android:layout_width="240dp"
+            android:layout_height="47dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.179" />
+            app:layout_constraintVertical_bias="0.127" />
 
-        <TextView
-            android:id="@+id/txtDept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DEPARTMENT"
+        <Button
+            android:id="@+id/button"
+            android:layout_width="264dp"
+            android:layout_height="38dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.443"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.286" />
-
-        <TextView
-            android:id="@+id/txtStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="STATUS"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.744"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.286" />
+            app:layout_constraintVertical_bias="0.976" />
 
         <ListView
             android:id="@+id/listEnrolledDept"
-            android:layout_width="322dp"
-            android:layout_height="337dp"
+            android:layout_width="263dp"
+            android:layout_height="340dp"
             android:layout_weight="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.505"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.812" />
+            app:layout_constraintVertical_bias="0.718" />
 
-        <TextView
-            android:id="@+id/txtEnrolledDoc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enrolledDept"
-            android:textSize="20sp"
+        <Spinner
+            android:id="@+id/spinnerDeptReason"
+            android:layout_width="290dp"
+            android:layout_height="47dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.095" />
+            app:layout_constraintVertical_bias="0.264" />
 
-        <TextView
-            android:id="@+id/txtClinicName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CLINIC"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.152"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.286" />
     </android.support.constraint.ConstraintLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,6 +88,7 @@
         <include
             layout="@layout/main_nav_drawer"/>
     </RelativeLayout>
+
 
 
 </android.support.v4.widget.DrawerLayout>

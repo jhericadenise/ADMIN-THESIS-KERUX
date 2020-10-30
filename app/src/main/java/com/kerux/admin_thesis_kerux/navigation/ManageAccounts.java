@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kerux.admin_thesis_kerux.R;
@@ -45,7 +45,9 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     Button displayBlocked;
 
     DrawerLayout drawerLayout;
+    private Spinner spinnerReason;
 
+    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +55,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         setContentView(R.layout.activity_manage_accounts);
         connectionClass = new ConnectionClass(); //create ConnectionClass
 
-        TextView titleDate = (TextView) findViewById(R.id.txtAccDate);
-        titleDate.setText(giveDate());
-
         String i = getIntent().getStringExtra("username");
-        TextView adminName = (TextView) findViewById(R.id.txtAccAdmin);
-        adminName.setText(i);
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -112,6 +109,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             }
 
         });
+
     }
 
     public void blockPrivileges(String name){

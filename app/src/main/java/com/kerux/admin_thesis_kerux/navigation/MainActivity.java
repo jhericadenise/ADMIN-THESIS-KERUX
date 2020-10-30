@@ -11,9 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.kerux.admin_thesis_kerux.R;
+import com.kerux.admin_thesis_kerux.reports.GenerateAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.GenerateRatingReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.GenerateStatReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     //Initialize Variable
     DrawerLayout drawerLayout;
 
@@ -121,5 +126,32 @@ public class MainActivity extends AppCompatActivity {
         //close drawer
         closeDrawer(drawerLayout);
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.bttnViewStat:
+                Intent intent = new Intent(this, ViewStatReportsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.bttnGenerateStat:
+                Intent intent2 = new Intent(this, GenerateStatReportsActivity.class);
+                startActivity(intent2);
+                break;
+            case R.id.bttnViewAudit:
+                Intent intent3 = new Intent(this, ViewAuditReportsActivity.class);
+                startActivity(intent3);
+                break;
+            case R.id.bttnGenerateAudit:
+                Intent intent4 = new Intent(this, GenerateAuditReportsActivity.class);
+                startActivity (intent4);
+                break;
+            case R.id.bttnGenerateRating:
+                Intent intent5 = new Intent(this, GenerateRatingReportsActivity.class);
+                startActivity (intent5);
+                break;
+        }
+    }
+
 
 }
