@@ -27,7 +27,7 @@ public interface DBUtility {
             "WHERE queuemanager.Status = 'Active'";
     String SELECT_ACCOUNTS_LIST = "select distinct FirstName, LastName from patient WHERE Status = 'Active'";
     String SELECT_BLOCKED_USERS = "select distinct FirstName, LastName from patient WHERE Status = 'Blocked'";
-    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, adminenrollment.Clinic_ID from admin INNER JOIN adminenrollment ON admin.Admin_ID = adminenrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
+    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, adminenrollment.Clinic_ID, admin.Username from admin INNER JOIN adminenrollment ON admin.Admin_ID = adminenrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
 
     String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status =?";
     String SELECT_UNENROLLED_DOC = "SELECT * from doctor where Status = ?";

@@ -221,7 +221,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
                         ps1.executeUpdate();
 
-                        String query2=SELECT_NEW_DEPARTMENT_ID;
+                        String query2=SELECT_NEW_DEPARTMENT_ID; //DON'T NEED TO LOG, IT JUST GETS THE DEP_ID OF THE NEWLY INSERTED DEPARTMENT
                         PreparedStatement ps2 = con.prepareStatement(query2);
                         ResultSet rs1 = ps2.executeQuery();
                         while(rs1.next()){
@@ -232,6 +232,27 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                             ps3.setString(1, session.getadminid());
                             ps3.setString(2, newdeptid);
                             ps3.setString(3, session.getclinicid());
+                            ps3.executeUpdate();
+                            //SAMPLE AUDIT LOG
+                            String queryAUDIT=INSERT_AUDIT_LOG;
+                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "department");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, "insert into department (Clinic_ID, ReasonRevoke_ID, Name, Status) values (?,?,?,?)");
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status);
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
+
+                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "department_enrollment");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)");
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, session.getadminid()+", "+newdeptid+", "+session.getclinicid());
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
+
                         }
                       /*  String queryJoin = "insert into department_enrollment (Admin_ID, Department_ID, Clinic_ID) "+
                                 "SELECT '"+session.getusername () +"', Department_ID, Clinic_ID from Department order by Department_ID DESC LIMIT 1;";

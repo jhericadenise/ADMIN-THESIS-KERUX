@@ -264,6 +264,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             ps3.setString(2, session.getadminid());
                             ps3.setString(3, String.valueOf(deptName));
                             ps3.setString(4, String.valueOf(clinicName));
+                            ps3.executeUpdate();
                         }
                         con.close();
 

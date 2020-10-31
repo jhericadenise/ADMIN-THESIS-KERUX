@@ -307,6 +307,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                             ps3.setString(1, session.getadminid());
                             ps3.setString(2, session.getclinicid());
                             ps3.setString(3, newdocid);
+                            ps3.executeUpdate();
                         }
                         con.close();
                         message = "ADDED";

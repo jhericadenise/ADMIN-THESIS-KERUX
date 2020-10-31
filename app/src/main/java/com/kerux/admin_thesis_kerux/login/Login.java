@@ -71,7 +71,7 @@ public class Login extends AppCompatActivity implements DBUtility {
 
         boolean isSuccess=false;
 
-        String firstName,lastName,email;
+        String firstName,lastName,email, usernam;
 
         @Override
         protected void onPreExecute() {
@@ -106,7 +106,7 @@ public class Login extends AppCompatActivity implements DBUtility {
                             firstName = rs.getString(2);
                             lastName = rs.getString(3);
                             email=rs.getString(4);
-
+                            usernam=rs.getString(5);
 
                             //SET SESSION
                             session.setadminid(adminId);
@@ -114,6 +114,7 @@ public class Login extends AppCompatActivity implements DBUtility {
                             session.setlastname(lastName);
                             session.setemail(email);
                             session.setclinicid(clincid);
+                            session.setusername(usernam);
                             isSuccess = true;
                             z = "Login successfull";
                         }
