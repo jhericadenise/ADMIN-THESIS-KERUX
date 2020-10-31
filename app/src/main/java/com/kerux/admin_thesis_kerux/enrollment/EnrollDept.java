@@ -221,6 +221,18 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
                         ps1.executeUpdate();
 
+                        String query2=SELECT_NEW_DEPARTMENT_ID;
+                        PreparedStatement ps2 = con.prepareStatement(query2);
+                        ResultSet rs1 = ps2.executeQuery();
+                        while(rs1.next()){
+                            String newdeptid=rs1.getString(1);
+
+                            String query3=INSERT_DEPT_ENROLLMENT;
+                            PreparedStatement ps3 = con.prepareStatement(query3);
+                            ps3.setString(1, session.getadminid());
+                            ps3.setString(2, newdeptid);
+                            ps3.setString(3, session.getclinicid());
+                        }
                       /*  String queryJoin = "insert into department_enrollment (Admin_ID, Department_ID, Clinic_ID) "+
                                 "SELECT '"+session.getusername () +"', Department_ID, Clinic_ID from Department order by Department_ID DESC LIMIT 1;";
 

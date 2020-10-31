@@ -295,6 +295,19 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         ps.setString(11, status);
 
                         ps.execute();
+
+                        String query2=SELECT_NEW_DOCTOR_ID;
+                        PreparedStatement ps2 = con.prepareStatement(query2);
+                        ResultSet rs1 = ps2.executeQuery();
+                        while(rs1.next()){
+                            String newdocid=rs1.getString(1);
+
+                            String query3=INSERT_DOC_ENROLLMENT;
+                            PreparedStatement ps3 = con.prepareStatement(query3);
+                            ps3.setString(1, session.getadminid());
+                            ps3.setString(2, session.getclinicid());
+                            ps3.setString(3, newdocid);
+                        }
                         con.close();
                         message = "ADDED";
                     }

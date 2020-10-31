@@ -30,6 +30,7 @@ import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Random;
 
 public class EnrollQM extends AppCompatActivity implements DBUtility{
@@ -250,6 +251,20 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                         ps1.setString(8, status);
 
                         ps1.execute();
+
+                        String query2=SELECT_NEW_QUEUEMANAGER_ID;
+                        PreparedStatement ps2 = con.prepareStatement(query2);
+                        ResultSet rs1 = ps2.executeQuery();
+                        while(rs1.next()){
+                            String newqmid=rs1.getString(1);
+
+                            String query3=INSERT_DEPT_ENROLLMENT;
+                            PreparedStatement ps3 = con.prepareStatement(query3);
+                            ps3.setString(1, newqmid);
+                            ps3.setString(2, session.getadminid());
+                            ps3.setString(3, String.valueOf(deptName));
+                            ps3.setString(4, String.valueOf(clinicName));
+                        }
                         con.close();
 
                         message = "ADDED";

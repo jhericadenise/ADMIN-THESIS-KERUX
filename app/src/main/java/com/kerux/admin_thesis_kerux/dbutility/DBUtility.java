@@ -42,6 +42,10 @@ public interface DBUtility {
     String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?)";
 
+    String SELECT_NEW_DEPARTMENT_ID = "Select MAX(department_id) from department";
+    String SELECT_NEW_DOCTOR_ID = "Select MAX(doctor_id) from doctor";
+    String SELECT_NEW_QUEUEMANAGER_ID = "Select MAX(queuemanager_id) from queuemanager";
+
     String INSERT_DEPT_ENROLLMENT = "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)";
     String INSERT_QM_ENROLLMENT = "INSERT INTO qmenrollment (QueueManager_ID, Admin_ID, Department_ID, Clinic_ID) values (?,?,?,?)";
     String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Doctor_ID) values (?,?,?)";
