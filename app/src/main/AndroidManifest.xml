@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.kerux.admin_thesis_kerux">
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,12 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".reports.GenerateRatingReportsActivity"></activity>
-        <activity android:name=".reports.GenerateAuditReportsActivity" />
+
+        <activity android:name=".reports.ViewRatingReportsActivity" />
         <activity android:name=".reports.ViewAuditReportsActivity" />
-        <activity android:name=".reports.GenerateStatReportsActivity" />
         <activity android:name=".reports.ViewStatReportsActivity" />
         <activity android:name=".navigation.ManageAccounts" />
+        <!--<activity android:name=".navigation.MainActivity" />-->
         <activity android:name=".navigation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

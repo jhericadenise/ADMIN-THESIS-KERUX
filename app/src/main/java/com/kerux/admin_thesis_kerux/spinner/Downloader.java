@@ -19,12 +19,14 @@ public class Downloader extends AsyncTask<Void,Void,String> {//TO BE USED WHEN W
     Spinner sp;
     ProgressDialog pd;
     String columnName;
+    String headerValue;
 
-    public Downloader(Context c, String urlAddress, Spinner sp,String columnName) {
+    public Downloader(Context c, String urlAddress, Spinner sp,String columnName, String headerValue) {
         this.c = c;
         this.urlAddress = urlAddress;
         this.sp = sp;
         this.columnName = columnName;
+        this.headerValue=headerValue;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {//TO BE USED WHEN W
 
         if(s != null)
         {
-            Parser p=new Parser(c,s,sp, columnName);
+            Parser p=new Parser(c,s,sp, columnName, headerValue);
             p.execute();
 
         }else {

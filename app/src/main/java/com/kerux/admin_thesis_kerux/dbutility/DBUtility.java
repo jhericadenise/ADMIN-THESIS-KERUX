@@ -42,6 +42,13 @@ public interface DBUtility {
     String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?)";
 
+    String INSERT_DEPT_ENROLLMENT = "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)";
+    String INSERT_QM_ENROLLMENT = "INSERT INTO qmenrollment (QueueManager_ID, Admin_ID, Department_ID, Clinic_ID) values (?,?,?,?)";
+    String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Doctor_ID) values (?,?,?)";
+
+    String INSERT_AUDIT_LOG = "INSERT INTO audit_log (TableName, EventType, SqlCommand, OldData, NewData, LoginName)" +
+            "values (?,?,?,?,?,?)";
+
     String VALIDATION_DEPT = "Select * from department where name = ? AND Status = 'Active' AND Clinic_ID = ?";
     String VALIDATION_DOCTOR = "Select * from doctor where firstName = ? AND lastName = ? AND Status = 'Active'";
     String VALIDATION_QM = "Select * from queuemanager where name = ? AND Status = 'Active'";
@@ -56,4 +63,10 @@ public interface DBUtility {
             "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.firstname=?";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Inactive' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE FirstName = ?";
+
+    String EDIT_PROFILE="select email, password, patienttype_id, name, contactno from patient" +
+            "where patient_id = ?";
+    String UPDATE_PROFILE="update patient set email = ?, password = ?, firstname = ?, lastname = ?, contactno = ? where patient_id =  ?";
+
+    String SELECT_STAT = "SELECT * from statistics";
 }

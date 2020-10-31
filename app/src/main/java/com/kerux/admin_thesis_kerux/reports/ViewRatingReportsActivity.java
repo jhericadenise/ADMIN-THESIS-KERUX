@@ -12,14 +12,14 @@ import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
-public class ViewAuditReportsActivity extends AppCompatActivity {
+public class ViewRatingReportsActivity extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_audit_reports);
+        setContentView(R.layout.activity_view_rating_reports);
 
         drawerLayout = findViewById(R.id.drawer_layout);
     }
@@ -62,11 +62,11 @@ public class ViewAuditReportsActivity extends AppCompatActivity {
     }
 
     public void ClickViewAudit(View view){
-        recreate();
+        MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
     public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
+        recreate();
     }
 
     public void ClickLogout(View view){

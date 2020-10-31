@@ -19,12 +19,14 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
     ArrayList names=new ArrayList();
     Spinner sp;
     String columnName;
+    String headerValue;
 
-    public Parser(Context c, String data,Spinner sp, String columnName) {
+    public Parser(Context c, String data,Spinner sp, String columnName, String headerValue) {
         this.c = c;
         this.data = data;
         this.sp=sp;
         this.columnName = columnName;
+        this.headerValue = headerValue;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
         {
             JSONArray ja=new JSONArray(data);
             JSONObject jo=null;
-
+            names.add(headerValue);
             for (int i=0; i<ja.length(); i++)
             {
                 jo=ja.getJSONObject(i);

@@ -4,9 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,9 +20,13 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
@@ -46,7 +50,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
     DrawerLayout drawerLayout;
 
-    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
+    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerQM.php";
 
 
     @Override
@@ -115,7 +119,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
-        Downloader qm = new Downloader(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason");
+        Downloader qm = new Downloader(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
         qm.execute();
     }
 
@@ -134,6 +138,11 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, MainActivity.class);
     }
 
+    public void ClickEditProfile(View view){
+        //Redirect activity to dashboard
+        MainActivity.redirectActivity(this, EditProfile.class);
+    }
+
     public void ClickManageAccounts(View view){
         //Redirect activity to manage accounts
         MainActivity.redirectActivity(this, ManageAccounts.class);
@@ -147,6 +156,18 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     public void ClickRevoke(View view){
         //redirect activity to revoke page
         MainActivity.redirectActivity(this, UnenrollDoc.class);
+    }
+
+    public void ClickViewStat(View view){
+        MainActivity.redirectActivity(this, ViewStatReportsActivity.class);
+    }
+
+    public void ClickViewAudit(View view){
+        MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
+    }
+
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){

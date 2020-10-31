@@ -5,16 +5,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.kerux.admin_thesis_kerux.R;
-import com.kerux.admin_thesis_kerux.reports.GenerateAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.GenerateRatingReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.GenerateStatReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -61,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Recreate activity
         recreate();
     }
+    public void ClickEditProfile(View view){
+        //Redirect activity to dashboard
+        MainActivity.redirectActivity(this, EditProfile.class);
+    }
 
     public void ClickManageAccounts(View view){
         //Redirect activity to manage accounts
@@ -75,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void ClickRevoke(View view){
         //redirect activity to revoke page
         redirectActivity(this, UnenrollDoc.class);
+    }
+
+    public void ClickViewStat(View view){
+        redirectActivity(this, ViewStatReportsActivity.class);
+    }
+
+    public void ClickViewAudit(View view){
+        redirectActivity(this, ViewAuditReportsActivity.class);
+    }
+
+    public void ClickViewRating(View view){
+        redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){
@@ -134,21 +149,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(this, ViewStatReportsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.bttnGenerateStat:
-                Intent intent2 = new Intent(this, GenerateStatReportsActivity.class);
-                startActivity(intent2);
-                break;
             case R.id.bttnViewAudit:
                 Intent intent3 = new Intent(this, ViewAuditReportsActivity.class);
                 startActivity(intent3);
-                break;
-            case R.id.bttnGenerateAudit:
-                Intent intent4 = new Intent(this, GenerateAuditReportsActivity.class);
-                startActivity (intent4);
-                break;
-            case R.id.bttnGenerateRating:
-                Intent intent5 = new Intent(this, GenerateRatingReportsActivity.class);
-                startActivity (intent5);
                 break;
         }
     }

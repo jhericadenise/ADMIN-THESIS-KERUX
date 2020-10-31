@@ -3,9 +3,9 @@ package com.kerux.admin_thesis_kerux.navigation;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -147,6 +150,11 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, MainActivity.class);
     }
 
+    public void ClickEditProfile(View view){
+        //Redirect activity to dashboard
+        MainActivity.redirectActivity(this, EditProfile.class);
+    }
+
     public void ClickManageAccounts(View view){
         //Recreate activity
         recreate();
@@ -160,6 +168,18 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     public void ClickRevoke(View view){
         //redirect activity to revoke page
         MainActivity.redirectActivity(this, UnenrollDoc.class);
+    }
+
+    public void ClickViewStat(View view){
+        MainActivity.redirectActivity(this, ViewStatReportsActivity.class);
+    }
+
+    public void ClickViewAudit(View view){
+        MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
+    }
+
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){
