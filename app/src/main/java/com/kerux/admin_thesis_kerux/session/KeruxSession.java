@@ -12,14 +12,6 @@ public class KeruxSession {
         prefs = PreferenceManager.getDefaultSharedPreferences(cntx);
     }
 
-    public void setusername(String username) {
-        prefs.edit().putString("username", username).commit();
-    }
-
-    public String getusername() {
-        String username = prefs.getString("username","");
-        return username;
-    }
     public void setemail(String email) {
 
         prefs.edit().putString("email", email).commit();
@@ -30,14 +22,6 @@ public class KeruxSession {
         return email;
     }
 
-    public void setpassword(String password) {
-        prefs.edit().putString("password", password).commit();
-    }
-
-    public String getpassword() {
-        String password = prefs.getString("password","");
-        return password;
-    }
     public void setadminid(String adminid) {
         prefs.edit().putString("adminid", adminid).commit();
     }
@@ -65,22 +49,15 @@ public class KeruxSession {
         return lastname;
     }
 
-    public void setpatienttype(String patienttype){
-        prefs.edit().putString("patienttype", patienttype).commit();
+    public void setclinicid(String clinicid){
+        prefs.edit().putString("clinicid", clinicid).commit();
     }
 
-    public String getpatienttype() {
-        String patienttype = prefs.getString("patienttype","");
-        return patienttype;
+    public String getclinicid() {
+        String clinicid = prefs.getString("clinicid","");
+        return clinicid;
     }
 
-    public void setchosendept(String chosendept){
-        prefs.edit().putString("chosendept", chosendept).commit();
-    }
 
-    public String getchosendept() {
-        String patienttype = prefs.getString("chosendept","");
-        return patienttype;
-    }
 
 }

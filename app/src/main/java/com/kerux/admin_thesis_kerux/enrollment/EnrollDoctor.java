@@ -24,6 +24,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -54,6 +55,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
     ConnectionClass connectionClass;
 
+    KeruxSession session;
+
     DrawerLayout drawerLayout;
 
 
@@ -62,6 +65,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_doctor);
         connectionClass = new ConnectionClass(); //create ConnectionClass
+
+        session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -215,7 +220,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         String docDays="";
         int docType = (int)spinnerDocType.getSelectedItemId();
         int dept = (int)spinnerDep.getSelectedItemId();
-        int clinic = (int)spinnerClinic.getSelectedItemId();
+        int clinic = Integer.parseInt(session.getclinicid());
         String status = "Active";
 
         @Override

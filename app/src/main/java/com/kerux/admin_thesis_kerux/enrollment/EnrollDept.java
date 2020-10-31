@@ -167,7 +167,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         String Status = "Active";
         String timeStamp = timeStamp();
         boolean hasRecord = false;
-        int clinicName = (int)spinnerClinic.getSelectedItemId();
+        int clinicName = Integer.parseInt(session.getclinicid());
         int reason = 0;
 
         @Override

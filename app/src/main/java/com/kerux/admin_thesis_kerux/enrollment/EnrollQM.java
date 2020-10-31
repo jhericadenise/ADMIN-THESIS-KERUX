@@ -24,6 +24,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -47,12 +48,15 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
     DrawerLayout drawerLayout;
 
+    KeruxSession session;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_qm);
         connectionClass = new ConnectionClass(); //create ConnectionClass
+
+        session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -193,7 +197,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String QMpw = qmPw.getText().toString();
         String status = "Active";
         boolean hasRecord = false;
-        int clinicName = (int)spinnerClinic.getSelectedItemId();
+        int clinicName = Integer.parseInt(session.getclinicid());
         int deptName = (int)spinnerDept.getSelectedItemId();
 
         @Override

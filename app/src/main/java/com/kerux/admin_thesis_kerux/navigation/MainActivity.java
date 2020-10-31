@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -15,11 +16,13 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     //Initialize Variable
     DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
