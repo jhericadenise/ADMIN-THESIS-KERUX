@@ -3,9 +3,7 @@ package com.kerux.admin_thesis_kerux.navigation;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,13 +13,18 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
-import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
+import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -30,9 +33,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +49,18 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     Button displayBlocked;
 
     DrawerLayout drawerLayout;
-    private Spinner spinnerReason;
-
-    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinner.php";
+    private Spinner spinnerReasonPatient;
+    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerPatient.php";
+    KeruxSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_accounts);
-        connectionClass = new ConnectionClass(); //create ConnectionClass
-
-        String i = getIntent().getStringExtra("username");
-
+        super.onCreate ( savedInstanceState );
+        setContentView ( R.layout.activity_manage_accounts );
+        connectionClass = new ConnectionClass (); //create ConnectionClass
         drawerLayout = findViewById(R.id.drawer_layout);
+        session=new KeruxSession(getApplicationContext());
+        spinnerReasonPatient = findViewById(R.id.spinnerAccReason);
 
         accountsList = (ListView) findViewById(R.id.listAccounts);
         displayAccounts = (Button) findViewById(R.id.bttnViewAcc);
@@ -70,36 +70,37 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         displayAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ManageAccounts.ListAccounts viewAcc = new ManageAccounts.ListAccounts();
-                viewAcc.execute();
+                ManageAccounts.ListEnrolledAcc viewAccs = new ManageAccounts.ListEnrolledAcc();
+                viewAccs.execute();
             }
         });
+
         displayBlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ManageAccounts.ViewBlockedUsers viewBlocked = new ManageAccounts.ViewBlockedUsers();
-                viewBlocked.execute();
+                ManageAccounts.ListBlockedAccs viewBlockAcc = new ManageAccounts.ListBlockedAccs();
+                viewBlockAcc.execute();
             }
         });
 
         accountsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                final String selectedFromList = String.valueOf((accountsList.getItemAtPosition(position)));
-                Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
+//                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(position)));
+                final String selectedFromList =  getAccString(String.valueOf((accountsList.getItemAtPosition(position))));
+//                Toast.makeText(getApplicationContext(),selected,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageAccounts.this);
-                builder.setMessage("Block user privileges?")
+                builder.setMessage("Block Privilege?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String name = selectedFromList.substring(3, selectedFromList.length() - 1);
-
+                                String reason = ((Spinner)findViewById(R.id.spinnerAccReason)).getSelectedItem().toString();
                                 Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_LONG).show();
-                                blockPrivileges(name);
-                                ManageAccounts.ListAccounts accListDisp = new ManageAccounts.ListAccounts();
-                                accListDisp.execute();
+                                blockPrivileges(selectedFromList, reason);
+                                ManageAccounts.ListEnrolledAcc accListdisp = new  ManageAccounts.ListEnrolledAcc();
+                                accListdisp.execute();
+                                insertAudit();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -113,26 +114,8 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
         });
 
-    }
-
-    public void blockPrivileges(String name){
-
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-        try {
-            ps = con.prepareStatement(BLOCK_PRIVILEGES);
-            ps.setString(1, name);
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String giveDate() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
-        return sdf.format(cal.getTime());
+        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+        dept.execute();
     }
 
     public void ClickMenu (View view){
@@ -156,12 +139,12 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     }
 
     public void ClickManageAccounts(View view){
-        //Recreate activity
-        recreate();
+        //Redirect activity to manage accounts
+        MainActivity.redirectActivity(this, ManageAccounts.class);
     }
 
     public void ClickEnrollment(View view){
-        //Redirect activity to manage accounts
+        //Recreate activity
         MainActivity.redirectActivity(this, EnrollmentPage.class);
     }
 
@@ -193,22 +176,82 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    //function for displaying the enrolled user - patient
-    private class ListAccounts extends AsyncTask<String, String, String> {
+    public void insertAudit(){
+        Connection con = connectionClass.CONN();
+        PreparedStatement ps = null;
+
+        String statusActive = "Active";
+        String statusInactive = "Inactive";
+        String reason = ((Spinner)findViewById(R.id.spinnerAccReason)).getSelectedItem().toString();
+
+        try {
+            String queryAUDIT = INSERT_AUDIT_LOG;
+            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
+            psAUDIT.setString(1, "patient accounts");
+            psAUDIT.setString(2, "block user patient");
+            psAUDIT.setString(3, BLOCK_PRIVILEGES);
+            psAUDIT.setString(4,  "Status = " + statusActive);
+            psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
+            psAUDIT.setString(6, session.getusername());
+            psAUDIT.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //deleting a record in the database
+    public void blockPrivileges(String firstName, String reason){
+
+        Connection con = connectionClass.CONN();
+        PreparedStatement ps = null;
+
+        String query = BLOCK_ACC_REASON;
+        PreparedStatement ps1 = null;
+
+        try {
+            ps = con.prepareStatement(BLOCK_PRIVILEGES);
+            ps.setString(1, firstName);
+
+            ps1 = con.prepareStatement(query);
+            ps1.setString(1, reason);
+            ps1.setString(2, firstName);
+
+            ps.executeUpdate();
+            ps1.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getAccString(String rowFromListView){
+        String name = rowFromListView.substring(1, rowFromListView.length()-1);
+
+        String accString1=name.replaceAll("third=", "");
+        String accString2=accString1.replaceAll(",.+", "");
+        Log.d("DEPTSTRING:", accString2);
+
+        return accString2;
+    }
+
+
+    //function for displaying the enrolled department
+    private class ListEnrolledAcc extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Please wait..", Toast.LENGTH_LONG).show();
             super.onPreExecute();
         }
+
         @Override
         protected String doInBackground(String... strings) {
             try {
-                Security sec = new Security ();
                 //listview, list the names of all enrolled department
+                accountsList = (ListView) findViewById(R.id.listAccounts);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
                 ResultSet rset = st.executeQuery(SELECT_ACCOUNTS_LIST);
@@ -218,46 +261,57 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                 data = new ArrayList<Map<String, String>>();
 
                 while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", sec.decrypt(rset.getString(1).toString()) + rset.getString(2).toString());
+                    HashMap<String, String> datanum = new HashMap<String, String>();
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+
+                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
+                            "\n" + rset.getString(2).toString() +"\n \n"
+                    + "STATUS" +"\n" + rset.getString(3).toString());*/
+
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblAccountsList};
+
+                /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapterAccounts = new SimpleAdapter(ManageAccounts.this, data,
-                        R.layout.list_accounts_template, fromwhere, viewswhere);
+                        R.layout.listview_row, new String[]{"first", "second", "third"}, new int[]{R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
                 while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
+                    result += rset.getString(2) + "\n";
                 }
-                message = "ADDED SUCCESSFULLY!";
+                message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
                 message = "Exceptions" + ex;
             }
             return message;
         }
+
         @Override
         protected void onPostExecute(String s) {
             accountsList.setAdapter(listAdapterAccounts);
         }
     }
 
-    private class ViewBlockedUsers extends AsyncTask<String, String, String> {
+    //function for displaying the enrolled department
+    private class ListBlockedAccs extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Please wait..", Toast.LENGTH_LONG).show();
             super.onPreExecute();
         }
+
         @Override
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
+                blockedList = (ListView) findViewById(R.id.listBlocked);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
                 ResultSet rset = st.executeQuery(SELECT_BLOCKED_USERS);
@@ -267,26 +321,34 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                 data = new ArrayList<Map<String, String>>();
 
                 while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("A", rset.getString(1).toString());
+                    HashMap<String, String> datanum = new HashMap<String, String>();
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+
+                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
+                            "\n" + rset.getString(2).toString() +"\n \n"
+                    + "STATUS" +"\n" + rset.getString(3).toString());*/
+
                     data.add(datanum);
                 }
 
-                String[] fromwhere = {"A"};
-                int[] viewswhere = {R.id.lblBlockedUsers};
+
+                /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapterBlockedAcc = new SimpleAdapter(ManageAccounts.this, data,
-                        R.layout.list_blocked_users_template, fromwhere, viewswhere);
+                        R.layout.listview_row, new String[]{"first", "second", "third"}, new int[]{R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
                 while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
+                    result += rset.getString(2) + "\n";
                 }
-                message = "ADDED SUCCESSFULLY!";
+                message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
                 message = "Exceptions" + ex;
             }
             return message;
         }
+
         @Override
         protected void onPostExecute(String s) {
             blockedList.setAdapter(listAdapterBlockedAcc);

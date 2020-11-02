@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kerux.admin_thesis_kerux">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,8 +21,10 @@
         <activity android:name=".reports.ViewAuditReportsActivity" />
         <activity android:name=".reports.ViewStatReportsActivity" />
         <activity android:name=".navigation.ManageAccounts" />
-        <!--<activity android:name=".navigation.MainActivity" />-->
-        <activity android:name=".navigation.MainActivity">
+        <activity android:name=".navigation.MainActivity" />
+        <activity android:name=".navigation.EditProfile"/>
+        <activity android:name=".login.Login"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -6,23 +6,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
+import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
+import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
-import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DBUtility {
     //Initialize Variable
     DrawerLayout drawerLayout;
-
+    TextView deptCount;
+    TextView qmCount;
+    ConnectionClass connectionClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         //Assign variable
         drawerLayout = findViewById(R.id.drawer_layout);
+
+        connectionClass = new ConnectionClass (); //create ConnectionClass
+
+        deptCount = findViewById(R.id.txtCountDept);
+        qmCount = findViewById(R.id.txtCountQM);
 
     }
 
@@ -128,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //show dialog
         builder.show();
     }
+
 
     public static void redirectActivity(Activity activity, Class aClass) {
         //Initialize intent

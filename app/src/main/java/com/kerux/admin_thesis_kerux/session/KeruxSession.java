@@ -40,6 +40,16 @@ public class KeruxSession {
         return adminid;
     }
 
+    public String getdeptid() {
+        String deptid = prefs.getString("deptid","");
+        return deptid;
+    }
+
+    public String getdocid() {
+        String docid = prefs.getString("docid","");
+        return docid;
+    }
+
     public void setfirstname(String firstname) {
         prefs.edit().putString("firstname", firstname).commit();
     }

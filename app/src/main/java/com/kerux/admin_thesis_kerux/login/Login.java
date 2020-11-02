@@ -4,13 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,12 +22,14 @@ import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Login extends AppCompatActivity implements DBUtility {
     private static EditText username;
     private static EditText password;
     private static TextView attempt;
     private static Button button_login;
+    private static Button bttnDashboard;
     int attempt_counter = 5;
 
     private KeruxSession session;
@@ -51,22 +51,56 @@ public class Login extends AppCompatActivity implements DBUtility {
         button_login = (Button)findViewById(R.id.bttnLogin);
         secweb=new SecurityWEB();
         session = new KeruxSession(getApplicationContext());
+        bttnDashboard = findViewById(R.id.bttnDashboard);
+
+        bttnDashboard.setOnClickListener(new View.OnClickListener() {//
+            @Override
+            public void onClick(View v) {
+                GoToDashboard();
+            }
+        });
 
         button_login.setOnClickListener(new View.OnClickListener() {//
             @Override
             public void onClick(View v) {
                 Dologin dologin=new Dologin();
                 dologin.execute();
+                insertAudit();
             }
         });
 
     }
 
+    public void GoToDashboard(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+    public void insertAudit(){
+        Connection con = connectionClass.CONN();
+        PreparedStatement ps = null;
+
+        try {
+            String queryAUDIT = INSERT_AUDIT_LOG;
+            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
+            psAUDIT.setString(1, "login");
+            psAUDIT.setString(2, "login");
+            psAUDIT.setString(3, SELECT_ADMIN_LOGIN);
+            psAUDIT.setString(4,  "none");
+            psAUDIT.setString(5, "login");
+            psAUDIT.setString(6, session.getusername());
+            psAUDIT.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class Dologin extends AsyncTask<String,String,String> {
 
-        String uname=username.getText().toString(   );
+        String uname=username.getText().toString();
         String pw=password.getText().toString();
-        String adminId, clincid;
+        int adminId;
+        int clinicid;
         String z="";
 
         boolean isSuccess=false;
@@ -100,30 +134,36 @@ public class Login extends AppCompatActivity implements DBUtility {
                         ps.setString(2, secweb.encrypt(pw));
 
                         ResultSet rs=ps.executeQuery();
+                        /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
 
                         while (rs.next()) {
-                            adminId=rs.getString(1);
+                            adminId=rs.getInt(1);
                             firstName = rs.getString(2);
                             lastName = rs.getString(3);
                             email=rs.getString(4);
-                            usernam=rs.getString(5);
+                            clinicid=rs.getInt(5);
+                            usernam=rs.getString(6);
 
                             //SET SESSION
-                            session.setadminid(adminId);
+                            session.setadminid(String.valueOf(adminId));
                             session.setfirstname(firstName);
                             session.setlastname(lastName);
                             session.setemail(email);
-                            session.setclinicid(clincid);
+                            session.setclinicid(String.valueOf(clinicid));
                             session.setusername(usernam);
                             isSuccess = true;
-                            z = "Login successfull";
+                            /*z = String.valueOf(adminId)+", "+firstName+", "+lastName+", "+email+", "+String.valueOf(clinicid)+", "+usernam;*/
                         }
                     }
                 }
-                catch (Exception ex)
+            /*    catch (Exception ex)
                 {
                     isSuccess = false;
                     z = "Exceptions"+ex;
+                }*/
+                catch (Exception e) {
+
+                    Thread.dumpStack(); //always put this from sir mon
                 }
             }
             return z;

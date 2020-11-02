@@ -3,15 +3,16 @@ package com.kerux.admin_thesis_kerux.enrollment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
@@ -35,7 +36,6 @@ import java.sql.SQLException;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static String urlClinicSpinner = "http://192.168.1.13:89/kerux/clinicSpinner.php";
     private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
     private static String urlDocTypeSpinner = "http://192.168.1.13:89/kerux/doctorTypeSpinner.php";
     private EditText doctorFName;
@@ -84,7 +84,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         saturday = (CheckBox) findViewById(R.id.cBoxSat);
         spinnerDocType = (Spinner) findViewById(R.id.spinnerDocType);
         spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
-        spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
 
 
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
@@ -94,9 +93,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 doenroll.execute();
             }
         });
-
-        Downloader clinic = new Downloader(EnrollDoctor.this, urlClinicSpinner, spinnerClinic, "clinicName", "Choose Clinic");
-        clinic.execute();
 
         Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name", "Choose Department");
         dep.execute();
@@ -169,7 +165,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         startActivity(intent);
     }
 
-    public boolean checkDeptRecord() {
+    /*public boolean checkDeptRecord() {
         boolean hasExistingDept = false;
         Connection con = connectionClass.CONN();
         String docFName = doctorFName.getText().toString();
@@ -196,7 +192,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             }
         }
         return hasExistingDept;
-    }
+    }*/
 
 
     private class DoEnrollDoc extends AsyncTask<String, String, String> {
@@ -301,13 +297,34 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         ResultSet rs1 = ps2.executeQuery();
                         while(rs1.next()){
                             String newdocid=rs1.getString(1);
+                            String newdeptid=rs1.getString(1);
 
                             String query3=INSERT_DOC_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, session.getadminid());
                             ps3.setString(2, session.getclinicid());
-                            ps3.setString(3, newdocid);
+                            ps3.setString(3, newdeptid);
+                            ps3.setString(4, newdocid);
                             ps3.executeUpdate();
+                            //SAMPLE AUDIT LOG
+                            String queryAUDIT=INSERT_AUDIT_LOG;
+                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "doctor");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, INSERT_DOCTOR);
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, String.valueOf(clinic)+", "+reason+", "+dept+", "+status);
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
+
+                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "doctor_enrollment");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, INSERT_DOC_ENROLLMENT);
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, session.getadminid()+", "+newdocid+", "+ ", "+ newdeptid + ", " + session.getclinicid());
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
                         }
                         con.close();
                         message = "ADDED";

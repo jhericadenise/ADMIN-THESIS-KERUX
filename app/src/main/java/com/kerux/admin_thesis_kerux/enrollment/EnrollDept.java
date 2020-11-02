@@ -26,7 +26,6 @@ import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -41,7 +40,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
     private EditText deptName;
     private Spinner spinnerClinic;
-    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
 
     ConnectionClass connectionClass;
 
@@ -61,7 +59,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollDept = findViewById(R.id.bttnEnrollDept);
-        spinnerClinic = (Spinner) findViewById(R.id.clinicSpinner);
         deptName = (EditText)findViewById(R.id.txtboxDeptName);
 
         //what the button of enroll dept will do when its clicked
@@ -73,9 +70,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                 deptName.getText().clear();
             }
         });
-
-        Downloader dep = new Downloader(EnrollDept.this, urlClinicSpinner, spinnerClinic, "clinicName", "Choose Clinic");
-        dep.execute();
     }
 
     public void ClickMenu (View view){
@@ -238,7 +232,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                             PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "department");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "insert into department (Clinic_ID, ReasonRevoke_ID, Name, Status) values (?,?,?,?)");
+                            psAUDIT.setString(3, INSERT_DEPT);
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status);
                             psAUDIT.setString(6, session.getusername());
@@ -247,7 +241,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                             PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "department_enrollment");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)");
+                            psAUDIT.setString(3, INSERT_DEPT_ENROLLMENT);
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, session.getadminid()+", "+newdeptid+", "+session.getclinicid());
                             psAUDIT.setString(6, session.getusername());

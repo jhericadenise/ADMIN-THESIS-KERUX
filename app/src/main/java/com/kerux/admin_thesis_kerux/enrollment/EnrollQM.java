@@ -3,14 +3,15 @@ package com.kerux.admin_thesis_kerux.enrollment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
@@ -40,12 +41,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmUname;
     private EditText qmPw;
     private EditText qmEmail;
-    private Spinner spinnerClinic;
     private Spinner spinnerDept;
     Button generatePass;
     ConnectionClass connectionClass;
-    private static String urlClinicSpinner = "http://10.70.0.17:8081/kerux/clinicSpinner.php";
-    private static String urlDeptSpinner = "http://10.70.0.17:8081/kerux/departmentSpinner.php";
+    private static String urlDeptSpinner = "http://192.168.1.13/kerux/departmentSpinner.php";
 
     DrawerLayout drawerLayout;
 
@@ -62,7 +61,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
-        spinnerClinic = (Spinner) findViewById(R.id.spinnerClinic);
         spinnerDept = (Spinner) findViewById(R.id.spinnerDept);
 
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +90,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                 qmPw.setText(generateString(12));
             }
         });*/
-        Downloader clinic = new Downloader(EnrollQM.this, urlClinicSpinner, spinnerClinic, "clinicName", "Choose Clinic");
-        clinic.execute();
         Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Name", "Choose Doctor");
         dep.execute();
     }
@@ -198,8 +194,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String QMpw = qmPw.getText().toString();
         String status = "Active";
         boolean hasRecord = false;
-        int clinicName = Integer.parseInt(session.getclinicid());
-        int deptName = (int)spinnerDept.getSelectedItemId();
+        int reason = 0;
+        int clinic = Integer.parseInt(session.getclinicid());
+        int dept = (int)spinnerDept.getSelectedItemId();
 
         @Override
         protected void onPreExecute() {
@@ -241,14 +238,15 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                     } else {
                         String query = INSERT_QM;
                         PreparedStatement ps1 = con.prepareStatement(query);
-                        ps1.setString(1, String.valueOf(clinicName));
-                        ps1.setString(2, String.valueOf(deptName));
-                        ps1.setString(3, sec.encrypt(QMuname));
-                        ps1.setString(4, String.valueOf(QMpw));
-                        ps1.setString(5, QMFname);
-                        ps1.setString(6, QMLname);
-                        ps1.setString(7, QMEmail);
-                        ps1.setString(8, status);
+                        ps1.setInt(1, clinic);
+                        ps1.setInt(2, dept);
+                        ps.setInt(3, reason);
+                        ps1.setString(4, sec.encrypt(QMuname));
+                        ps1.setString(5, sec.encrypt(QMpw));
+                        ps1.setString(6, QMFname);
+                        ps1.setString(7, QMLname);
+                        ps1.setString(8, QMEmail);
+                        ps1.setString(9, status);
 
                         ps1.execute();
 
@@ -257,14 +255,34 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                         ResultSet rs1 = ps2.executeQuery();
                         while(rs1.next()){
                             String newqmid=rs1.getString(1);
+                            String newdeptid=rs1.getString(1);
 
-                            String query3=INSERT_DEPT_ENROLLMENT;
+                            String query3=INSERT_QM_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, newqmid);
                             ps3.setString(2, session.getadminid());
-                            ps3.setString(3, String.valueOf(deptName));
-                            ps3.setString(4, String.valueOf(clinicName));
+                            ps3.setString(3, String.valueOf(dept));
+                            ps3.setString(4, String.valueOf(clinic));
                             ps3.executeUpdate();
+                            //SAMPLE AUDIT LOG
+                            String queryAUDIT=INSERT_AUDIT_LOG;
+                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "queue manager");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, INSERT_QM);
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, String.valueOf(clinic)+", "+reason+", "+dept+", "+status);
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
+
+                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
+                            psAUDIT.setString(1, "qmenrollment");
+                            psAUDIT.setString(2, "insert");
+                            psAUDIT.setString(3, INSERT_QM_ENROLLMENT);
+                            psAUDIT.setString(4, "none");
+                            psAUDIT.setString(5, session.getadminid()+", "+newqmid+", "+ ", "+ newdeptid + ", " + session.getclinicid());
+                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.executeUpdate();
                         }
                         con.close();
 

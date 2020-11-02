@@ -11,8 +11,6 @@ import java.sql.SQLException;
 
 public class ConnectionClass implements DBUtility{
 
-    Connection connection = null;
-
     String driverName = DBUtility.jdbcDriverName;
     String url= jdbcUrl;
     String un= DBUtility.dbUserName;

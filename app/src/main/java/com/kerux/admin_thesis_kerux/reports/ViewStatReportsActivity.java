@@ -2,12 +2,12 @@ package com.kerux.admin_thesis_kerux.reports;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.data.BarEntry;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
@@ -21,12 +21,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ViewStatReportsActivity extends AppCompatActivity implements DBUtility {
 
     DrawerLayout drawerLayout;
     ConnectionClass connectionClass;
+    StatisticModel statModel;
+    Button bttnDisplayStat;
+    TextView txtServed;
+    TextView txtCancelled;
+    TextView docQueue;
+    TextView deptQueue;
+    TextView txtdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,48 +42,61 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         setContentView(R.layout.activity_view_stat_reports);
         drawerLayout = findViewById(R.id.drawer_layout);
         connectionClass=new ConnectionClass();
+        statModel = new StatisticModel(getApplicationContext());
+
+        bttnDisplayStat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateStat();
+            }
+        });
+        txtServed = findViewById(R.id.txtQueuesServed);
+        txtCancelled = findViewById(R.id.txtQueuesCancelled);
+        docQueue = findViewById(R.id.txtHighestDocQueue);
+        deptQueue = findViewById(R.id.txtHighestDeptQueue);
+        txtdate = findViewById(R.id.txtTimeStamp);
+
+        txtdate.setText(timeStamp());
+
     }
+    //Getting time stamp
+    public String timeStamp() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+        return sdf.format(calendar.getTime());
+    }
+    public void generateStat() {
 
-    public void generateStat(){
+/*
+        String served = txtServed.getText().toString();
+        String cancelled = txtCancelled.getText().toString();
+        String docName = docQueue.getText().toString();
+        String deptName = deptQueue.getText().toString();
+*/
 
+        txtServed.setText(statModel.getQueuesServed());
+        txtCancelled.setText(statModel.getQueuesCancelled());
+        docQueue.setText(statModel.getHighestDoctorQueues());
+        deptQueue.setText(statModel.getHighestDeptQueues());
+
+        String query = SELECT_STAT;
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
-            ps = con.prepareStatement(SELECT_STAT);
-            ps.executeQuery();
+            ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
 
-            ResultSet rs=ps.executeQuery();
+           /* while (rs.next()) {
+                rs.getString(1);
+                rs.getString(2);
+                rs.getString(3);
+                rs.getString(4);
 
-            while(rs.next()){
-                BarChart barChart = findViewById(R.id.BarChart);
-
-                ArrayList<BarEntry> visitors = new ArrayList<>();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            }*/
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-
-   /*     BarChart barChart = findViewById(R.id.BarChart);
-
-        ArrayList<BarEntry> visitors = new ArrayList<>();
-        visitors.add(new BarEntry(2014, 420));
-        visitors.add(new BarEntry(2015, 475));
-        visitors.add(new BarEntry(2016, 508));
-        visitors.add(new BarEntry(2017, 660));
-        visitors.add(new BarEntry(2018, 550));
-        visitors.add(new BarEntry(2019, 630));
-        visitors.add(new BarEntry(2020, 470));
-
-        BarDataSet barDataSet = new BarDataSet(visitors, "Visitors");
-        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(16f);
-
-        BarData barData = new BarData(barDataSet);
-        barChart.setFitBars(true);
-        barChart.setData(barData);
-        barChart.getDescription().setText("Bar Chart");
-        barChart.animateY(2000);*/
     }
 
     public void ClickMenu (View view){

@@ -4,12 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
@@ -17,6 +18,7 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -29,8 +31,10 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
     private EditText adminLName;
     private EditText adminPassword;
     private EditText adminEmail;
+    private EditText adminUsername;
     private String AdminID;
     private Button saveChanges;
+    private SecurityWEB secweb;
 
     ConnectionClass connectionClass;
     private KeruxSession session;//global variable
@@ -47,7 +51,7 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
         /*TextView title = (TextView) findViewById(R.id.dateToday);
         title.setText(giveDate());*/
-
+        secweb=new SecurityWEB();
         session = new KeruxSession(getApplicationContext());
 
         progressDialog = new ProgressDialog(this);
@@ -56,10 +60,12 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         adminLName = (EditText)findViewById(R.id.txtboxLastName);
         adminPassword = (EditText)findViewById(R.id.txtboxPassword);
         adminEmail = (EditText)findViewById(R.id.txtboxEmail);
+        adminUsername = findViewById(R.id.txtboxUsername);
 
         adminFName.setText(session.getfirstname());
         adminLName.setText(session.getlastname());
-        adminPassword.setText(session.getemail());
+        adminEmail.setText(secweb.decrypt(session.getemail()));
+        adminUsername.setText(secweb.decrypt(session.getusername()));
         AdminID=session.getadminid();
 
         saveChanges = (Button)findViewById(R.id.button_save);
@@ -142,10 +148,11 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
     //=================================================================================================================
 
     private class updatePatientInfo extends AsyncTask<String,String,String> {
-        String adminFirstName=adminFName.getText().toString();
-        String adminLastName=adminLName.getText().toString();
+        String adminFirstName= adminFName.getText().toString();
+        String adminLastName = adminLName.getText().toString();
         String adminPass = adminPassword.getText().toString();
         String adminEditEmail = adminEmail.getText().toString();
+        String adminEditUname = adminUsername.getText().toString();
 
         String z = "";
         boolean isSuccess = false;
@@ -186,11 +193,13 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                             String query = UPDATE_PROFILE; //update
 
                             PreparedStatement ps = con.prepareStatement(query); // ps for query which is edit profile
-                            ps.setString(1, adminFirstName);
-                            ps.setString(2, adminLastName);
-                            ps.setString(3, adminEditEmail);
-                            ps.setString(4, adminPass);
-                            ps.setString(5, AdminID);
+
+                            ps.setString(1, AdminID);
+                            ps.setString(2, adminFirstName);
+                            ps.setString(3, adminLastName);
+                            ps.setString(4, adminEditEmail);
+                            ps.setString(5, secweb.encrypt(adminEditUname));
+                            ps.setString(6, secweb.encrypt(adminPass));
 
                             //*ps.setString(2, session.getusername());*//*
 

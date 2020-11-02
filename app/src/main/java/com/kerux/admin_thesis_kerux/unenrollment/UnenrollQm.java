@@ -4,9 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +13,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
@@ -27,6 +28,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
@@ -51,13 +53,14 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     DrawerLayout drawerLayout;
 
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerQM.php";
-
+    KeruxSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_unenroll_qm);
         connectionClass = new ConnectionClass (); //create ConnectionClass
+        session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         spinnerQMReason = (Spinner) findViewById(R.id.spinnerQMReason);
@@ -93,6 +96,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                                 unenrollQM (selectedFromList, reason);
                                 UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
                                 qmListdisp.execute();
+                                insertAudit();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -181,6 +185,29 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
+    public void insertAudit(){
+        Connection con = connectionClass.CONN();
+        PreparedStatement ps = null;
+
+        String statusActive = "Active";
+        String statusInactive = "Inactive";
+        String reason = ((Spinner)findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
+
+        try {
+            String queryAUDIT = INSERT_AUDIT_LOG;
+            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
+            psAUDIT.setString(1, "queue manager");
+            psAUDIT.setString(2, "unenroll queue manager");
+            psAUDIT.setString(3, UNENROLL_QM);
+            psAUDIT.setString(4,  "Status = " + statusActive);
+            psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
+            psAUDIT.setString(6, session.getusername());
+            psAUDIT.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void unenrollQM(String firstName, String reason){
 
         Connection con = connectionClass.CONN();
@@ -208,7 +235,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     public boolean checkQMList(){
         boolean allInactiveRec = false;
         Connection con = connectionClass.CONN();
-        String docStatus = "Active";
+        String qmStatus = "Active";
 
         if(con != null){ //means that we have a valid db connection
             try{//inserting records; called INSERT_REC from DBUtility.java
@@ -216,7 +243,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 //prevent threat in any web app
                 String query = SELECT_UNENROLLED_QM;
                 PreparedStatement ps = con.prepareStatement(query);
-                ps.setString(1, docStatus);
+                ps.setString(1, qmStatus);
 
                 ResultSet rs=ps.executeQuery();
                 if(rs.next()){

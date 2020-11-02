@@ -1,76 +1,104 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-   /* String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
     String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
     String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==*/
+    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
-    String jdbcDriverName = "com.mysql.jdbc.Driver";
+/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
     String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
     String dbUserName = "KeruxAdmin";
-    String dbPassword = "admin";
+    String dbPassword = "admin";*/
 
+    //LIST VIEW DISPLAY
+    //Department
     String SELECT_LIST_DEPT = "SELECT clinic.clinicName, department.Name, department.Status from clinic " +
-            "INNER JOIN department ON " +
-            "clinic.Clinic_ID = department.Clinic_ID WHERE department.Status = 'Active'";
-    /*"select department.Name, department.Status from department" +
-    "INNER JOIN clinic clinic.clinicName ON department.Clinic_ID = clinic.Clinic_ID";*/
-    String SELECT_CLINIC_NAME = "select clinicName from clinic WHERE Status = 'Active'";
-    String SELECT_LIST_DOC = "SELECT clinic.clinicName, department.Name, doctor.FirstName, doctor.LastName from clinic " +
-            "INNER JOIN doctor ON clinic.Clinic_ID = doctor.Clinic_ID " +
-            "INNER JOIN department ON department.Department_ID = doctor.Department_ID " +
-            "WHERE doctor.Status = 'Active'";
-    String SELECT_LIST_QM = "select clinic.clinicName, department.Name, queuemanager.FirstName, queuemanager.LastName from clinic " +
-            "INNER JOIN queuemanager ON clinic.Clinic_ID = queuemanager.Clinic_ID " +
-            "INNER JOIN department ON department.Department_ID = queuemanager.Department_ID " +
+            "INNER JOIN department ON clinic.Clinic_ID = department.Clinic_ID WHERE department.Status = 'Active'";
+    //Doctor
+    String SELECT_LIST_DOC = "select clinic.clinicName, department.Name, doctor.FirstName, doctor.LastName " +
+            "from clinic INNER JOIN doctor ON clinic.Clinic_ID = doctor.Clinic_ID " +
+            "INNER JOIN department ON department.Department_ID = doctor.Department_ID WHERE doctor.Status = 'Active'";
+    //Queue Manager
+    String SELECT_LIST_QM = "SELECT department.Name, queuemanager.FirstName, queuemanager.LastName from department " +
+            "INNER JOIN queuemanager ON department.Department_ID = queuemanager.Department_ID " +
             "WHERE queuemanager.Status = 'Active'";
-    String SELECT_ACCOUNTS_LIST = "select distinct FirstName, LastName from patient WHERE Status = 'Active'";
-    String SELECT_BLOCKED_USERS = "select distinct FirstName, LastName from patient WHERE Status = 'Blocked'";
-    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, adminenrollment.Clinic_ID, admin.Username from admin INNER JOIN adminenrollment ON admin.Admin_ID = adminenrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
+    //Accounts Patient
+    String SELECT_ACCOUNTS_LIST = "select patient_type.Type, patient.ContactNo, patient.FirstName, patient.LastName, patient.Email from patient_type " +
+            "INNER JOIN patient ON patient_type.PatientType_ID = patient.PatientType_ID WHERE patient.Status = 'Active'";
+    //Blocked Patients
+    String SELECT_BLOCKED_USERS = "select FirstName, LastName, Status from patient WHERE Status = 'Blocked'";
 
+    //Audit Log
+    String SELECT_AUDIT = "SELECT Log_ID, TableName, EventType, SqlCommand, OldData, NewData, LoginName, TimeStamp from audit_log";
+
+    //For Logging in
+    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, " +
+            "admin_enrollment.Clinic_ID, admin.Username from admin INNER JOIN admin_enrollment ON " +
+            "admin.Admin_ID = admin_enrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
+
+    //LIST VIEW DISPLAY UNENROLLED USERS
     String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status =?";
     String SELECT_UNENROLLED_DOC = "SELECT * from doctor where Status = ?";
     String SELECT_UNENROLLED_QM = "SELECT * from queuemanager where Status = ?";
 
-    String SELECT_DEPT = "select name from department where status = 'Active' AND Clinic_ID = ?";
-
+    //INSERTING RECORDS
+    //Doctor
     String INSERT_DOCTOR = "insert into doctor (DoctorType_ID, Clinic_ID, reasonrevoke_id, FirstName, LastName, Department_ID, " +
             "RoomNo, Schedule1, Schedule2, Days, Status) values " +
             "(?,?,?,?,?,?,?,?,?,?,?)";
+    //Department
     String INSERT_DEPT = "insert into department (Clinic_ID, ReasonRevoke_ID, Name, Status) values (?,?,?,?)";
-    String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, Username, " +
-            "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?)";
+    //Queue Manager
+    String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, reasonrevoke_id, Username, " +
+            "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?,?)";
 
     String SELECT_NEW_DEPARTMENT_ID = "Select MAX(department_id) from department";
     String SELECT_NEW_DOCTOR_ID = "Select MAX(doctor_id) from doctor";
     String SELECT_NEW_QUEUEMANAGER_ID = "Select MAX(queuemanager_id) from queuemanager";
 
+    //INSERTING RECORDS IN ENROLLMENT
     String INSERT_DEPT_ENROLLMENT = "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)";
     String INSERT_QM_ENROLLMENT = "INSERT INTO qmenrollment (QueueManager_ID, Admin_ID, Department_ID, Clinic_ID) values (?,?,?,?)";
-    String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Doctor_ID) values (?,?,?)";
+    String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Department_ID, Doctor_ID) values (?,?,?,?)";
 
+    //INSERTING DATAS IN AUDIT
     String INSERT_AUDIT_LOG = "INSERT INTO audit_log (TableName, EventType, SqlCommand, OldData, NewData, LoginName)" +
             "values (?,?,?,?,?,?)";
 
+    //VALIDATION
     String VALIDATION_DEPT = "Select * from department where name = ? AND Status = 'Active' AND Clinic_ID = ?";
     String VALIDATION_DOCTOR = "Select * from doctor where firstName = ? AND lastName = ? AND Status = 'Active'";
     String VALIDATION_QM = "Select * from queuemanager where name = ? AND Status = 'Active'";
 
+    //UNENROLLING RECORDS
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";
     String UNENROLL_DOCTOR = "UPDATE doctor SET Status = 'Inactive' WHERE FirstName = ?";
-    String UNENROLL_DOC_REASON = "UPDATE doctor SET doctor.Reasonrevoke_id=(SELECT reason_revoke.reasonrevoke_id " +
-            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.firstname=?";
-    String UNENROLL_DEPT_REASON = "UPDATE department SET department.ReasonRevoke_ID=(SELECT reason_revoke.reasonrevoke_id " +
-            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.firstname=?";
-    String UNENROLL_QM_REASON = "UPDATE queuemanager SET queuemanager.Reasonrevoke_id=(SELECT reason_revoke.reasonrevoke_id " +
-            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.firstname=?";
     String UNENROLL_DEPT = "UPDATE department SET Status = 'Inactive' WHERE Name = ?";
     String BLOCK_PRIVILEGES = "UPDATE patient SET Status = 'Blocked' WHERE FirstName = ?";
+    //REASON
+    String UNENROLL_DOC_REASON = "UPDATE doctor SET doctor.ReasonRevoke_ID = (SELECT reason_revoke.reasonrevoke_id " +
+            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE doctor.FirstName = ?";
+    String UNENROLL_DEPT_REASON = "UPDATE department SET department.ReasonRevoke_ID = (SELECT reason_revoke.reasonrevoke_id " +
+            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE department.Name = ?";
+    String UNENROLL_QM_REASON = "UPDATE queuemanager SET queuemanager.Reasonrevoke_id=(SELECT reason_revoke.reasonrevoke_id " +
+            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE queuemanager.firstname = ?";
+    String BLOCK_ACC_REASON = "UPDATE queuemanager SET queuemanager.Reasonrevoke_id=(SELECT reason_revoke.reasonrevoke_id " +
+            "FROM reason_revoke WHERE reason_revoke.reason=? ) WHERE queuemanager.firstname = ?";
 
-    String EDIT_PROFILE="select email, password, patienttype_id, name, contactno from patient" +
-            "where patient_id = ?";
-    String UPDATE_PROFILE="update patient set email = ?, password = ?, firstname = ?, lastname = ?, contactno = ? where patient_id =  ?";
+    //UPDATE ADMIN PROFILE
+    String UPDATE_PROFILE="UPDATE admin SET FirstName = ?, LastName = ?, Email = ?, Username = ?, Password = ? WHERE Admin_ID = ?";
 
-    String SELECT_STAT = "SELECT * from statistics";
+    String SELECT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled) " +
+            "SELECT ( SELECT COUNT(ql.QueueList_ID) FROM queuelist ql " +
+            "INNER JOIN queue q on q.Queue_ID = ql.Queue_ID " +
+            "INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID " +
+            "INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID " +
+            "WHERE qm.Clinic_ID = ? AND ql.Status='Served'), " +
+            "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql " +
+            "INNER JOIN queue q on q.Queue_ID = ql.Queue_ID " +
+            "INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID " +
+            "INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID " +
+            "WHERE qm.Clinic_ID = ? AND ql.Status='Cancelled')";
+
 }

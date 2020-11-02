@@ -22,29 +22,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/enroll_dept" />
+            app:srcCompat="@drawable/deptenrollment" />
+
 
         <Button
             android:id="@+id/bttnEnrollDept"
-            android:layout_width="264dp"
-            android:layout_height="54dp"
+            android:layout_width="257dp"
+            android:layout_height="41dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.465" />
-
-        <Spinner
-            android:id="@+id/clinicSpinner"
-            android:layout_width="206dp"
-            android:layout_height="45dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.701"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.34" />
+            app:layout_constraintVertical_bias="0.366" />
 
         <EditText
             android:id="@+id/txtboxDeptName"

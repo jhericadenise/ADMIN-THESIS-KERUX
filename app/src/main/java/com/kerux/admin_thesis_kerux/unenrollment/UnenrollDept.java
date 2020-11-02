@@ -3,9 +3,6 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +12,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
@@ -26,6 +27,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
 import java.sql.Connection;
@@ -49,13 +51,14 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
     DrawerLayout drawerLayout;
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerDept.php";
-
+    KeruxSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_unenroll_dept );
         connectionClass = new ConnectionClass (); //create ConnectionClass
+        session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -87,11 +90,12 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 //                                String name = selectedFromList.substring(2, selectedFromList.length()-3);
                                /* String clinicName = selectedFromList.substring(1, selectedFromList.length()-1);
                                 String status = selectedFromList.substring(3, selectedFromList.length()-1);*/
-                                String reason = ((Spinner)findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
+                                String reason = ((Spinner)findViewById(R.id.spinnerDeptReason)).getSelectedItem().toString();
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 unenrollDept(selectedFromList, reason);
                                 ListDept deptListdisp = new ListDept();
                                 deptListdisp.execute();
+                                insertAudit();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -165,6 +169,30 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         super.onPause();
         //close drawer
         MainActivity.closeDrawer(drawerLayout);
+    }
+
+    public void insertAudit(){
+        Connection con = connectionClass.CONN();
+        PreparedStatement ps = null;
+
+        String statusActive = "Active";
+        String statusInactive = "Inactive";
+        String reason = ((Spinner)findViewById(R.id.spinnerDeptReason)).getSelectedItem().toString();
+
+        try {
+            String queryAUDIT = INSERT_AUDIT_LOG;
+            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
+            psAUDIT.setString(1, "department");
+            psAUDIT.setString(2, "unenroll department");
+            psAUDIT.setString(3, UNENROLL_DEPT);
+            psAUDIT.setString(4,  "Status = " + statusActive);
+            psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
+            psAUDIT.setString(6, session.getusername());
+            psAUDIT.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //deleting a record in the database
