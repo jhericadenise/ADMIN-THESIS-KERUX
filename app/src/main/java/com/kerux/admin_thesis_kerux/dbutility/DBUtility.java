@@ -99,17 +99,11 @@ public interface DBUtility {
     String TOTAL_NUM_UNENROLL_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll queue manager'";
     String SELECT_AUDIT_LIST = "SELECT TableName, EventType, TimeStamp FROM audit_log";
 
-    String INSERT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled) " +
-            "SELECT ( SELECT COUNT(ql.QueueList_ID) FROM queuelist ql " +
-            "INNER JOIN queue q on q.Queue_ID = ql.Queue_ID " +
-            "INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID " +
-            "INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID " +
-            "WHERE qm.Clinic_ID = ? AND ql.Status='Served'), " +
-            "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql " +
-            "INNER JOIN queue q on q.Queue_ID = ql.Queue_ID " +
-            "INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID " +
-            "INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID " +
-            "WHERE qm.Clinic_ID = ? AND ql.Status='Cancelled')";
-    String SELECT_STAT="SELECT * from statistics ORDER BY statistics_id desc limit 1";
+    String INSERT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled, HighestDocQueues, HighestDeptQueues, TimeStart, TimeEnd) SELECT " +
+            "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql INNER JOIN queue q on q.Queue_ID = ql.Queue_ID INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID WHERE qm.Clinic_ID = ? AND ql.Status='Served'), " +
+            "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql INNER JOIN queue q on q.Queue_ID = ql.Queue_ID INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID WHERE qm.Clinic_ID = ? AND ql.Status='Cancelled'), " +
+            "(SELECT CONCAT(Doctor.FirstName, Doctor.LastName) FROM DOCTOR INNER JOIN queue on queue.Doctor_ID = doctor.Doctor_ID WHERE queue.Queue_ID = (SELECT z.queueid FROM (SELECT w.Queue_ID as queueid, MAX(w.num) FROM (SELECT Queue_ID as Queue_ID, count(*) as num FROM instance GROUP BY Queue_ID) w) z)), " +
+            "(SELECT Department.Name FROM department INNER JOIN queue on queue.Department_ID = department.Department_ID WHERE queue.Queue_ID = (SELECT x.queueid FROM (SELECT y.Queue_ID as queueid, MAX(y.num) FROM (SELECT Queue_ID as Queue_ID, count(*) as num FROM instance GROUP BY Queue_ID) y) x)), CURRENT_TIME, CURRENT_TIME";
+    String SELECT_STAT="SELECT QueuesServed, QueuesCancelled, HighestDocQueues, HighestDeptQueues from statistics ORDER BY statistics_id desc limit 1";
 
 }

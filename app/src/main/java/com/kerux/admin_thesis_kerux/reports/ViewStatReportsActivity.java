@@ -47,18 +47,18 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         connectionClass=new ConnectionClass();
         session=new KeruxSession(getApplicationContext());
         statModel = new StatisticModel(getApplicationContext());
-
+        bttnDisplayStat=(Button)findViewById(R.id.bttnRefresh);
         bttnDisplayStat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 generateStat();
             }
         });
-        txtServed = findViewById(R.id.txtQueuesServed);
-        txtCancelled = findViewById(R.id.txtQueuesCancelled);
-        docQueue = findViewById(R.id.txtHighestDocQueue);
-        deptQueue = findViewById(R.id.txtHighestDeptQueue);
-        txtdate = findViewById(R.id.txtTimeStamp);
+        txtServed = (TextView)findViewById(R.id.txtQueuesServed);
+        txtCancelled = (TextView)findViewById(R.id.txtQueuesCancelled);
+        docQueue = (TextView)findViewById(R.id.txtHighestDocQueue);
+        deptQueue = (TextView)findViewById(R.id.txtHighestDeptQueue);
+        txtdate = (TextView)findViewById(R.id.txtTimeStamp);
 
         txtdate.setText(timeStamp());
 
@@ -82,7 +82,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         try {
             ps = con.prepareStatement(query);
             ps.setString(1, session.getclinicid());
-            ps.setString(1, session.getclinicid());
+            ps.setString(2, session.getclinicid());
             int i=ps.executeUpdate();
 
             if (i==1){
