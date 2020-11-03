@@ -26,7 +26,6 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
@@ -69,6 +68,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
         spinnerReasonDoc = findViewById(R.id.spinnerDocReason);
 
+        //display enrolled doctor on listview
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +77,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             }
         });
 
+        //selecting on listview and deleting the data selected
         docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -85,14 +86,14 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDoc.this);
-                builder.setMessage("Unenroll Doctor?")
+                builder.setMessage("Are you sure you want to revoke the privilege of this doctor?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
                                 String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Successfully revoked privilege",Toast.LENGTH_LONG).show();
                                 unenrollDoc (selectedFromList, reason);
                                 UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc ();
                                 docListdisp.execute();
@@ -110,10 +111,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
         });
 
+        //for the spinner
         Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
         doc.execute();
 
-
+        //restrict going to another activity for unenroll
         Button bttnQM = findViewById(R.id.bttnGoToUnenrollQM);
         bttnQM.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,9 +174,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
@@ -187,6 +186,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         MainActivity.closeDrawer(drawerLayout);
     }
 
+    //insert to audit logs
     public void insertAudit(){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
@@ -200,7 +200,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
             psAUDIT.setString(1, "doctor");
             psAUDIT.setString(2, "unenroll doctor");
-            psAUDIT.setString(3, UNENROLL_DOCTOR);
+            psAUDIT.setString(3, "Unenrolling a doctor record");
             psAUDIT.setString(4, "Status = " + statusActive);
             psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
             psAUDIT.setString(6, session.getusername());
@@ -211,13 +211,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         }
     }
 
+    //unenrolling doctor records
     public void unenrollDoc(String firstName, String reason){
 
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
-
-        String statusActive = "Active";
-        String statusInactive = "Inactive";
 
         String query = UNENROLL_DOC_REASON;
         PreparedStatement ps1 = null;
@@ -237,8 +235,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             e.printStackTrace();
         }
     }
-    //deleting a record in the database
 
+    //checking if doctor tables still have Active records
     public boolean checkDoctorList(){
         boolean allInactiveRec = false;
         Connection con = connectionClass.CONN();
@@ -276,6 +274,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         startActivity(intent);
     }
 
+    //removing unnecessary strings when clicking a record in listview and getting the id needed to unenroll
     public String getDocString(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
 
@@ -287,7 +286,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     }
 
 
-    //function for displaying the enrolled department
+    //function for displaying the enrolled doctors
     private class ListDoc extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;

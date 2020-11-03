@@ -6,11 +6,6 @@ public interface DBUtility {
     String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
     String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
-/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
-    String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
-    String dbUserName = "KeruxAdmin";
-    String dbPassword = "admin";*/
-
     //LIST VIEW DISPLAY
     //Department
     String SELECT_LIST_DEPT = "SELECT clinic.clinicName, department.Name, department.Status from clinic " +
@@ -88,6 +83,16 @@ public interface DBUtility {
 
     //UPDATE ADMIN PROFILE
     String UPDATE_PROFILE="UPDATE admin SET FirstName = ?, LastName = ?, Email = ?, Username = ?, Password = ? WHERE Admin_ID = ?";
+
+    //COUNTING RECORDS
+    String TOTAL_NUM_LOGIN = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'login'?";
+    String TOTAL_NUM_ENROLLMENT_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'department_enrollment'?";
+    String TOTAL_NUM_ENROLLMENT_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'doctor_enrollment'?";
+    String TOTAL_NUM_ENROLLMENT_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'?";
+    String TOTAL_NUM_UNENROLL_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'?";
+    String TOTAL_NUM_UNENROLL_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll department'?";
+    String TOTAL_NUM_UNENROLL_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll queue manager'?";
+    String SELECT_AUDIT_LIST = "SELECT TableName, EventType, TimeStamp FROM audit_log";
 
     String SELECT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled) " +
             "SELECT ( SELECT COUNT(ql.QueueList_ID) FROM queuelist ql " +

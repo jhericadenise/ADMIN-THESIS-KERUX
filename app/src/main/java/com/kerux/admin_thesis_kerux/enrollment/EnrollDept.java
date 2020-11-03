@@ -22,7 +22,6 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
@@ -40,11 +39,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
     private EditText deptName;
     private Spinner spinnerClinic;
-
     ConnectionClass connectionClass;
-
     private KeruxSession session;
-
     DrawerLayout drawerLayout;
 
     @Override
@@ -114,11 +110,6 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
     public void ClickViewAudit(View view){
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
-
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
-
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
@@ -190,7 +181,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
 
             if (depName.trim().equals("")) {
-                message = "Please enter all fields....";
+                message = "Please enter all fields";
             }
             else if (!depName.matches("^[A-Za-z]+$")) {
                 message = "Check format";
@@ -221,38 +212,33 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                         while(rs1.next()){
                             String newdeptid=rs1.getString(1);
 
+                            //insert department into department_enrollment table
                             String query3=INSERT_DEPT_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, session.getadminid());
                             ps3.setString(2, newdeptid);
                             ps3.setString(3, session.getclinicid());
                             ps3.executeUpdate();
-                            //SAMPLE AUDIT LOG
+                            //insert to audit log table
                             String queryAUDIT=INSERT_AUDIT_LOG;
                             PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "department");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_DEPT);
+                            psAUDIT.setString(3, "Inserting a Department record");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status);
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
-
+                            //inserting to audit log
                             PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "department_enrollment");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_DEPT_ENROLLMENT);
+                            psAUDIT.setString(3, "Inserting into department_enrollment table");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, session.getadminid()+", "+newdeptid+", "+session.getclinicid());
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
-
                         }
-                      /*  String queryJoin = "insert into department_enrollment (Admin_ID, Department_ID, Clinic_ID) "+
-                                "SELECT '"+session.getusername () +"', Department_ID, Clinic_ID from Department order by Department_ID DESC LIMIT 1;";
-
-                        Statement stmt2 = con.createStatement();
-                        stmt2.executeUpdate(queryJoin);*/
                         con.close();
                         message = "ADDED SUCCESSFULLY!";
                     }

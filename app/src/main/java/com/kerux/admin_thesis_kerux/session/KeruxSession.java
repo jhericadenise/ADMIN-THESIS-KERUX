@@ -77,6 +77,22 @@ public class KeruxSession {
         return clinicid;
     }
 
+    public String getTableName(){
+        String tableName = prefs.getString("tableName", "");
+        return  tableName;
+    }
+
+    public void setTableName(String tableName){
+        prefs.edit().putString("tableName", tableName).commit();
+    }
+    public String getAuditID(){
+        String auditID = prefs.getString("Log_ID", "");
+        return auditID;
+    }
+
+    public void setAuditID(String auditID){
+        prefs.edit().putString("Log_ID", auditID).commit();
+    }
 
 
 }

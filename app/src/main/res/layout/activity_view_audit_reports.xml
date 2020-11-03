@@ -22,7 +22,7 @@
             app:srcCompat="@drawable/audit" />
 
         <Button
-            android:id="@+id/bttnGenerateStat"
+            android:id="@+id/bttnGenerateAudit"
             android:layout_width="238dp"
             android:layout_height="47dp"
             android:background="@android:color/transparent"

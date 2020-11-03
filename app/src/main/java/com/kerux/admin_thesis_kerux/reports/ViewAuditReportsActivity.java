@@ -1,5 +1,6 @@
 package com.kerux.admin_thesis_kerux.reports;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -36,7 +38,10 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
     DrawerLayout drawerLayout;
     private ListView listAudit;
     private Button bttnViewAuditReports;
+    private Button bttnGenerateAuditReports;
     private ListAdapter listAdapter;
+
+    KeruxSession keruxSes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
         drawerLayout = findViewById(R.id.drawer_layout);
         bttnViewAuditReports = findViewById(R.id.bttnViewAudit);
+        bttnGenerateAuditReports = findViewById(R.id.bttnGenerateAudit);
         listAudit = findViewById(R.id.listAuditReports);
 
         bttnViewAuditReports.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +61,17 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                 viewAudit.execute();
             }
         });
+
+        bttnGenerateAuditReports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewAuditReportsActivity.this, GenerateReport.class);
+                /*intent.putExtra("tableName", keruxSes.getTableName());
+                intent.putExtra("Log_ID", keruxSes.getAuditID());*/
+                startActivity(intent);
+            }
+        });
+
     }
     public void ClickMenu (View view){
         //open drawer
@@ -96,10 +113,6 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
     public void ClickViewAudit(View view){
         recreate();
-    }
-
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){

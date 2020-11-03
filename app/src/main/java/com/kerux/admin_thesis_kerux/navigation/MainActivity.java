@@ -16,7 +16,6 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -97,10 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void ClickViewAudit(View view){
         redirectActivity(this, ViewAuditReportsActivity.class);
-    }
-
-    public void ClickViewRating(View view){
-        redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){

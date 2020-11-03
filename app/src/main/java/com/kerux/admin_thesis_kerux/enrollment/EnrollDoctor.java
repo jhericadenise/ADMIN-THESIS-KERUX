@@ -22,7 +22,6 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
@@ -145,9 +144,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
@@ -165,36 +161,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         startActivity(intent);
     }
 
-    /*public boolean checkDeptRecord() {
-        boolean hasExistingDept = false;
-        Connection con = connectionClass.CONN();
-        String docFName = doctorFName.getText().toString();
-        String docLName = doctorLName.getText().toString();
-
-        if(con != null){ //means that we have a valid db connection
-            try{//inserting records; called INSERT_REC from DBUtility.java
-                // use of parameterized query such as PreparedStatement prevents SQL injection which is considered a way to
-                //prevent threat in any web app
-                String query = VALIDATION_DOCTOR;
-                PreparedStatement ps = con.prepareStatement(query);
-                ps.setString(1, docFName);
-                ps.setString(2, docLName);
-
-                ResultSet rs=ps.executeQuery();
-                if(rs.next()){
-                    hasExistingDept=true;
-                    Toast.makeText(getApplicationContext(),"Record already exists",Toast.LENGTH_LONG).show();
-                }
-            } catch(SQLException sqle){
-                System.err.println(sqle.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return hasExistingDept;
-    }*/
-
-
+    //method for enrolling a doctor into the database
     private class DoEnrollDoc extends AsyncTask<String, String, String> {
 
         Security sec = new Security();
@@ -242,12 +209,15 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 e.printStackTrace();
             }
 
+            //checking if there are blank fields
             if (docFName.trim().equals("") || docLName.trim().equals("") || roomNum.trim().equals("") || sched1.trim().equals("") || sched2.trim().equals("") ) {
-                message = "Please enter all fields....";
+                message = "Please enter all fields";
             }
+            //checking if the first name and last name has numbers
             if (!docFName.matches("^[A-Za-z]+$") || !docLName.matches("^[A-Za-z]+$")) {
                 message = "Check format";
             }
+            //checking if the record exists on the database
             if (hasRecord){
                 message = "Record already exists";
             }
@@ -275,6 +245,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         if(cboxSat!=null){
                             docDays+=cboxSat;
                         }
+                        //inserting doctor in the database
                         String query = INSERT_DOCTOR;
                         PreparedStatement ps = con.prepareStatement(query);
 
@@ -299,6 +270,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                             String newdocid=rs1.getString(1);
                             String newdeptid=rs1.getString(1);
 
+                            //inserting into doctor_enrollment
                             String query3=INSERT_DOC_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, session.getadminid());
@@ -306,21 +278,22 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                             ps3.setString(3, newdeptid);
                             ps3.setString(4, newdocid);
                             ps3.executeUpdate();
-                            //SAMPLE AUDIT LOG
+
+                            //inserting to audit log
                             String queryAUDIT=INSERT_AUDIT_LOG;
                             PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "doctor");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_DOCTOR);
+                            psAUDIT.setString(3, "Insert doctor record");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, String.valueOf(clinic)+", "+reason+", "+dept+", "+status);
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
-
+                            //inserting to audit log
                             PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "doctor_enrollment");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_DOC_ENROLLMENT);
+                            psAUDIT.setString(3, "Insert into doctor_enrollment table record");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, session.getadminid()+", "+newdocid+", "+ ", "+ newdeptid + ", " + session.getclinicid());
                             psAUDIT.setString(6, session.getusername());

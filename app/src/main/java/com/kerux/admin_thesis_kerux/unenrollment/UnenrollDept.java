@@ -25,7 +25,6 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
@@ -156,10 +155,6 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
-
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -184,7 +179,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
             psAUDIT.setString(1, "department");
             psAUDIT.setString(2, "unenroll department");
-            psAUDIT.setString(3, UNENROLL_DEPT);
+            psAUDIT.setString(3, "Unenrolling a department record");
             psAUDIT.setString(4,  "Status = " + statusActive);
             psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
             psAUDIT.setString(6, session.getusername());

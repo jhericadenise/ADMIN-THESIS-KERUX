@@ -84,7 +84,7 @@ public class Login extends AppCompatActivity implements DBUtility {
             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
             psAUDIT.setString(1, "login");
             psAUDIT.setString(2, "login");
-            psAUDIT.setString(3, SELECT_ADMIN_LOGIN);
+            psAUDIT.setString(3, "Logging in to the app");
             psAUDIT.setString(4,  "none");
             psAUDIT.setString(5, "login");
             psAUDIT.setString(6, session.getusername());

@@ -21,7 +21,6 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
@@ -67,6 +66,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         blockedList = (ListView) findViewById(R.id.listBlocked);
         displayBlocked = (Button) findViewById(R.id.bttnViewBlocked);
 
+        //button for displaying enrolled accounts in a list view
         displayAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +74,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                 viewAccs.execute();
             }
         });
-
+        //button for displaying blocked accounts in a listview
         displayBlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,12 +83,12 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             }
         });
 
+        //clicking on list view and deleting record
         accountsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                final String selectedFromList = String.valueOf((deptList.getItemAtPosition(position)));
                 final String selectedFromList =  getAccString(String.valueOf((accountsList.getItemAtPosition(position))));
-//                Toast.makeText(getApplicationContext(),selected,Toast.LENGTH_LONG).show();
+
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageAccounts.this);
                 builder.setMessage("Block Privilege?")
@@ -114,6 +114,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
         });
 
+        //spinner downloader
         Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
         dept.execute();
     }
@@ -161,10 +162,6 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
-
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -176,6 +173,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         MainActivity.closeDrawer(drawerLayout);
     }
 
+    //insert to audit log table
     public void insertAudit(){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
@@ -200,7 +198,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         }
     }
 
-    //deleting a record in the database
+    //blocking user
     public void blockPrivileges(String firstName, String reason){
 
         Connection con = connectionClass.CONN();
@@ -235,7 +233,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     }
 
 
-    //function for displaying the enrolled department
+    //function for displaying the enrolled accounts
     private class ListEnrolledAcc extends AsyncTask<String, String, String> {
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
@@ -250,7 +248,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         @Override
         protected String doInBackground(String... strings) {
             try {
-                //listview, list the names of all enrolled department
+                //listview, list the names of all enrolled accounts
                 accountsList = (ListView) findViewById(R.id.listAccounts);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
@@ -265,16 +263,9 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                     datanum.put("first", rset.getString(1).toString());
                     datanum.put("second", rset.getString(2).toString());
                     datanum.put("third", rset.getString(3).toString());
-
-                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
-                            "\n" + rset.getString(2).toString() +"\n \n"
-                    + "STATUS" +"\n" + rset.getString(3).toString());*/
-
                     data.add(datanum);
                 }
 
-
-                /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapterAccounts = new SimpleAdapter(ManageAccounts.this, data,
                         R.layout.listview_row, new String[]{"first", "second", "third"}, new int[]{R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 

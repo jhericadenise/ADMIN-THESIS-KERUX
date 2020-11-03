@@ -16,7 +16,6 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
@@ -124,10 +123,6 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
-
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -138,14 +133,6 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         //close drawer
         MainActivity.closeDrawer(drawerLayout);
     }
-
-    /*public String giveDate() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
-        return sdf.format(cal.getTime());
-    }*/
-
-    //=================================================================================================================
 
     private class updatePatientInfo extends AsyncTask<String,String,String> {
         String adminFirstName= adminFName.getText().toString();
@@ -188,7 +175,6 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                     } else {
                         try {
 
-
                             //String query1 = EDIT_PROFILE; //select
                             String query = UPDATE_PROFILE; //update
 
@@ -202,18 +188,11 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                             ps.setString(6, secweb.encrypt(adminPass));
 
                             //*ps.setString(2, session.getusername());*//*
-
-
-
                             // Statement stmt = con.createStatement();
                             // stmt.executeUpdate(query);
                             ps.executeUpdate(); // rs used by ps which is edit profile
                             isSuccess = true;
                             z = "Login successfull";
-
-
-
-
 
                         } catch (Exception e) {
                             isSuccess = false;

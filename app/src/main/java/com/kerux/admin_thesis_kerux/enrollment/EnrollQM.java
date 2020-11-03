@@ -22,7 +22,6 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
-import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
@@ -41,10 +40,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmUname;
     private EditText qmPw;
     private EditText qmEmail;
-    private Spinner spinnerDept;
-    Button generatePass;
+    private Spinner deptSpinner;
     ConnectionClass connectionClass;
-    private static String urlDeptSpinner = "http://192.168.1.13/kerux/departmentSpinner.php";
+    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php";
 
     DrawerLayout drawerLayout;
 
@@ -61,7 +59,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
-        spinnerDept = (Spinner) findViewById(R.id.spinnerDept);
+        deptSpinner = (Spinner) findViewById(R.id.spinnerDept);
 
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,14 +81,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         qmUname = (EditText) findViewById(R.id.txtboxQMun);
         qmPw = (EditText) findViewById(R.id.txtboxQMpw);
 
-        /*generatePass = findViewById(R.id.bttnGenerate);
-        generatePass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                qmPw.setText(generateString(12));
-            }
-        });*/
-        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, spinnerDept, "Name", "Choose Doctor");
+
+        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "Name", "Choose Department");
         dep.execute();
     }
 
@@ -135,10 +127,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
     public void ClickViewAudit(View view){
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
-    }
-
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){
@@ -196,7 +184,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         boolean hasRecord = false;
         int reason = 0;
         int clinic = Integer.parseInt(session.getclinicid());
-        int dept = (int)spinnerDept.getSelectedItemId();
+        int dept = (int)deptSpinner.getSelectedItemId();
 
         @Override
         protected void onPreExecute() {
@@ -207,22 +195,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
             Connection con = connectionClass.CONN();
             PreparedStatement ps = null;
-            /*try {
-                ps = con.prepareStatement(VALIDATION_QM);
-                ps.setString(1, QMname);
-
-                ResultSet rs = ps.executeQuery();
-
-                if (rs.next()) {
-                    hasRecord = true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            message = "Record already exists";*/
 
             if (QMFname.trim().equals("") || QMLname.trim().equals("") || QMEmail.trim().equals("") || QMuname.trim().equals("") || QMpw.trim().equals("")) {
-                message = "Please enter all fields....";
+                message = "Please enter all fields";
 
             }
             else if (!QMFname.matches("^[A-Za-z]+$") && !QMLname.matches("^[A-Za-z]+$")) {
@@ -257,6 +232,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             String newqmid=rs1.getString(1);
                             String newdeptid=rs1.getString(1);
 
+                            //inserting to qm enrollment
                             String query3=INSERT_QM_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, newqmid);
@@ -264,21 +240,22 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             ps3.setString(3, String.valueOf(dept));
                             ps3.setString(4, String.valueOf(clinic));
                             ps3.executeUpdate();
-                            //SAMPLE AUDIT LOG
+
+                            //inserting to audit log
                             String queryAUDIT=INSERT_AUDIT_LOG;
                             PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "queue manager");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_QM);
+                            psAUDIT.setString(3, "Inserting Queue Manager record");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, String.valueOf(clinic)+", "+reason+", "+dept+", "+status);
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
-
+                            //inserting to audit log
                             PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "qmenrollment");
                             psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, INSERT_QM_ENROLLMENT);
+                            psAUDIT.setString(3, "Insert into qmenrollment table");
                             psAUDIT.setString(4, "none");
                             psAUDIT.setString(5, session.getadminid()+", "+newqmid+", "+ ", "+ newdeptid + ", " + session.getclinicid());
                             psAUDIT.setString(6, session.getusername());

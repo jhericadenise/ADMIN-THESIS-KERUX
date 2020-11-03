@@ -67,13 +67,6 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     }
     public void generateStat() {
 
-/*
-        String served = txtServed.getText().toString();
-        String cancelled = txtCancelled.getText().toString();
-        String docName = docQueue.getText().toString();
-        String deptName = deptQueue.getText().toString();
-*/
-
         txtServed.setText(statModel.getQueuesServed());
         txtCancelled.setText(statModel.getQueuesCancelled());
         docQueue.setText(statModel.getHighestDoctorQueues());
@@ -141,9 +134,6 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-    public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
-    }
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
