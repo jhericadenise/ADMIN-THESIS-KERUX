@@ -15,6 +15,7 @@ import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -36,12 +37,15 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     TextView deptQueue;
     TextView txtdate;
 
+    KeruxSession session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stat_reports);
         drawerLayout = findViewById(R.id.drawer_layout);
         connectionClass=new ConnectionClass();
+        session=new KeruxSession(getApplicationContext());
         statModel = new StatisticModel(getApplicationContext());
 
         bttnDisplayStat.setOnClickListener(new View.OnClickListener() {
@@ -67,17 +71,33 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     }
     public void generateStat() {
 
-        txtServed.setText(statModel.getQueuesServed());
-        txtCancelled.setText(statModel.getQueuesCancelled());
-        docQueue.setText(statModel.getHighestDoctorQueues());
-        deptQueue.setText(statModel.getHighestDeptQueues());
+//        txtServed.setText(statModel.getQueuesServed());
+//        txtCancelled.setText(statModel.getQueuesCancelled());
+//        docQueue.setText(statModel.getHighestDoctorQueues());
+//        deptQueue.setText(statModel.getHighestDeptQueues());
 
-        String query = SELECT_STAT;
+        String query = INSERT_STAT;
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            ps.setString(1, session.getclinicid());
+            ps.setString(1, session.getclinicid());
+            int i=ps.executeUpdate();
+
+            if (i==1){
+                String query1 = SELECT_STAT;
+
+                PreparedStatement ps1 = con.prepareStatement(query1);
+                ResultSet rs=ps1.executeQuery();
+                while (rs.next()) {
+                    txtServed.setText(rs.getString(1));
+                    txtCancelled.setText(rs.getString(2));
+                    docQueue.setText(rs.getString(3));
+                    deptQueue.setText(rs.getString(4));
+
+                }
+            }
             /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
 
            /* while (rs.next()) {
