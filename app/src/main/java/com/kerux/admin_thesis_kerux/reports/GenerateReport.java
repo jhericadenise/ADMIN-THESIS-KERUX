@@ -90,7 +90,6 @@ public class GenerateReport extends AppCompatActivity implements DBUtility {
                 } else {
                     createPdf();
                     viewPdf();
-
                     z="Report Generated";
                 }
             }
@@ -137,25 +136,51 @@ public class GenerateReport extends AppCompatActivity implements DBUtility {
         document.open();
         document.add(new Paragraph("KERUX QUEUE REPORT"));
         int counter=1;
+        boolean secondphase=false;
         String line="";
         for (int i=0;i<getData.size();i++){
-//            document.add(new Paragraph(getData.get(i)));
-            if(counter==3){
-                document.add(new Paragraph(line));
+            if(getData.get(i).equals("---------------------------------")){
+                secondphase=true;
                 line="";
                 counter=1;
+                document.add(new Paragraph("  "));
+                continue;
+            }
+            if (!secondphase){
+
+                if(counter==3){
+                    document.add(new Paragraph(line));
+                    line="";
+                    counter=1;
+                }
+                if(counter!=3){
+                    if (counter==2){
+                        line+=getData.get(i);
+                    }
+                    else{
+                        line+=getData.get(i)+" | ";
+                    }
+                    counter++;
+                }
+
+            }else{
+                if(counter==4){
+                    document.add(new Paragraph(line));
+                    line="";
+                    counter=1;
+                }
+                if(counter!=4){
+                    if (counter==3){
+                        line+=getData.get(i);
+                    }
+                    else{
+                        line+=getData.get(i)+" | ";
+                    }
+                    counter++;
+                }
             }
 
 
-            if(counter!=3){
-                if (counter==2){
-                    line+=getData.get(i);
-                }
-                else{
-                    line+=getData.get(i)+" | ";
-                }
-                counter++;
-            }
         }
 
 
@@ -199,96 +224,100 @@ public class GenerateReport extends AppCompatActivity implements DBUtility {
             Security sec =new Security();
             if (con == null) {
                 error="Please check your internet connection";
+                Log.d("WENT HEHEHE", "Help");
             } else {
 
                 //LOGIN TOTAL
                 String totalLogin = TOTAL_NUM_LOGIN;
                 PreparedStatement ps = con.prepareStatement(totalLogin);
-                ps.setString(1, tableName);
+//                ps.setString(1, tableName);
 
                 ResultSet rs=ps.executeQuery();
 
                 while (rs.next())
                 {
-                    data.add("Total Number of Logins to the app:         ");
+                    data.add("Total Number of Logins to the app:");
                     data.add(rs.getString(1));
+                    for(String num:data){
+                        Log.d("MEN", num+"YYYYY");
+                    }
                 }
 
                 //TOTAL ENROLLED DEPARTMENT
                 String totalDept = TOTAL_NUM_ENROLLMENT_DEPT;
                 PreparedStatement ps2 = con.prepareStatement(totalDept);
-                ps2.setString(1, tableName);
+//                ps2.setString(1, tableName);
 
                 ResultSet rs2=ps2.executeQuery();
 
                 while (rs2.next())
                 {
-                    data.add("Total Number of Department enrolled:      ");
+                    data.add("Total Number of Department enrolled:");
                     data.add(rs2.getString(1));
                 }
 
                 //TOTAL ENROLLED QUEUE MANAGER
                 String totalQm = TOTAL_NUM_ENROLLMENT_QM;
                 PreparedStatement ps3 = con.prepareStatement(totalQm);
-                ps3.setString(1, tableName);
+//                ps3.setString(1, tableName);
 
                 ResultSet rs3=ps3.executeQuery();
 
                 while (rs3.next())
                 {
-                    data.add("Total Number of Queue Manager enrolled: ");
+                    data.add("Total Number of Queue Manager enrolled:");
                     data.add(rs3.getString(1));
                 }
 
                 //TOTAL  ENROLLED DOCTOR
                 String totalDoc = TOTAL_NUM_ENROLLMENT_DOC;
                 PreparedStatement ps4 = con.prepareStatement(totalDoc);
-                ps4.setString(1, tableName);
+//                ps4.setString(1, tableName);
 
                 ResultSet rs4=ps4.executeQuery();
 
                 while (rs4.next())
                 {
-                    data.add("Total Number of Doctor enrolled: ");
+                    data.add("Total Number of Doctor enrolled:");
                     data.add(rs4.getString(1));
                 }
 
                 //TOTAL UNENROLLED DEPARTMENT
                 String totalUnenrollDept = TOTAL_NUM_UNENROLL_DEPT;
                 PreparedStatement ps5 = con.prepareStatement(totalUnenrollDept);
-                ps5.setString(1, tableName);
+//                ps5.setString(1, tableName);
 
                 ResultSet rs5 = ps5.executeQuery();
 
                 while (rs5.next())
                 {
-                    data.add("Total Number of Department unenrolled: ");
+                    data.add("Total Number of Department unenrolled:");
                     data.add(rs5.getString(1));
                 }
 
                 //TOTAL UNENROLLED QUEUE MANAGER
                 String totalUnenrollQM = TOTAL_NUM_UNENROLL_QM;
                 PreparedStatement ps6 = con.prepareStatement(totalUnenrollQM);
-                ps5.setString(1, tableName);
+//                ps5.setString(1, tableName);
 
                 ResultSet rs6 = ps6.executeQuery();
 
                 while (rs6.next())
                 {
-                    data.add("Total Number of Queue Manager unenrolled: ");
+                    data.add("Total Number of Queue Manager unenrolled:");
                     data.add(rs6.getString(1));
                 }
 
                 //TOTAL UNENROLLED DOCTOR
                 String totalUnenrollDoc = TOTAL_NUM_UNENROLL_DOC;
                 PreparedStatement ps7 = con.prepareStatement(totalUnenrollDoc);
-                ps5.setString(1, tableName);
+//                ps5.setString(1, tableName);
 
                 ResultSet rs7 = ps7.executeQuery();
 
                 while (rs7.next())
                 {
-                    data.add("Total Number of Doctor unenrolled: ");
+                    data.add("Total Number of Doctor unenrolled:");
                     data.add(rs7.getString(1));
                 }
 
@@ -296,21 +325,19 @@ public class GenerateReport extends AppCompatActivity implements DBUtility {
                 String queryLIST=SELECT_AUDIT_LIST;
 
                 PreparedStatement ps8 = con.prepareStatement(queryLIST);
-                ps8.setString(1, auditID);
+//                ps8.setString(1, auditID);
 
                 ResultSet rs8 = ps8.executeQuery();
-
-                data.add("------------");
-                data.add("------------");
+                data.add("---------------------------------");
                 data.add("Table Name");
                 data.add("Event Type");
                 data.add("Timestamp");
 
-                while (rs4.next())
+                while (rs8.next())
                 {
-                    data.add(rs4.getString(1));
-                    data.add(rs4.getString(2));
-                    data.add(rs4.getString(3));
+                    data.add(rs8.getString(1));
+                    data.add(rs8.getString(2));
+                    data.add(rs8.getString(3));
                 }
 
             }
@@ -322,6 +349,7 @@ public class GenerateReport extends AppCompatActivity implements DBUtility {
         if(!error.equals("")){
             Toast.makeText(getBaseContext(),error, Toast.LENGTH_LONG).show();
         }
+        Log.d("DATAAA", data.get(1));
         return data;
 
     }

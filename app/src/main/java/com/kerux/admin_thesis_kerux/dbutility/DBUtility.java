@@ -1,10 +1,15 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
-    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
-    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+//    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+//    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
+//    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
+//    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+
+    String jdbcDriverName = "com.mysql.jdbc.Driver";
+    String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
+    String dbUserName = "KeruxAdmin";
+    String dbPassword = "admin";
 
     //LIST VIEW DISPLAY
     //Department
@@ -28,9 +33,7 @@ public interface DBUtility {
     String SELECT_AUDIT = "SELECT Log_ID, TableName, EventType, SqlCommand, OldData, NewData, LoginName, TimeStamp from audit_log";
 
     //For Logging in
-    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, " +
-            "admin_enrollment.Clinic_ID, admin.Username from admin INNER JOIN admin_enrollment ON " +
-            "admin.Admin_ID = admin_enrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
+    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, adminenrollment.Clinic_ID, admin.Username from admin INNER JOIN adminenrollment ON admin.Admin_ID = adminenrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
 
     //LIST VIEW DISPLAY UNENROLLED USERS
     String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status =?";
@@ -47,6 +50,8 @@ public interface DBUtility {
     //Queue Manager
     String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, reasonrevoke_id, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?,?)";
+
+
 
     String SELECT_NEW_DEPARTMENT_ID = "Select MAX(department_id) from department";
     String SELECT_NEW_DOCTOR_ID = "Select MAX(doctor_id) from doctor";
@@ -85,13 +90,13 @@ public interface DBUtility {
     String UPDATE_PROFILE="UPDATE admin SET FirstName = ?, LastName = ?, Email = ?, Username = ?, Password = ? WHERE Admin_ID = ?";
 
     //COUNTING RECORDS
-    String TOTAL_NUM_LOGIN = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'login'?";
-    String TOTAL_NUM_ENROLLMENT_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'department_enrollment'?";
-    String TOTAL_NUM_ENROLLMENT_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'doctor_enrollment'?";
-    String TOTAL_NUM_ENROLLMENT_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'?";
-    String TOTAL_NUM_UNENROLL_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'?";
-    String TOTAL_NUM_UNENROLL_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll department'?";
-    String TOTAL_NUM_UNENROLL_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll queue manager'?";
+    String TOTAL_NUM_LOGIN = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'login'";
+    String TOTAL_NUM_ENROLLMENT_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'department_enrollment'";
+    String TOTAL_NUM_ENROLLMENT_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'doctor_enrollment'";
+    String TOTAL_NUM_ENROLLMENT_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'";
+    String TOTAL_NUM_UNENROLL_DEPT = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'qmenrollment'";
+    String TOTAL_NUM_UNENROLL_DOC = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll department'";
+    String TOTAL_NUM_UNENROLL_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll queue manager'";
     String SELECT_AUDIT_LIST = "SELECT TableName, EventType, TimeStamp FROM audit_log";
 
     String SELECT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled) " +
