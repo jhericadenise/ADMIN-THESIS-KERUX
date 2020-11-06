@@ -16,6 +16,7 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
+import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 
@@ -78,19 +79,22 @@ public class Login extends AppCompatActivity implements DBUtility {
     public void insertAudit(){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
+        Security sec = new Security();
 
         try {
             String queryAUDIT = INSERT_AUDIT_LOG;
             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-            psAUDIT.setString(1, "login");
-            psAUDIT.setString(2, "login");
-            psAUDIT.setString(3, "Logging in to the app");
-            psAUDIT.setString(4,  "none");
-            psAUDIT.setString(5, "login");
-            psAUDIT.setString(6, session.getusername());
+            psAUDIT.setString(1, sec.encrypt("login"));
+            psAUDIT.setString(2, sec.encrypt("login"));
+            psAUDIT.setString(3, sec.encrypt("Logging in to the app"));
+            psAUDIT.setString(4, sec.encrypt("none"));
+            psAUDIT.setString(5, sec.encrypt("login"));
+            psAUDIT.setString(6, sec.encrypt(session.getusername()));
             psAUDIT.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

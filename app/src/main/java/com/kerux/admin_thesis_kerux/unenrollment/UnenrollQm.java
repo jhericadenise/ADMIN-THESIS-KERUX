@@ -27,6 +27,7 @@ import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 
@@ -184,6 +185,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     public void insertAudit(){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
+        Security sec = new Security();
 
         String statusActive = "Active";
         String statusInactive = "Inactive";
@@ -192,15 +194,17 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         try {
             String queryAUDIT = INSERT_AUDIT_LOG;
             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-            psAUDIT.setString(1, "queue manager");
-            psAUDIT.setString(2, "unenroll queue manager");
-            psAUDIT.setString(3, "Unenrolling a queue manager record");
-            psAUDIT.setString(4,  "Status = " + statusActive);
-            psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
+            psAUDIT.setString(1, sec.encrypt("queue manager"));
+            psAUDIT.setString(2, sec.encrypt("unenroll queue manager"));
+            psAUDIT.setString(3, sec.encrypt("Unenrolling a queue manager record"));
+            psAUDIT.setString(4, sec.encrypt("Status = " + statusActive));
+            psAUDIT.setString(5, sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason));
             psAUDIT.setString(6, session.getusername());
             psAUDIT.executeUpdate();
         }
         catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

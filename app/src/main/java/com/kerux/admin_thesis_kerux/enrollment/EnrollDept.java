@@ -267,21 +267,21 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                             //insert to audit log table
                             String queryAUDIT=INSERT_AUDIT_LOG;
                             PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, "department");
-                            psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "Inserting a Department record");
-                            psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status);
-                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.setString(1, sec.encrypt("department"));
+                            psAUDIT.setString(2, sec.encrypt("insert"));
+                            psAUDIT.setString(3, sec.encrypt("Inserting a Department record"));
+                            psAUDIT.setString(4, sec.encrypt("none"));
+                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status));
+                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                             //inserting to audit log
                             PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, "department_enrollment");
-                            psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "Inserting into department_enrollment table");
-                            psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, session.getadminid()+", "+newdeptid+", "+session.getclinicid());
-                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.setString(1, sec.encrypt("department_enrollment"));
+                            psAUDIT.setString(2, sec.encrypt("insert"));
+                            psAUDIT.setString(3, sec.encrypt("Inserting into department_enrollment table"));
+                            psAUDIT.setString(4, sec.encrypt("none"));
+                            psAUDIT.setString(5, sec.encrypt(session.getadminid()+", "+newdeptid+", "+session.getclinicid()));
+                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                         }
                         con.close();

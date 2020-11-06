@@ -378,21 +378,21 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             //inserting to audit log
                             String queryAUDIT = INSERT_AUDIT_LOG;
                             PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, "queue manager");
-                            psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "Inserting Queue Manager record");
-                            psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status);
-                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.setString(1, sec.encrypt("queue manager"));
+                            psAUDIT.setString(2, sec.encrypt("insert"));
+                            psAUDIT.setString(3, sec.encrypt("Inserting Queue Manager record"));
+                            psAUDIT.setString(4, sec.encrypt("none"));
+                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status));
+                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                             //inserting to audit log
                             PreparedStatement psAUDIT1 = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, "qmenrollment");
-                            psAUDIT.setString(2, "insert");
-                            psAUDIT.setString(3, "Insert into qmenrollment table");
-                            psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, session.getadminid() + ", " + newqmid + ", " + ", " + newdeptid + ", " + session.getclinicid());
-                            psAUDIT.setString(6, session.getusername());
+                            psAUDIT.setString(1, sec.encrypt("qmenrollment"));
+                            psAUDIT.setString(2, sec.encrypt("insert"));
+                            psAUDIT.setString(3, sec.encrypt("Insert into qmenrollment table"));
+                            psAUDIT.setString(4, sec.encrypt("none"));
+                            psAUDIT.setString(5, sec.encrypt(session.getadminid() + ", " + newqmid + ", " + ", " + newdeptid + ", " + session.getclinicid()));
+                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                         }
                         con.close();
