@@ -135,7 +135,7 @@ public class Login extends AppCompatActivity implements DBUtility {
 
                         ResultSet rs=ps.executeQuery();
                         /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
-
+                        z = "Successfully logged in";
                         while (rs.next()) {
                             adminId=rs.getInt(1);
                             firstName = rs.getString(2);
@@ -152,19 +152,17 @@ public class Login extends AppCompatActivity implements DBUtility {
                             session.setclinicid(String.valueOf(clinicid));
                             session.setusername(usernam);
                             isSuccess = true;
-                            /*z = String.valueOf(adminId)+", "+firstName+", "+lastName+", "+email+", "+String.valueOf(clinicid)+", "+usernam;*/
                         }
                     }
                 }
-            /*    catch (Exception ex)
+                catch (Exception ex)
                 {
                     isSuccess = false;
                     z = "Exceptions"+ex;
-                }*/
-                catch (Exception e) {
-
-                    Thread.dumpStack(); //always put this from sir mon
                 }
+/*                catch (Exception e) {
+                    Thread.dumpStack(); //always put this from sir mon
+                }*/
             }
             return z;
         }

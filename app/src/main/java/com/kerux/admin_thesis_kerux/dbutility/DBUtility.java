@@ -1,15 +1,16 @@
 package com.kerux.admin_thesis_kerux.dbutility;
 
 public interface DBUtility {
-//    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
-//    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
-//    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
-//    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
-    String jdbcDriverName = "com.mysql.jdbc.Driver";
+    String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
+    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
+    String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
+    String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
+
+/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
     String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
     String dbUserName = "KeruxAdmin";
-    String dbPassword = "admin";
+    String dbPassword = "admin";*/
 
     //LIST VIEW DISPLAY
     //Department
@@ -33,7 +34,8 @@ public interface DBUtility {
     String SELECT_AUDIT = "SELECT Log_ID, TableName, EventType, SqlCommand, OldData, NewData, LoginName, TimeStamp from audit_log";
 
     //For Logging in
-    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, adminenrollment.Clinic_ID, admin.Username from admin INNER JOIN adminenrollment ON admin.Admin_ID = adminenrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
+    String SELECT_ADMIN_LOGIN = "SELECT admin.Admin_ID, admin.FirstName, admin.LastName, admin.Email, admin_enrollment.Clinic_ID, admin.Username from admin " +
+            "INNER JOIN admin_enrollment ON admin.Admin_ID = admin_enrollment.Admin_ID WHERE admin.Username =? and admin.Password=?";
 
     //LIST VIEW DISPLAY UNENROLLED USERS
     String SELECT_UNENROLLED_DEPT = "SELECT * from department where Status =?";
@@ -67,9 +69,9 @@ public interface DBUtility {
             "values (?,?,?,?,?,?)";
 
     //VALIDATION
-    String VALIDATION_DEPT = "Select * from department where name = ? AND Status = 'Active' AND Clinic_ID = ?";
-    String VALIDATION_DOCTOR = "Select * from doctor where firstName = ? AND lastName = ? AND Status = 'Active'";
-    String VALIDATION_QM = "Select * from queuemanager where name = ? AND Status = 'Active'";
+    String VALIDATION_DEPT = "Select * from department where name = ? AND Status = 'Active' AND Clinic_ID = ? AND Clinic_ID = ?";
+    String VALIDATION_DOCTOR = "Select * from doctor where firstName = ? AND lastName = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_QM = "Select * from queuemanager where firstName = ? AND LastName = ? AND Status = 'Active' AND Clinic_ID = ?";
 
     //UNENROLLING RECORDS
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";
@@ -106,4 +108,7 @@ public interface DBUtility {
             "(SELECT Department.Name FROM department INNER JOIN queue on queue.Department_ID = department.Department_ID WHERE queue.Queue_ID = (SELECT x.queueid FROM (SELECT y.Queue_ID as queueid, MAX(y.num) FROM (SELECT Queue_ID as Queue_ID, count(*) as num FROM instance GROUP BY Queue_ID) y) x)), CURRENT_TIME, CURRENT_TIME";
     String SELECT_STAT="SELECT QueuesServed, QueuesCancelled, HighestDocQueues, HighestDeptQueues from statistics ORDER BY statistics_id desc limit 1";
 
+    //Dashboard count
+    String DB_DEPT = "SELECT COUNT(Department_ID) from department WHERE Status = 'Active'";
+    String DB_QM = "SELECT COUNT(QueueManager_ID) from queuemanager WHERE Status = 'Active'";
 }

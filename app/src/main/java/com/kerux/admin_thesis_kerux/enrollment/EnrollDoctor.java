@@ -1,5 +1,6 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -88,8 +90,31 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EnrollDoctor.DoEnrollDoc doenroll = new EnrollDoctor.DoEnrollDoc();
-                doenroll.execute();
+                if (!validateFName() || !validateLName() ||!validateRoomNo() || !validateSched()) {
+                    confirmInput();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EnrollDoctor.this);
+                    builder.setMessage("Are you sure you want to Enroll?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    EnrollDoctor.DoEnrollDoc doenroll = new EnrollDoctor.DoEnrollDoc();
+                                    doenroll.execute();
+                                    doctorFName.getText().clear();
+                                    doctorLName.getText().clear();
+                                    roomNo.getText().clear();
+                                    schedule1.getText().clear();
+                                    schedule2.getText().clear();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         });
 
@@ -161,6 +186,82 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         startActivity(intent);
     }
 
+    private boolean validateFName() {
+        String firstname = doctorFName.getText().toString().trim();
+
+        if(firstname.isEmpty()){
+            doctorFName.setError("Field can't be empty");
+            return false;
+        } else if (firstname.length() < 3){
+            doctorFName.setError("First Name too short");
+            return false;
+        } else if(firstname.matches("^[A-Za-z]+$")) {
+            doctorLName.setError("Last name cannot have number values");
+            return false;
+        } else {
+            doctorFName.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateLName() {
+        String lastname = doctorLName.getText().toString().trim();
+
+        if(lastname.isEmpty()){
+            doctorLName.setError("Field can't be empty");
+            return false;
+        } else if (lastname.length() < 2){
+            doctorLName.setError("Last Name too short");
+            return false;
+        } else if(lastname.matches("^[A-Za-z]+$")) {
+            doctorLName.setError("Last name cannot have number values");
+            return false;
+        }
+        else {
+            doctorLName.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateSched() {
+        String sched1 = schedule1.getText().toString().trim();
+        String sched2 = schedule2.getText().toString().trim();
+
+        if(sched1.isEmpty()){
+            schedule1.setError("Field can't be empty");
+            return false;
+        } else if(sched2.isEmpty()){
+            schedule2.setError("Field can't be empty");
+            return false;
+        } else {
+            schedule1.setError(null);
+            schedule2.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateRoomNo() {
+        String room = roomNo.getText().toString().trim();
+
+        if(room.isEmpty()){
+            roomNo.setError("Field can't be empty");
+            return false;
+        } else {
+            roomNo.setError(null);
+            return true;
+        }
+    }
+
+    public boolean confirmInput() {
+        String input = "First Name: " + doctorFName.getText().toString();
+        input += "\n";
+        input += "Last Name: " + doctorLName.getText().toString();
+        input += "Schedule: " + schedule1.getText().toString();
+        input += "Room No: " + roomNo.getText().toString();
+        Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
     //method for enrolling a doctor into the database
     private class DoEnrollDoc extends AsyncTask<String, String, String> {
 
@@ -209,14 +310,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 e.printStackTrace();
             }
 
-            //checking if there are blank fields
-            if (docFName.trim().equals("") || docLName.trim().equals("") || roomNum.trim().equals("") || sched1.trim().equals("") || sched2.trim().equals("") ) {
-                message = "Please enter all fields";
-            }
-            //checking if the first name and last name has numbers
-            if (!docFName.matches("^[A-Za-z]+$") || !docLName.matches("^[A-Za-z]+$")) {
-                message = "Check format";
-            }
             //checking if the record exists on the database
             if (hasRecord){
                 message = "Record already exists";

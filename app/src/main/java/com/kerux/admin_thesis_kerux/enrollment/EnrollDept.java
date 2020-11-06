@@ -1,5 +1,6 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -61,9 +63,27 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         bttnEnrollDept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DoEnroll doEnroll=new DoEnroll();
-                doEnroll.execute();
-                deptName.getText().clear();
+                if (!validateDeptName()) {
+                    confirmInput();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EnrollDept.this);
+                    builder.setMessage("Are you sure you want to Enroll?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    DoEnroll doEnroll=new DoEnroll();
+                                    doEnroll.execute();
+                                    deptName.getText().clear();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         });
     }
@@ -140,6 +160,31 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         return sdf.format(calendar.getTime());
+    }
+
+    private boolean validateDeptName() {
+        String name = deptName.getText().toString().trim();
+
+        if(name.isEmpty()){
+            deptName.setError("Field can't be empty");
+            return false;
+        } else if (name.length() < 2){
+            deptName.setError("Department name too short");
+            return false;
+        } else if(name.matches("^[A-Za-z]+$")) {
+            deptName.setError("Department name cannot have number values");
+            return false;
+        }
+        else {
+            deptName.setError(null);
+            return true;
+        }
+    }
+
+    public boolean confirmInput() {
+        String input = "Department Name: " + deptName.getText().toString();
+        Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     /*Function class for enrolling the department in to the db, inserting the records in the db*/

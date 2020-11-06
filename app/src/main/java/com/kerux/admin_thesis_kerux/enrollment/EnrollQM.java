@@ -1,8 +1,10 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -31,7 +34,9 @@ import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class EnrollQM extends AppCompatActivity implements DBUtility{
 
@@ -64,14 +69,32 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
-                doenroll.execute();
-                sendEmail();
-                qmFirstName.getText().clear();
-                qmLastName.getText().clear();
-                qmUname.getText().clear();
-                qmPw.getText().clear();
-                qmEmail.getText().clear();
+                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername() || !validatePassword()) {
+                    confirmInput();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EnrollQM.this);
+                    builder.setMessage("Are you sure you want to Enroll?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
+                                    doenroll.execute();
+                                    sendEmail();
+                                    qmFirstName.getText().clear();
+                                    qmLastName.getText().clear();
+                                    qmEmail.getText().clear();
+                                    qmUname.getText().clear();
+                                    qmPw.getText().clear();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         });
 
@@ -84,6 +107,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
         Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "Name", "Choose Department");
         dep.execute();
+
     }
 
     public void ClickMenu (View view){
@@ -163,11 +187,117 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String message = "Good day!\n" +
                 "We've successfully enrolled you as a Queue Manager\n\n\n" +
                 "Here are your credentials" + "\n\nUsername: " + qmUname.getText().toString().trim() +
-                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n\n Thank you!";
+                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n" +
+                "Please change your password immediately after receiving this email\n\n" +
+                "\n\n Thank you!";
 
         SendMailTask sm = new SendMailTask(this, email, subject, message);
         sm.execute();
     }
+    
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^" +
+                    //"(?=.*[0-9])" +         //at least 1 digit
+                    //"(?=.*[a-z])" +         //at least 1 lower case letter
+                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
+                    "(?=.*?[A-Z])" +      //any letter
+                    "(?=.*?[a-z])" +    //at least 1 special character
+                    "(?=.*?[0-9])" +           //no white spaces
+                    "(?=.*?[#?!@$%^&*-])"+
+                    ".{8,}"+
+                    "$");
+
+    private boolean validatePassword() {
+        String qmpassword = qmPw.getText().toString().trim();
+        if (qmpassword.isEmpty()) {
+            qmPw.setError("Field can't be empty");
+            return false;
+        } else if (!PASSWORD_PATTERN.matcher(qmpassword).matches()) {
+            qmPw.setError("Password too weak");
+            return false;
+        } else {
+            qmPw.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateEmail() {
+        String emailInputQM = qmEmail.getText().toString().trim();
+        if (emailInputQM.isEmpty()) {
+            qmEmail.setError("Field can't be empty");
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInputQM).matches()) {
+            qmEmail.setError("Please enter a valid email address");
+            return false;
+        } else {
+            qmEmail.setError(null);
+            return true;
+        }
+    }
+    private boolean validateUsername() {
+        String usernameInputQM = qmUname.getText().toString().trim();
+        if (usernameInputQM.isEmpty()) {
+            qmUname.setError("Field can't be empty");
+            return false;
+        } else if (usernameInputQM.length() > 15) {
+            qmUname.setError("Username too long");
+            return false;
+        } else {
+            qmUname.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateFName() {
+        String firstname = qmFirstName.getText().toString().trim();
+
+        if(firstname.isEmpty()){
+            qmFirstName.setError("Field can't be empty");
+            return false;
+        } else if (firstname.length() < 3){
+            qmFirstName.setError("First Name too short");
+            return false;
+        } else if(firstname.matches("^[A-Za-z]+$")) {
+            qmFirstName.setError("First name cannot have number values");
+            return false;
+        } else {
+            qmFirstName.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateLName() {
+        String lastname = qmLastName.getText().toString().trim();
+
+        if(lastname.isEmpty()){
+            qmLastName.setError("Field can't be empty");
+            return false;
+        } else if (lastname.length() < 2){
+            qmLastName.setError("Last Name too short");
+            return false;
+        } else if(lastname.matches("^[A-Za-z]+$")) {
+            qmLastName.setError("Last name cannot have number values");
+            return false;
+        } else {
+            qmLastName.setError(null);
+            return true;
+        }
+    }
+
+    public boolean confirmInput() {
+        String input = "Email: " + qmEmail.getText().toString();
+        input += "\n";
+        input += "Username: " + qmUname.getText().toString();
+        input += "\n";
+        input += "Password: " + qmPw.getText().toString();
+        input += "\n";
+        input += "First Name: " + qmFirstName.getText().toString();
+        input += "\n";
+        input += "Last Name: " + qmLastName.getText().toString();
+        Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
 
     //Enrolling or adding the record to the database for the queue manager
     private class DoEnrollQM extends AsyncTask<String, String, String> {
@@ -195,18 +325,22 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
             Connection con = connectionClass.CONN();
             PreparedStatement ps = null;
+            try {
+                ps = con.prepareStatement(VALIDATION_QM);
+                ps.setInt (1, clinic);
+                ps.setString(2, QMFname);
+                ps.setString(3, QMLname);
 
-            if (QMFname.trim().equals("") || QMLname.trim().equals("") || QMEmail.trim().equals("") || QMuname.trim().equals("") || QMpw.trim().equals("")) {
-                message = "Please enter all fields";
+                ResultSet rs=ps.executeQuery();
 
+                if(rs.next()){
+                    hasRecord = true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            else if (!QMFname.matches("^[A-Za-z]+$") && !QMLname.matches("^[A-Za-z]+$")) {
-                message = "Check format";
-            }
-            else if (hasRecord){
-                message = "Record already exists";
-            }
-            else {
+            message = "Record already exists";
+
                 try {
                     if (con == null) {
                         message = "Unsuccessful";
@@ -215,7 +349,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                         PreparedStatement ps1 = con.prepareStatement(query);
                         ps1.setInt(1, clinic);
                         ps1.setInt(2, dept);
-                        ps.setInt(3, reason);
+                        ps1.setInt(3, reason);
                         ps1.setString(4, sec.encrypt(QMuname));
                         ps1.setString(5, sec.encrypt(QMpw));
                         ps1.setString(6, QMFname);
@@ -225,15 +359,15 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
                         ps1.execute();
 
-                        String query2=SELECT_NEW_QUEUEMANAGER_ID;
+                        String query2 = SELECT_NEW_QUEUEMANAGER_ID;
                         PreparedStatement ps2 = con.prepareStatement(query2);
                         ResultSet rs1 = ps2.executeQuery();
-                        while(rs1.next()){
-                            String newqmid=rs1.getString(1);
-                            String newdeptid=rs1.getString(1);
+                        while (rs1.next()) {
+                            String newqmid = rs1.getString(1);
+                            String newdeptid = rs1.getString(1);
 
                             //inserting to qm enrollment
-                            String query3=INSERT_QM_ENROLLMENT;
+                            String query3 = INSERT_QM_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, newqmid);
                             ps3.setString(2, session.getadminid());
@@ -242,40 +376,40 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             ps3.executeUpdate();
 
                             //inserting to audit log
-                            String queryAUDIT=INSERT_AUDIT_LOG;
-                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
+                            String queryAUDIT = INSERT_AUDIT_LOG;
+                            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "queue manager");
                             psAUDIT.setString(2, "insert");
                             psAUDIT.setString(3, "Inserting Queue Manager record");
                             psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, String.valueOf(clinic)+", "+reason+", "+dept+", "+status);
+                            psAUDIT.setString(5, String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status);
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
                             //inserting to audit log
-                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
+                            PreparedStatement psAUDIT1 = con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, "qmenrollment");
                             psAUDIT.setString(2, "insert");
                             psAUDIT.setString(3, "Insert into qmenrollment table");
                             psAUDIT.setString(4, "none");
-                            psAUDIT.setString(5, session.getadminid()+", "+newqmid+", "+ ", "+ newdeptid + ", " + session.getclinicid());
+                            psAUDIT.setString(5, session.getadminid() + ", " + newqmid + ", " + ", " + newdeptid + ", " + session.getclinicid());
                             psAUDIT.setString(6, session.getusername());
                             psAUDIT.executeUpdate();
                         }
                         con.close();
 
-                        message = "ADDED";
                     }
                 } catch (Exception ex) {
                     isSuccess = false;
                     message = "Exceptions" + ex;
                 }
-            }
             return message;
         }
 
         @Override
         protected void onPostExecute(String s) {
+/*
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
+*/
 
             if (isSuccess) {
                 Intent intent = new Intent(EnrollQM.this, EnrollQM.class);

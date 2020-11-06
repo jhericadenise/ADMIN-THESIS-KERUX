@@ -69,12 +69,9 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         return sdf.format(calendar.getTime());
     }
-    public void generateStat() {
 
-//        txtServed.setText(statModel.getQueuesServed());
-//        txtCancelled.setText(statModel.getQueuesCancelled());
-//        docQueue.setText(statModel.getHighestDoctorQueues());
-//        deptQueue.setText(statModel.getHighestDeptQueues());
+    //Generate statistic reports
+    public void generateStat() {
 
         String query = INSERT_STAT;
         Connection con = connectionClass.CONN();
@@ -98,15 +95,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
 
                 }
             }
-            /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
 
-           /* while (rs.next()) {
-                rs.getString(1);
-                rs.getString(2);
-                rs.getString(3);
-                rs.getString(4);
-
-            }*/
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -153,7 +142,6 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     public void ClickViewAudit(View view){
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
-
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
