@@ -105,6 +105,12 @@ public interface DBUtility {
     String TOTAL_NUM_UNENROLL_QM = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'unenroll queue manager'";
     String SELECT_AUDIT_LIST = "SELECT TableName, EventType, TimeStamp FROM audit_log";
 
+    //GENERATE STATISTIC
+    String QUEUES_SERVED = "SELECT QueuesServed, TimeEnd FROM statistics";
+    String QUEUES_CANCELLED = "SELECT QueuesCancelled, TimeEnd FROM statistics";
+    String HIGHEST_DOC_QUEUES = "SELECT HighestDocQueues, TimeEnd FROM statistics";
+    String HIGHEST_DEPT_QUEUES = "SELECT HighestDeptQueues, TimeEnd FROM statistics";
+
     String INSERT_STAT = "INSERT INTO statistics (QueuesServed, QueuesCancelled, HighestDocQueues, HighestDeptQueues, TimeStart, TimeEnd) SELECT " +
             "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql INNER JOIN queue q on q.Queue_ID = ql.Queue_ID INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID WHERE qm.Clinic_ID = ? AND ql.Status='Served'), " +
             "(SELECT COUNT(ql.QueueList_ID) FROM queuelist ql INNER JOIN queue q on q.Queue_ID = ql.Queue_ID INNER JOIN queueconnector qc on qc.Queue_ID = q.Queue_ID INNER JOIN queuemanager qm on qm.QueueManager_ID = qc.QueueManager_ID WHERE qm.Clinic_ID = ? AND ql.Status='Cancelled'), " +

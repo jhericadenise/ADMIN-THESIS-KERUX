@@ -140,7 +140,7 @@ public class Login extends AppCompatActivity implements DBUtility {
 
                         ResultSet rs=ps.executeQuery();
                         /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
-                        z = "Successfully logged in";
+                        z = "Incorrect username or password";
                         while (rs.next()) {
                             adminId=rs.getInt(1);
                             firstName = rs.getString(2);
@@ -157,6 +157,7 @@ public class Login extends AppCompatActivity implements DBUtility {
                             session.setclinicid(String.valueOf(clinicid));
                             session.setusername(usernam);
                             isSuccess = true;
+                            z = "Logged in successfully!";
                         }
                     }
                 }

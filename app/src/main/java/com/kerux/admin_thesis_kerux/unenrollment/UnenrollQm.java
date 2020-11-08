@@ -268,15 +268,13 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         startActivity(intent);
     }
 
-
     public String getQMString(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
 
-        String qmString1=name.replaceAll("third=", "");
-        String qmString2=qmString1.replaceAll(",.+", "");
-        Log.d("QMSTRING:", qmString2);
+        String qmString1=name.replaceAll(".*second=", "");
 
-        return qmString2;
+
+        return qmString1;
     }
 
     //Displaying the list of enrolled queue manager in the database

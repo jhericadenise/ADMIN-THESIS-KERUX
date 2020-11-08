@@ -3,7 +3,6 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -221,12 +220,10 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     public String getDeptString(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
 
-        String deptString1=name.replaceAll("third=", "");
-        String deptString2=deptString1.replaceAll(",.+", "");
-        Log.d("DEPTSTRING:", deptString2);
-
-        return deptString2;
+        String deptString = name.replaceAll(".*second=", "");
+        return deptString;
     }
+
 
 
     //function for displaying the enrolled department
