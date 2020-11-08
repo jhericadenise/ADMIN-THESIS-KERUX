@@ -257,7 +257,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             qmFirstName.setError("First Name too short");
             return false;
-        } else if(firstname.matches("^[A-Za-z]+$")) {
+        } else if(firstname.matches("[^a-zA-Z]")) {
             qmFirstName.setError("First name cannot have number values");
             return false;
         } else {
@@ -275,7 +275,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             qmLastName.setError("Last Name too short");
             return false;
-        } else if(lastname.matches("^[A-Za-z]+$")) {
+        } else if(lastname.matches("^[^a-zA-Z]")) {
             qmLastName.setError("Last name cannot have number values");
             return false;
         } else {

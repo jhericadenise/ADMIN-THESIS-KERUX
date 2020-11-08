@@ -35,6 +35,7 @@ public class Login extends AppCompatActivity implements DBUtility {
 
     private KeruxSession session;
     private SecurityWEB secweb;
+    private Security sec;
 
     ProgressDialog progressDialog; //
     ConnectionClass connectionClass;
@@ -52,14 +53,14 @@ public class Login extends AppCompatActivity implements DBUtility {
         button_login = (Button)findViewById(R.id.bttnLogin);
         secweb=new SecurityWEB();
         session = new KeruxSession(getApplicationContext());
-        bttnDashboard = findViewById(R.id.bttnDashboard);
+        /*bttnDashboard = findViewById(R.id.bttnDashboard);*/
 
-        bttnDashboard.setOnClickListener(new View.OnClickListener() {//
+       /* bttnDashboard.setOnClickListener(new View.OnClickListener() {//
             @Override
             public void onClick(View v) {
                 GoToDashboard();
             }
-        });
+        });*/
 
         button_login.setOnClickListener(new View.OnClickListener() {//
             @Override
@@ -79,7 +80,7 @@ public class Login extends AppCompatActivity implements DBUtility {
     public void insertAudit(){
         Connection con = connectionClass.CONN();
         PreparedStatement ps = null;
-        Security sec = new Security();
+        sec = new Security();
 
         try {
             String queryAUDIT = INSERT_AUDIT_LOG;
@@ -89,7 +90,7 @@ public class Login extends AppCompatActivity implements DBUtility {
             psAUDIT.setString(3, sec.encrypt("Logging in to the app"));
             psAUDIT.setString(4, sec.encrypt("none"));
             psAUDIT.setString(5, sec.encrypt("login"));
-            psAUDIT.setString(6, sec.encrypt(session.getusername()));
+            psAUDIT.setString(6, session.getusername());
             psAUDIT.executeUpdate();
         }
         catch (SQLException e) {

@@ -71,7 +71,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         qmDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
+                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM();
                 qmListdisp.execute();
             }
         });
@@ -81,20 +81,19 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final String selectedFromList = getQMString(String.valueOf((qmList.getItemAtPosition(position))));
-                Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollQm.this);
-                builder.setMessage("Unenroll Queue Manager?")
+                builder.setMessage("Are you sure you want to revoke the privilege of this queue manager" +
+                        "?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
-
-                                String reason = ((Spinner)findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
-                                Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_LONG).show();
-                                unenrollQM (selectedFromList, reason);
-                                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM ();
+                                String reason = ((Spinner) findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
+                                Toast.makeText(getApplicationContext(), selectedFromList, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Successfully revoked privilege", Toast.LENGTH_LONG).show();
+                                unenrollQM(selectedFromList, reason);
+                                UnenrollQm.ListQM qmListdisp = new UnenrollQm.ListQM();
                                 qmListdisp.execute();
                                 insertAudit();
                             }
@@ -107,8 +106,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 AlertDialog alert = builder.create();
                 alert.show();
             }
-
         });
+
         Button bttnDept = findViewById(R.id.bttnUnenrollDept);
         bttnDept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,7 +264,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
     //go back to the previous page
     public void goBack() {
-        Intent intent = new Intent(this, EnrollmentPage.class);
+        Intent intent = new Intent(this, UnenrollDoc.class);
         startActivity(intent);
     }
 
@@ -295,30 +294,35 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
+                qmList = (ListView) findViewById(R.id.listEnrolledQm);
                 String result = "Database Connection Successful\n";
                 Statement st = con.createStatement();
                 ResultSet rset = st.executeQuery(SELECT_LIST_QM);
                 ResultSetMetaData rsmd = rset.getMetaData();
 
                 List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>>();
+                data = new ArrayList<Map<String, String>> ();
 
                 while (rset.next()) {
-                    Map<String, String> datanum = new HashMap<String, String>();
+                    HashMap<String, String> datanum = new HashMap<String, String>();
                     datanum.put("first", rset.getString(1).toString());
                     datanum.put("second", rset.getString(2).toString());
                     datanum.put("third", rset.getString(3).toString());
-                    datanum.put("fourth", rset.getString(4).toString());
+
+                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
+                            "\n" + rset.getString(2).toString() +"\n \n"
+                    + "STATUS" +"\n" + rset.getString(3).toString());*/
+
                     data.add(datanum);
                 }
 
                 listAdapter = new SimpleAdapter (UnenrollQm.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth"},
-                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
+
                 while (rset.next()) {
-                    result += rset.getString(2).toString();
+                    result += rset.getString(2) + "\n";
                 }
-                message = "ADDED SUCCESSFULLY!";
+                message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
                 message = "Exceptions" + ex;

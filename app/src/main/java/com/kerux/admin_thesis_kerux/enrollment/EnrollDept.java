@@ -45,6 +45,9 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
     private KeruxSession session;
     DrawerLayout drawerLayout;
 
+    private Security sec;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,7 +174,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         } else if (name.length() < 2){
             deptName.setError("Department name too short");
             return false;
-        } else if(name.matches("^[A-Za-z]+$")) {
+        } else if(name.matches("[^a-zA-Z]")) {
             deptName.setError("Department name cannot have number values");
             return false;
         }

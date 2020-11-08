@@ -21,9 +21,7 @@ public interface DBUtility {
             "from clinic INNER JOIN doctor ON clinic.Clinic_ID = doctor.Clinic_ID " +
             "INNER JOIN department ON department.Department_ID = doctor.Department_ID WHERE doctor.Status = 'Active'";
     //Queue Manager
-    String SELECT_LIST_QM = "SELECT department.Name, queuemanager.FirstName, queuemanager.LastName from department " +
-            "INNER JOIN queuemanager ON department.Department_ID = queuemanager.Department_ID " +
-            "WHERE queuemanager.Status = 'Active'";
+    String SELECT_LIST_QM = "SELECT department.Name, queuemanager.FirstName, queuemanager.LastName from department INNER JOIN queuemanager ON department.Department_ID = queuemanager.Department_ID WHERE queuemanager.Status = 'Active'";
     //Accounts Patient
     String SELECT_ACCOUNTS_LIST = "select patient_type.Type, patient.ContactNo, patient.FirstName, patient.LastName, patient.Email from patient_type " +
             "INNER JOIN patient ON patient_type.PatientType_ID = patient.PatientType_ID WHERE patient.Status = 'Active'";
@@ -90,6 +88,12 @@ public interface DBUtility {
 
     //UPDATE ADMIN PROFILE
     String UPDATE_PROFILE="UPDATE admin SET FirstName = ?, LastName = ?, Email = ?, Username = ?, Password = ? WHERE Admin_ID = ?";
+
+    //sql statement for edit profile to not require the input of password when just editing basic patient information
+    String UPDATE_PROFILE_PASS = "UPDATE admin SET password = ?";
+
+    //sql statement to compare the "old password" the patient has inputted in the text field from the one in the database
+    String CONFIRM_ADMIN_PASS = "SELECT Password FROM admin where Password = ?";
 
     //COUNTING RECORDS
     String TOTAL_NUM_LOGIN = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'login'";

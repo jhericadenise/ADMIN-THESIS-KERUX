@@ -132,6 +132,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
+
         Security sec = new Security();
 
         @Override
@@ -155,14 +156,16 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
                 while (rset.next()) {
                     HashMap<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("first", sec.decrypt(rset.getString(1).toString()));
-                    datanum.put("second", sec.decrypt(rset.getString(2).toString()));
-                    datanum.put("third", sec.decrypt(rset.getString(3).toString()));
-                    datanum.put("fourth", sec.decrypt(rset.getString(4).toString()));
-                    datanum.put("fifth", sec.decrypt(rset.getString(5).toString()));
-                    datanum.put("sixth", sec.decrypt(rset.getString(6).toString()));
-                    datanum.put("seventh", sec.decrypt(rset.getString(7).toString()));
-                    datanum.put("eight", sec.decrypt(rset.getString(8).toString()));
+                    datanum.put("first", rset.getString(1).toString());
+                    datanum.put("second", rset.getString(2).toString());
+                    datanum.put("third", rset.getString(3).toString());
+                  /*  Log.d( "AUDIT", rset.getString(2));
+                    Log.d( "AUDIT", rset.getString(3));*/
+                    datanum.put("fourth", rset.getString(4).toString());
+                    datanum.put("fifth", rset.getString(5).toString());
+                    datanum.put("sixth", rset.getString(6).toString());
+                    datanum.put("seventh", rset.getString(7).toString());
+                    datanum.put("eight", rset.getString(8).toString());
                     data.add(datanum);
                 }
 

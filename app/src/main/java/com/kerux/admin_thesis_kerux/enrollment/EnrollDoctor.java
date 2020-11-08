@@ -195,7 +195,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             doctorFName.setError("First Name too short");
             return false;
-        } else if(firstname.matches("^[A-Za-z]+$")) {
+        } else if(firstname.matches("[^a-zA-Z]")) {
             doctorLName.setError("Last name cannot have number values");
             return false;
         } else {
@@ -213,7 +213,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             doctorLName.setError("Last Name too short");
             return false;
-        } else if(lastname.matches("^[A-Za-z]+$")) {
+        } else if(lastname.matches("[^a-zA-Z]")) {
             doctorLName.setError("Last name cannot have number values");
             return false;
         }

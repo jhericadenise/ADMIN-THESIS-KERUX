@@ -23,17 +23,20 @@ import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class EditProfile extends AppCompatActivity implements DBUtility {
 
     private EditText adminFName;
     private EditText adminLName;
-    private EditText adminPassword;
+    private EditText adminNewPassword;
+    private EditText adminOldPassword;
     private EditText adminEmail;
     private EditText adminUsername;
     private String AdminID;
     private Button saveChanges;
     private SecurityWEB secweb;
+    private Button confirmPass;
 
     ConnectionClass connectionClass;
     private KeruxSession session;//global variable
@@ -57,7 +60,8 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
         adminFName = (EditText)findViewById(R.id.txtboxFirstName);
         adminLName = (EditText)findViewById(R.id.txtboxLastName);
-        adminPassword = (EditText)findViewById(R.id.txtboxPassword);
+        adminNewPassword = (EditText)findViewById(R.id.txtboxNewPassword);
+        adminOldPassword = (EditText)findViewById(R.id.txtboxOldPassword);
         adminEmail = (EditText)findViewById(R.id.txtboxEmail);
         adminUsername = findViewById(R.id.txtboxUsername);
 
@@ -72,8 +76,8 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         saveChanges.setOnClickListener(new View.OnClickListener() {//
             @Override
             public void onClick(View v) {
-                updatePatientInfo updatepinfo=new updatePatientInfo();
-                updatepinfo.execute();
+                updateInfo updateAdmin=new updateInfo();
+                updateAdmin.execute();
             }
         });
 
@@ -134,10 +138,9 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    private class updatePatientInfo extends AsyncTask<String,String,String> {
+    private class updateInfo extends AsyncTask<String,String,String> {
         String adminFirstName= adminFName.getText().toString();
         String adminLastName = adminLName.getText().toString();
-        String adminPass = adminPassword.getText().toString();
         String adminEditEmail = adminEmail.getText().toString();
         String adminEditUname = adminUsername.getText().toString();
 
@@ -164,7 +167,7 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
         @Override
         protected String doInBackground(String... params) {
-            if(adminFirstName.trim().equals("")||adminLastName.trim().equals("")||adminPass.trim().equals(""))
+            if(adminFirstName.trim().equals("")||adminLastName.trim().equals(""))
                 z = "Please enter values in the Name and Password....";
             else
             {
@@ -185,14 +188,13 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                             ps.setString(3, adminLastName);
                             ps.setString(4, adminEditEmail);
                             ps.setString(5, secweb.encrypt(adminEditUname));
-                            ps.setString(6, secweb.encrypt(adminPass));
 
                             //*ps.setString(2, session.getusername());*//*
                             // Statement stmt = con.createStatement();
                             // stmt.executeUpdate(query);
                             ps.executeUpdate(); // rs used by ps which is edit profile
                             isSuccess = true;
-                            z = "Login successfull";
+                            z = "Profile Successfully edited";
 
                         } catch (Exception e) {
                             isSuccess = false;
@@ -222,5 +224,99 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
 
     }
+    //method to update the patient password
+
+    private class updatePass extends AsyncTask<String,String,String> {
+
+        String adminNewPass = adminNewPassword.getText().toString();
+        String adminOldPass = adminOldPassword.getText().toString();
+
+        String z = "";
+        boolean isSuccess = false;
+
+        /*String pID;*/
+
+        /*ArrayList<String> ar = new ArrayList<String>();*/
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+
+            super.onPreExecute();
+        }
+
+        /*sql retrieves current patient data using select method and place in corresponding text fields
+                user will now have the chance to edit the said text fields
+                user will press the update button
+                sql update will get the entry from the fields and push the new data to the database
+                make an intent that will either go back to the dashboard or stay at the edit profile page*/
+
+        @Override
+        protected String doInBackground(String... params) {
+            if(adminNewPass.trim().equals("")||adminOldPass.trim().equals(""))
+                z = "Please enter your old and new password.";
+            else
+            {
+                try {
+                    Connection con = connectionClass.CONN();
+                    if (con == null) {
+                        z = "Please check your internet connection";
+                    } else {
+                        try {
+
+                            String query = CONFIRM_ADMIN_PASS;
+
+                            PreparedStatement ps = con.prepareStatement(query);
+                            ps.setString(1, adminOldPass);
+
+                            ResultSet rs = ps.executeQuery();
+
+                            while (rs.next()) {
+                                String oldPassword = rs.getString(1);
+                                if(oldPassword.equals(adminOldPass)){
+                                    String query1 = UPDATE_PROFILE_PASS;
+
+                                    PreparedStatement ps1 = con.prepareStatement(query1);
+                                    ps1.setString(1, adminNewPass);
+
+                                    ps1.executeUpdate();
+
+                                }
+
+                            }
+
+                            ps.executeUpdate(); // rs used by ps which is edit profile
+                            isSuccess = true;
+                            z = "Password successfully edited!";
+
+
+                        } catch (Exception e) {
+                            isSuccess = false;
+                            Thread.dumpStack(); //always put this from sir mon
+                        }
+                    }
+                }catch (Exception ex)
+                {
+                    isSuccess = false;
+                    z = "Exceptions"+ex;
+                }
+            }
+            return z;        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(getBaseContext(),""+z,Toast.LENGTH_LONG).show();
+            if(isSuccess) {
+                Intent intent=new Intent(EditProfile.this,MainActivity.class);
+                startActivity(intent);
+
+            }
+            progressDialog.hide();
+        }
+
+
+    }
+
 
 }

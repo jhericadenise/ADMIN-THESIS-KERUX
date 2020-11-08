@@ -18,21 +18,21 @@
 
     <EditText
         android:id="@+id/txtboxUname"
-        android:layout_width="196dp"
+        android:layout_width="180dp"
         android:layout_height="55dp"
         android:layout_marginStart="20dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.798"
+        app:layout_constraintHorizontal_bias="0.746"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.487" />
 
     <EditText
         android:id="@+id/txtboxPass"
-        android:layout_width="195dp"
+        android:layout_width="180dp"
         android:layout_height="51dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
@@ -40,7 +40,7 @@
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.793"
+        app:layout_constraintHorizontal_bias="0.743"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.602" />
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.779" />
 
-    <Button
+  <!--  <Button
         android:id="@+id/bttnDashboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,5 +71,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.952" />
-
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>
