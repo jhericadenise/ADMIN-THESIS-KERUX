@@ -1,9 +1,12 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -53,6 +56,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
     private Spinner spinnerDocType;
     private Spinner spinnerDep;
     private Spinner spinnerClinic;
+    private EditText docType;
 
     ConnectionClass connectionClass;
 
@@ -66,12 +70,13 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_doctor);
         connectionClass = new ConnectionClass(); //create ConnectionClass
-
+        final Context context = this;
         session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollDoc = findViewById(R.id.bttnEnrollDoc);
+        Button bttnAdd = findViewById(R.id.bttnAddDocType);
         doctorFName = (EditText) findViewById(R.id.txtboxDocFName);
         doctorLName = (EditText) findViewById(R.id.txtboxDocLName);
         roomNo = (EditText) findViewById(R.id.txtboxRoomNo);
@@ -85,7 +90,49 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         saturday = (CheckBox) findViewById(R.id.cBoxSat);
         spinnerDocType = (Spinner) findViewById(R.id.spinnerDocType);
         spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
+        docType = findViewById(R.id.txtboxDoctorType);
 
+        bttnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* Intent intent = new Intent(EnrollDoctor.this, EnrollDoctorType.class);
+                startActivity(intent);*/
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(context);
+                View promptsView = li.inflate(R.layout.activity_enroll_doctor_type, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView.findViewById(R.id.txtboxDoctorType);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("ENROLL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        DoEnrollDocType doEnrollDocType = new DoEnrollDocType();
+                                        doEnrollDocType.execute();
+                                    }
+                                })
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
+        });
 
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +169,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         dep.execute();
         Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
         docType.execute();
+
+    }
+
+    public  void openDialog(){
 
     }
 
@@ -405,6 +456,87 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         @Override
         protected void onPostExecute(String s) {
+            Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
+
+            if (isSuccess) {
+                Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
+                startActivity(intent);
+            }
+
+        }
+    }
+
+    private class DoEnrollDocType extends AsyncTask<String, String, String> {
+
+        Security sec = new Security();
+        boolean isSuccess = false;
+        String message = "";
+        String enrollDoctorType = docType.getText().toString();
+        boolean hasRecord = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            Connection con = connectionClass.CONN();
+          /*  PreparedStatement ps = null;
+            try {
+                ps = con.prepareStatement(VALIDATION_DOC_TYPE);
+                ps.setString(1, enrollDoctorType);
+
+                ResultSet rs=ps.executeQuery();
+
+                if(rs.next()){
+                    hasRecord = true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            message = "Record already exists";
+*/
+
+            if (enrollDoctorType.trim().equals("")) {
+                message = "Please enter all fields";
+            }
+            else if (hasRecord){
+                message = "Record already exists";
+            }
+            else {
+                try {
+                    if (con == null) {
+                        message = "CANNOT ADD RECORD";
+
+                    } else {
+                        //inserting data of department to the database
+                        String query = INSERT_DOC_TYPE_ENROLLMENT;
+                        PreparedStatement ps1 = null;
+                        try {
+                            ps1 = con.prepareStatement(query);
+                            ps1.setString(1, enrollDoctorType);
+                            ps1.executeUpdate();
+                            message = "Added Successfully!";
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                        con.close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    message = "Exceptions"+ex;
+                    Log.d("ex", ex.getMessage () + " Jheca");
+                }
+            }
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {

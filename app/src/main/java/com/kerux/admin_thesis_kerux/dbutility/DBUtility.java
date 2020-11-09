@@ -61,15 +61,17 @@ public interface DBUtility {
     String INSERT_DEPT_ENROLLMENT = "INSERT INTO department_enrollment (Admin_ID, Department_ID, Clinic_ID) values (?,?,?)";
     String INSERT_QM_ENROLLMENT = "INSERT INTO qmenrollment (QueueManager_ID, Admin_ID, Department_ID, Clinic_ID) values (?,?,?,?)";
     String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Department_ID, Doctor_ID) values (?,?,?,?)";
+    String INSERT_DOC_TYPE_ENROLLMENT = "INSERT INTO doctor_type (DoctorType) values (?)";
 
     //INSERTING DATAS IN AUDIT
     String INSERT_AUDIT_LOG = "INSERT INTO audit_log (TableName, EventType, SqlCommand, OldData, NewData, LoginName)" +
             "values (?,?,?,?,?,?)";
 
     //VALIDATION
-    String VALIDATION_DEPT = "Select * from department where name = ? AND Status = 'Active' AND Clinic_ID = ? AND Clinic_ID = ?";
-    String VALIDATION_DOCTOR = "Select * from doctor where firstName = ? AND lastName = ? AND Status = 'Active' AND Clinic_ID = ?";
-    String VALIDATION_QM = "Select * from queuemanager where firstName = ? AND LastName = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_DEPT = "SELECT * from department where name = ? AND Status = 'Active' AND Clinic_ID = ? AND Clinic_ID = ?";
+    String VALIDATION_DOCTOR = "SELECT * from doctor where firstName = ? AND lastName = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_QM = "SELECT * from queuemanager where firstName = ? AND LastName = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_DOC_TYPE = "SELECT * FROM doctor_type WHERE DoctorType = ?";
 
     //UNENROLLING RECORDS
     String UNENROLL_QM = "UPDATE queuemanager SET Status = 'Inactive' WHERE FirstName = ?";

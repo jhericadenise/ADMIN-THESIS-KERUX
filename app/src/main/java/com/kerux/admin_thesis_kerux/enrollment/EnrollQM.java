@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EnrollQM extends AppCompatActivity implements DBUtility{
@@ -223,10 +223,17 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
     private boolean validateEmail() {
         String emailInputQM = qmEmail.getText().toString().trim();
+
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        CharSequence inputStr = emailInputQM;
+
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
         if (emailInputQM.isEmpty()) {
             qmEmail.setError("Field can't be empty");
             return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInputQM).matches()) {
+        } else if (!matcher.matches()) {
             qmEmail.setError("Please enter a valid email address");
             return false;
         } else {
@@ -234,6 +241,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             return true;
         }
     }
+
     private boolean validateUsername() {
         String usernameInputQM = qmUname.getText().toString().trim();
         if (usernameInputQM.isEmpty()) {

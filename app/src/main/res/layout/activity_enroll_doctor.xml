@@ -193,6 +193,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.989" />
+
+        <Button
+            android:id="@+id/bttnAddDocType"
+            android:layout_width="30dp"
+            android:layout_height="39dp"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.954"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.743" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
