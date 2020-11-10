@@ -35,10 +35,14 @@ import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -238,15 +242,11 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
             z="";
 
             try {
-                Connection con = connectionClass.CONN();
-                Security sec =new Security();
-                if (con == null) {
-                    z = "Please check your internet connection";
-                } else {
+
                     createPdf();
                     viewPdf();
                     z="Report Generated";
-                }
+
             }
             catch (Exception ex)
             {
@@ -368,127 +368,30 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         ArrayList<String> data=new ArrayList<>();
         String error="";
         try {
-            Connection con = connectionClass.CONN();
-            Security sec =new Security();
-            if (con == null) {
-                error="Please check your internet connection";
-                Log.d("WENT HEHEHE", "Help");
-            } else {
 
-                //LOGIN TOTAL
-                String totalLogin = TOTAL_NUM_LOGIN;
-                PreparedStatement ps = con.prepareStatement(totalLogin);
-//                ps.setString(1, tableName);
 
-                ResultSet rs=ps.executeQuery();
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/AuditReportAdminServlet");
+            URLConnection connection = url.openConnection();
 
-                while (rs.next())
-                {
-                    data.add("Total Number of Logins to the app:");
-                    data.add(rs.getString(1));
-                    for(String num:data){
-                        Log.d("MEN", num+"YYYYY");
-                    }
-                }
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-                //TOTAL ENROLLED DEPARTMENT
-                String totalDept = TOTAL_NUM_ENROLLMENT_DEPT;
-                PreparedStatement ps2 = con.prepareStatement(totalDept);
-//                ps2.setString(1, tableName);
 
-                ResultSet rs2=ps2.executeQuery();
 
-                while (rs2.next())
-                {
-                    data.add("Total Number of Department enrolled:");
-                    data.add(rs2.getString(1));
-                }
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
 
-                //TOTAL ENROLLED QUEUE MANAGER
-                String totalQm = TOTAL_NUM_ENROLLMENT_QM;
-                PreparedStatement ps3 = con.prepareStatement(totalQm);
-//                ps3.setString(1, tableName);
-
-                ResultSet rs3=ps3.executeQuery();
-
-                while (rs3.next())
-                {
-                    data.add("Total Number of Queue Manager enrolled:");
-                    data.add(rs3.getString(1));
-                }
-
-                //TOTAL  ENROLLED DOCTOR
-                String totalDoc = TOTAL_NUM_ENROLLMENT_DOC;
-                PreparedStatement ps4 = con.prepareStatement(totalDoc);
-//                ps4.setString(1, tableName);
-
-                ResultSet rs4=ps4.executeQuery();
-
-                while (rs4.next())
-                {
-                    data.add("Total Number of Doctor enrolled:");
-                    data.add(rs4.getString(1));
-                }
-
-                //TOTAL UNENROLLED DEPARTMENT
-                String totalUnenrollDept = TOTAL_NUM_UNENROLL_DEPT;
-                PreparedStatement ps5 = con.prepareStatement(totalUnenrollDept);
-//                ps5.setString(1, tableName);
-
-                ResultSet rs5 = ps5.executeQuery();
-
-                while (rs5.next())
-                {
-                    data.add("Total Number of Department unenrolled:");
-                    data.add(rs5.getString(1));
-                }
-
-                //TOTAL UNENROLLED QUEUE MANAGER
-                String totalUnenrollQM = TOTAL_NUM_UNENROLL_QM;
-                PreparedStatement ps6 = con.prepareStatement(totalUnenrollQM);
-//                ps5.setString(1, tableName);
-
-                ResultSet rs6 = ps6.executeQuery();
-
-                while (rs6.next())
-                {
-                    data.add("Total Number of Queue Manager unenrolled:");
-                    data.add(rs6.getString(1));
-                }
-
-                //TOTAL UNENROLLED DOCTOR
-                String totalUnenrollDoc = TOTAL_NUM_UNENROLL_DOC;
-                PreparedStatement ps7 = con.prepareStatement(totalUnenrollDoc);
-//                ps5.setString(1, tableName);
-
-                ResultSet rs7 = ps7.executeQuery();
-
-                while (rs7.next())
-                {
-                    data.add("Total Number of Doctor unenrolled:");
-                    data.add(rs7.getString(1));
-                }
-
-                //LIST
-                String queryLIST=SELECT_AUDIT_LIST;
-
-                PreparedStatement ps8 = con.prepareStatement(queryLIST);
-//                ps8.setString(1, auditID);
-
-                ResultSet rs8 = ps8.executeQuery();
-                data.add("---------------------------------");
-                data.add("Table Name");
-                data.add("Event Type");
-                data.add("Timestamp");
-
-                while (rs8.next())
-                {
-                    data.add(rs8.getString(1));
-                    data.add(rs8.getString(2));
-                    data.add(rs8.getString(3));
-                }
-
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                data.add(returnString);
             }
+
+            in.close();
+
+
         }
         catch (Exception ex)
         {

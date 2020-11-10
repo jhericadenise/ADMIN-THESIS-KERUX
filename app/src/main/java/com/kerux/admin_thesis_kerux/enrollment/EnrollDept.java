@@ -2,6 +2,7 @@ package com.kerux.admin_thesis_kerux.enrollment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,11 +30,19 @@ import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -197,6 +206,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         String message = "";
         String depName = deptName.getText().toString();
         String Status = "Active";
+        String newdeptid="";
         String timeStamp = timeStamp();
         boolean hasRecord = false;
         int clinicName = Integer.parseInt(session.getclinicid());
@@ -208,84 +218,56 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         }
         @Override
         protected String doInBackground(String... params) {
-            Connection con = connectionClass.CONN();
-            PreparedStatement ps = null;
+
             try {
-                ps = con.prepareStatement(VALIDATION_DEPT);
-                ps.setString(1, depName);
-                ps.setInt(2, clinicName);
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDepartmentServlet");
+                URLConnection connection = url.openConnection();
 
-                ResultSet rs=ps.executeQuery();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                if(rs.next()){
-                    hasRecord = true;
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("depName", depName)
+                        .appendQueryParameter("clinicName", Integer.toString(clinicName))
+                        .appendQueryParameter("reason", Integer.toString(reason))
+                        .appendQueryParameter("Status", Status)
+                        .appendQueryParameter("getclinicid", session.getclinicid())
+                        .appendQueryParameter("getadminid", session.getadminid());
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    isSuccess=true;
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-            if (hasRecord){
-                message = "Record already exists";
-            }
-            else {
-                try {
-                    if (con == null) {
-                        message = "CANNOT ADD RECORD";
-
-                    } else {
-                        //inserting data of department to the database
-                        String query = INSERT_DEPT;
-                        PreparedStatement ps1 = con.prepareStatement(query);
-                        ps1.setInt(1, clinicName);
-                        ps1.setInt(2, reason);
-                        ps1.setString(3, depName);
-                        ps1.setString(4, Status);
-
-                        ps1.executeUpdate();
-
-                        String query2 = SELECT_NEW_DEPARTMENT_ID; //DON'T NEED TO LOG, IT JUST GETS THE DEP_ID OF THE NEWLY INSERTED DEPARTMENT
-                        PreparedStatement ps2 = con.prepareStatement(query2);
-                        ResultSet rs1 = ps2.executeQuery();
-                        while (rs1.next()) {
-                            String newdeptid = rs1.getString(1);
-
-                            //insert department into department_enrollment table
-                            String query3 = INSERT_DEPT_ENROLLMENT;
-                            PreparedStatement ps3 = con.prepareStatement(query3);
-                            ps3.setString(1, session.getadminid());
-                            ps3.setString(2, newdeptid);
-                            ps3.setString(3, session.getclinicid());
-                            ps3.executeUpdate();
-                            //insert to audit log table
-                            String queryAUDIT = INSERT_AUDIT_LOG;
-                            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("department"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Inserting a Department record"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinicName) + ", " + reason + ", " + depName + ", " + Status));
-                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                            //inserting to audit log
-                            PreparedStatement psAUDIT1 = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("department_enrollment"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Inserting into department_enrollment table"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()));
-                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                        }
-                        con.close();
-                        message = "ADDED SUCCESSFULLY!";
+                for (int i = 0; i < output.size(); i++) {
+                    String line=output.get(i);
+                    String notnullline = line.replaceAll("null", "0");
+                    String [] words=notnullline.split("\\s\\|\\s");
+                    message=words[0];
+                    if(!words[1].isEmpty()){
+                        newdeptid=words[1];
                     }
-                } catch (Exception ex) {
-                    isSuccess = false;
-                    message = "Exceptions" + ex;
-                    Log.d("ex", ex.getMessage() + " Jheca");
                 }
+                in.close();
+            }catch(Exception e){
+                message="Exceptions"+e;
             }
+
             return message;
 
         }
@@ -294,10 +276,60 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
             Toast.makeText(getBaseContext(),""+message,Toast.LENGTH_LONG).show();
 
             if(isSuccess) {
+                try{
+                    insertAudit( sec.encrypt("department"),  sec.encrypt("insert"),  sec.encrypt("Inserting a Department record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinicName) + ", " + reason + ", " + depName + ", " + Status),  sec.encrypt(session.getusername()));
+                    insertAudit( sec.encrypt("department_enrollment"),  sec.encrypt("insert"),  sec.encrypt("Inserting into department_enrollment table"),  sec.encrypt("none"),  sec.encrypt(session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
+                }catch(Exception e){
+                    Log.d("insertAudit", e.getMessage());
+                }
+
                 Intent intent=new Intent(EnrollDept.this,EnrollDept.class);
                 startActivity(intent);
             }
 
+        }
+
+        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URLConnection connection = url.openConnection();
+
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("first", first)
+                        .appendQueryParameter("second", second)
+                        .appendQueryParameter("third", third)
+                        .appendQueryParameter("fourth", fourth)
+                        .appendQueryParameter("fifth", fifth)
+                        .appendQueryParameter("sixth", sixth);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                in.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }

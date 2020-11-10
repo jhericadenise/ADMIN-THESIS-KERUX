@@ -3,6 +3,7 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
@@ -33,7 +36,15 @@ import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,7 +70,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     private EditText table;
 
     DrawerLayout drawerLayout;
-    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerDoctor.php";
+    private static String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerDoctorServlet";
 
     KeruxSession session;
 
@@ -102,7 +113,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                                         DoEnrollReasonDoc doEnrollReason = new DoEnrollReasonDoc();
                                         doEnrollReason.execute();
                                         //for the spinner
-                                        Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType doc = new DownloaderDocType(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
                                         doc.execute();
                                     }
                                 })
@@ -166,7 +177,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         });
 
         //for the spinner
-        Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType doc = new DownloaderDocType(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
         doc.execute();
 
         //restrict going to another activity for unenroll
@@ -242,8 +253,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
     //insert to audit logs
     public void insertAudit(){
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
+
         Security sec = new Security();
 
         String statusActive = "Active";
@@ -251,19 +261,42 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
 
         try {
-            String queryAUDIT = INSERT_AUDIT_LOG;
-            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-            psAUDIT.setString(1, sec.encrypt("doctor"));
-            psAUDIT.setString(2, sec.encrypt("unenroll doctor"));
-            psAUDIT.setString(3, sec.encrypt("Unenrolling a doctor record"));
-            psAUDIT.setString(4, sec.encrypt("Status = " + statusActive));
-            psAUDIT.setString(5, sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason));
-            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-            psAUDIT.executeUpdate();
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URLConnection connection = url.openConnection();
+
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("first", sec.encrypt("doctor"))
+                    .appendQueryParameter("second", sec.encrypt("unenroll doctor"))
+                    .appendQueryParameter("third", sec.encrypt("Unenrolling a doctor record"))
+                    .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
+                    .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))
+                    .appendQueryParameter("sixth", session.getusername());
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            in.close();
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -271,24 +304,38 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     //unenrolling doctor records
     public void unenrollDoc(String firstName, String reason){
 
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-
-        String query = UNENROLL_DOC_REASON;
-        PreparedStatement ps1 = null;
-
         try {
-            ps = con.prepareStatement(UNENROLL_DOCTOR);
-            ps.setString(1, firstName);
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollDocServlet");
+            URLConnection connection = url.openConnection();
 
-            ps1 = con.prepareStatement(query);
-            ps1.setString(1, reason);
-            ps1.setString(2, firstName);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-            ps.executeUpdate();
-            ps1.executeUpdate();
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("firstName", firstName)
+                    .appendQueryParameter("reason", reason);
+            String query = builder.build().getEncodedQuery();
 
-        } catch (SQLException e) {
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            in.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -296,31 +343,48 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     //checking if doctor tables still have Active records
     public boolean checkDoctorList(){
         boolean allInactiveRec = false;
-        Connection con = connectionClass.CONN();
+
         String docStatus = "Active";
 
-        if(con != null){ //means that we have a valid db connection
-            try{//inserting records; called INSERT_REC from DBUtility.java
-                // use of parameterized query such as PreparedStatement prevents SQL injection which is considered a way to
-                //prevent threat in any web app
-                String query = SELECT_UNENROLLED_DOC;
-                PreparedStatement ps = con.prepareStatement(query);
-                ps.setString(1, docStatus);
+        try {
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/CheckDocList");
+            URLConnection connection = url.openConnection();
 
-                ResultSet rs=ps.executeQuery();
-                if(rs.next()){
-                    Log.d("WENT HERE", "DIDNT GO IN");
-                }
-                else{
-                    Log.d("WENT HERE", "WENT IN");
-                    allInactiveRec=true;
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-                }
-            } catch(SQLException sqle){
-                System.err.println(sqle.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("docStatus", docStatus);
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
             }
+            String result=output.get(0);
+            if (result.equals("true")){
+
+            }
+            else{
+                allInactiveRec=true;
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return allInactiveRec;
     }
@@ -359,33 +423,36 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             try {
                 //listview, list the names of all enrolled department
                 docList = (ListView) findViewById(R.id.listEnrolledDoc);
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_LIST_DOC);
-                ResultSetMetaData rsmd = rset.getMetaData();
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDocServlet");
+                URLConnection connection = url.openConnection();
 
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>> ();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                while (rset.next()) {
-                    HashMap<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("first", rset.getString(1).toString());
-                    datanum.put("second", rset.getString(2).toString());
-                    datanum.put("third", rset.getString(3).toString());
 
-                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
-                            "\n" + rset.getString(2).toString() +"\n \n"
-                    + "STATUS" +"\n" + rset.getString(3).toString());*/
-
-                    data.add(datanum);
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                StringBuffer receivedData=new StringBuffer();
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    receivedData.append(returnString+"n");
+                    output.add(returnString);
                 }
+                for (int i = 0; i < output.size(); i++) {
+                    message = output.get(i);
+                }
+                in.close();
+                String retrieved=receivedData.toString();
+                List<Map<String, String>> data= new ArrayList<Map<String, String>>();
 
+                data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
                         R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
-                while (rset.next()) {
-                    result += rset.getString(2) + "\n";
-                }
+
                 message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
@@ -424,31 +491,47 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             }
             else {
                 try {
-                    if (con == null) {
-                        message = "CANNOT ADD RECORD";
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDocReasonServlet");
+                    URLConnection connection = url.openConnection();
 
-                    } else {
-                        //inserting data of department to the database
-                        String query = INSERT_REASON;
-                        PreparedStatement ps1 = null;
-                        try {
-                            ps1 = con.prepareStatement(query);
-                            ps1.setString(1, reason);
-                            ps1.setString(2, tableName);
-                            ps1.executeUpdate();
-                            message = "Added Successfully!";
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
-                        }
-                        con.close();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("reason", reason)
+                            .appendQueryParameter("tableName", tableName);
+                    String query = builder.build().getEncodedQuery();
+
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(
+                            new OutputStreamWriter(os, "UTF-8"));
+                    writer.write(query);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String returnString="";
+                    ArrayList<String> output=new ArrayList<String>();
+                    while ((returnString = in.readLine()) != null)
+                    {
+                        isSuccess=true;
+                        Log.d("returnString", returnString);
+                        output.add(returnString);
                     }
-                }
-                catch (Exception ex)
-                {
+                    for (int i = 0; i < output.size(); i++) {
+                        message = output.get(i);
+                    }
+                    in.close();
+                } catch (Exception e) {
                     isSuccess = false;
-                    message = "Exceptions"+ex;
-                    Log.d("ex", ex.getMessage () + " Jheca");
+                    message = "Exceptions"+e;
+                    Log.d("ex", e.getMessage () + " Jheca");
+                    e.printStackTrace();
                 }
+
             }
             return message;
         }

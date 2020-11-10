@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,10 +21,18 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
  public class MainActivity extends AppCompatActivity implements View.OnClickListener, DBUtility {
     //Initialize Variable
@@ -50,34 +60,60 @@ import java.sql.SQLException;
     }
 
     public void totalDept(){
-        String query = DB_DEPT;
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-        try {
-            ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
-                deptCount.setText(rs.getString(1));
+        try {
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalDeptAdminServlet");
+            URLConnection connection = url.openConnection();
+
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            for (int i = 0; i < output.size(); i++) {
+                deptCount.setText(output.get(i));
+
+            }
+
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
      public void totalQm(){
-         String query1 = DB_QM;
-         Connection con = connectionClass.CONN();
-         PreparedStatement ps1 = null;
          try {
-             ps1 = con.prepareStatement(query1);
-             ResultSet rs1 = ps1.executeQuery();
+             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalQMAdminServlet");
+             URLConnection connection = url.openConnection();
 
-             while (rs1.next()) {
-                 qmCount.setText(rs1.getString(1));
+             connection.setReadTimeout(10000);
+             connection.setConnectTimeout(15000);
+             connection.setDoInput(true);
+             connection.setDoOutput(true);
+
+             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+             String returnString="";
+             ArrayList<String> output=new ArrayList<String>();
+             while ((returnString = in.readLine()) != null)
+             {
+                 Log.d("returnString", returnString);
+                 output.add(returnString);
              }
-         } catch (SQLException throwables) {
-             throwables.printStackTrace();
+             for (int i = 0; i < output.size(); i++) {
+                 qmCount.setText(output.get(i));
+             }
+
+             in.close();
+         } catch (Exception e) {
+             e.printStackTrace();
          }
      }
 

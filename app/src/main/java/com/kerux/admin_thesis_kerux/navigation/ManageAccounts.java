@@ -3,6 +3,7 @@ package com.kerux.admin_thesis_kerux.navigation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
@@ -29,8 +32,16 @@ import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,7 +70,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
     DrawerLayout drawerLayout;
     private Spinner spinnerReasonPatient;
-    private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerPatient.php";
+    private static String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/resonSpinnerPatientServlet";
     KeruxSession session;
 
     @Override
@@ -102,7 +113,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                                         DoEnrollReasonAcc doEnrollReasonAcc = new DoEnrollReasonAcc();
                                         doEnrollReasonAcc.execute();
                                         //for refreshing the spinner
-                                        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
                                         dept.execute();
                                     }
                                 })
@@ -169,7 +180,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         });
 
         //spinner downloader
-        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
         dept.execute();
     }
 
@@ -235,43 +246,82 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         String statusActive = "Active";
         String statusInactive = "Inactive";
         String reason = ((Spinner)findViewById(R.id.spinnerAccReason)).getSelectedItem().toString();
-
         try {
-            String queryAUDIT = INSERT_AUDIT_LOG;
-            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-            psAUDIT.setString(1, "patient accounts");
-            psAUDIT.setString(2, "block user patient");
-            psAUDIT.setString(3, BLOCK_PRIVILEGES);
-            psAUDIT.setString(4,  "Status = " + statusActive);
-            psAUDIT.setString(5, "Status = " + statusInactive + ", " + "Reason = " + reason);
-            psAUDIT.setString(6, session.getusername());
-            psAUDIT.executeUpdate();
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URLConnection connection = url.openConnection();
+
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("first", "patient accounts")
+                    .appendQueryParameter("second", "block user patient")
+                    .appendQueryParameter("third", BLOCK_PRIVILEGES)
+                    .appendQueryParameter("fourth", "Status = " + statusActive)
+                    .appendQueryParameter("fifth", "Status = " + statusInactive + ", " + "Reason = " + reason)
+                    .appendQueryParameter("sixth", session.getusername());
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            in.close();
         }
-        catch (SQLException e) {
+         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     //blocking user
     public void blockPrivileges(String firstName, String reason){
-
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-
-        String query = BLOCK_ACC_REASON;
-        PreparedStatement ps1 = null;
-
         try {
-            ps = con.prepareStatement(BLOCK_PRIVILEGES);
-            ps.setString(1, firstName);
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/BlockPrivilegesAdminServlet");
+            URLConnection connection = url.openConnection();
 
-            ps1 = con.prepareStatement(query);
-            ps1.setString(1, reason);
-            ps1.setString(2, firstName);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-            ps.executeUpdate();
-            ps1.executeUpdate();
-        } catch (SQLException e) {
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("firstName", firstName)
+                    .appendQueryParameter("reason", reason);
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            in.close();
+        }
+         catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -304,28 +354,37 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             try {
                 //listview, list the names of all enrolled accounts
                 accountsList = (ListView) findViewById(R.id.listAccounts);
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_ACCOUNTS_LIST);
-                ResultSetMetaData rsmd = rset.getMetaData();
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListEnrolledAcctAdminServlet");
+                URLConnection connection = url.openConnection();
 
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>>();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                while (rset.next()) {
-                    HashMap<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("first", rset.getString(1).toString());
-                    datanum.put("second", rset.getString(2).toString());
-                    datanum.put("third", rset.getString(3).toString());
-                    data.add(datanum);
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                StringBuffer receivedData=new StringBuffer();
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    receivedData.append(returnString+"n");
+                    output.add(returnString);
                 }
+                for (int i = 0; i < output.size(); i++) {
+                    message = output.get(i);
+                }
+                in.close();
+                String retrieved=receivedData.toString();
+                List<Map<String, String>> data= new ArrayList<Map<String, String>>();
+
+                data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapterAccounts = new SimpleAdapter(ManageAccounts.this, data,
                         R.layout.listview_row, new String[]{"first", "second", "third"}, new int[]{R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
-                while (rset.next()) {
-                    result += rset.getString(2) + "\n";
-                }
+
                 message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;
@@ -357,35 +416,39 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             try {
                 //listview, list the names of all enrolled department
                 blockedList = (ListView) findViewById(R.id.listBlocked);
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_BLOCKED_USERS);
-                ResultSetMetaData rsmd = rset.getMetaData();
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListBlockedAcctAdminServlet");
+                URLConnection connection = url.openConnection();
 
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>>();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                while (rset.next()) {
-                    HashMap<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("first", rset.getString(1).toString());
-                    datanum.put("second", rset.getString(2).toString());
-                    datanum.put("third", rset.getString(3).toString());
 
-                    /*datanum.put("A", "CLINIC NAME" + "\n"+rset.getString(1).toString() + "\n \n" + "DEPARTMENT NAME" +
-                            "\n" + rset.getString(2).toString() +"\n \n"
-                    + "STATUS" +"\n" + rset.getString(3).toString());*/
-
-                    data.add(datanum);
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                StringBuffer receivedData=new StringBuffer();
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    receivedData.append(returnString+"n");
+                    output.add(returnString);
                 }
+                for (int i = 0; i < output.size(); i++) {
+                    message = output.get(i);
+                }
+                in.close();
+                String retrieved=receivedData.toString();
+                List<Map<String, String>> data= new ArrayList<Map<String, String>>();
+
+                data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
 
                 /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapterBlockedAcc = new SimpleAdapter(ManageAccounts.this, data,
                         R.layout.listview_row, new String[]{"first", "second", "third"}, new int[]{R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
-                while (rset.next()) {
-                    result += rset.getString(2) + "\n";
-                }
+
                 message = "DELETED";
             } catch (Exception ex) {
                 isSuccess = false;

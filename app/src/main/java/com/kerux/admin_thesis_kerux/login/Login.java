@@ -2,8 +2,10 @@ package com.kerux.admin_thesis_kerux.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,10 +22,18 @@ import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Login extends AppCompatActivity implements DBUtility {
     private static EditText username;
@@ -32,7 +42,6 @@ public class Login extends AppCompatActivity implements DBUtility {
     private static Button button_login;
     private static Button bttnDashboard;
     int attempt_counter = 5;
-
     private KeruxSession session;
     private SecurityWEB secweb;
     private Security sec;
@@ -78,20 +87,42 @@ public class Login extends AppCompatActivity implements DBUtility {
         startActivity(intent);
     }
     public void insertAudit(){
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
-        sec = new Security();
 
         try {
-            String queryAUDIT = INSERT_AUDIT_LOG;
-            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-            psAUDIT.setString(1, sec.encrypt("login"));
-            psAUDIT.setString(2, sec.encrypt("login"));
-            psAUDIT.setString(3, sec.encrypt("Logging in to the app"));
-            psAUDIT.setString(4, sec.encrypt("none"));
-            psAUDIT.setString(5, sec.encrypt("login"));
-            psAUDIT.setString(6, session.getusername());
-            psAUDIT.executeUpdate();
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URLConnection connection = url.openConnection();
+
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("first", sec.encrypt("login"))
+                    .appendQueryParameter("second", sec.encrypt("login"))
+                    .appendQueryParameter("third", sec.encrypt("Logging in to the app"))
+                    .appendQueryParameter("fourth", sec.encrypt("none"))
+                    .appendQueryParameter("fifth", sec.encrypt("login"))
+                    .appendQueryParameter("sixth", session.getusername());
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            in.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -127,39 +158,60 @@ public class Login extends AppCompatActivity implements DBUtility {
             else
             {
                 try {
-                    Connection con = connectionClass.CONN();
-                    if (con == null) {
-                        z = "Please check your internet connection";
-                    } else {
+                    z = "Incorrect username or password";
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/LoginAdminServlet");
+                    URLConnection connection = url.openConnection();
 
-                        String query= SELECT_ADMIN_LOGIN;
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
 
-                        PreparedStatement ps = con.prepareStatement(query);
-                        ps.setString(1, secweb.encrypt(uname));
-                        ps.setString(2, secweb.encrypt(pw));
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("username", secweb.encrypt(uname))
+                            .appendQueryParameter("password", secweb.encrypt(pw));
+                    String query = builder.build().getEncodedQuery();
 
-                        ResultSet rs=ps.executeQuery();
-                        /*z=secweb.encrypt(uname) + " " + secweb.encrypt(pw);*/
-                        z = "Incorrect username or password";
-                        while (rs.next()) {
-                            adminId=rs.getInt(1);
-                            firstName = rs.getString(2);
-                            lastName = rs.getString(3);
-                            email=rs.getString(4);
-                            clinicid=rs.getInt(5);
-                            usernam=rs.getString(6);
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(
+                            new OutputStreamWriter(os, "UTF-8"));
+                    writer.write(query);
+                    writer.flush();
+                    writer.close();
+                    os.close();
 
-                            //SET SESSION
-                            session.setadminid(String.valueOf(adminId));
-                            session.setfirstname(firstName);
-                            session.setlastname(lastName);
-                            session.setemail(email);
-                            session.setclinicid(String.valueOf(clinicid));
-                            session.setusername(usernam);
-                            isSuccess = true;
-                            z = "Logged in successfully!";
-                        }
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String returnString="";
+                    ArrayList<String> output=new ArrayList<String>();
+                    while ((returnString = in.readLine()) != null)
+                    {
+                        isSuccess=true;
+                        z = "Logged in successfully!";
+                        Log.d("returnString", returnString);
+                        output.add(returnString);
                     }
+                    for (int i = 0; i < output.size(); i++) {
+                        if(i==0){
+                            adminId=Integer.parseInt(output.get(i));
+                        }
+                        else if(i==1){
+                            firstName=output.get(i);
+                        }
+                        else if(i==2){
+                            lastName=output.get(i);
+                        }
+                        else if(i==3){
+                            email=output.get(i);
+                        }
+                        else if(i==4){
+                            clinicid=Integer.parseInt(output.get(i));
+                        }
+                        else if(i==5){
+                            usernam=output.get(i);
+                        }
+
+                    }
+                    in.close();
                 }
                 catch (Exception ex)
                 {
@@ -178,6 +230,12 @@ public class Login extends AppCompatActivity implements DBUtility {
             Toast.makeText(getBaseContext(),""+z,Toast.LENGTH_LONG).show();
 
             if(isSuccess) {
+                session.setadminid(String.valueOf(adminId));
+                session.setfirstname(firstName);
+                session.setlastname(lastName);
+                session.setemail(email);
+                session.setclinicid(String.valueOf(clinicid));
+                session.setusername(usernam);
                 Intent intent=new Intent(Login.this, MainActivity.class);
                 intent.putExtra("adminname", firstName+" "+lastName);
                 startActivity(intent);

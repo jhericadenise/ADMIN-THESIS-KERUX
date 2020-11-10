@@ -33,10 +33,16 @@ import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,6 +96,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         docQueue = (TextView)findViewById(R.id.txtHighestDocQueue);
         deptQueue = (TextView)findViewById(R.id.txtHighestDeptQueue);
         txtdate = (TextView)findViewById(R.id.txtTimeStamp);
+        bttnGenerateStatReports=(Button)findViewById(R.id.bttnGenerateStat);
 
         txtdate.setText(timeStamp());
 
@@ -123,31 +130,61 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     //Generate statistic reports
     public void generateStat() {
 
-        String query = INSERT_STAT;
-        Connection con = connectionClass.CONN();
-        PreparedStatement ps = null;
         try {
-            ps = con.prepareStatement(query);
-            ps.setString(1, session.getclinicid());
-            ps.setString(2, session.getclinicid());
-            int i=ps.executeUpdate();
 
-            if (i==1){
-                String query1 = SELECT_STAT;
 
-                PreparedStatement ps1 = con.prepareStatement(query1);
-                ResultSet rs=ps1.executeQuery();
-                while (rs.next()) {
-                    txtServed.setText(rs.getString(1));
-                    txtCancelled.setText(rs.getString(2));
-                    docQueue.setText(rs.getString(3));
-                    deptQueue.setText(rs.getString(4));
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/GenerateStatServlet");
+            URLConnection connection = url.openConnection();
 
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("getclinicid", session.getclinicid());
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
+            ArrayList<String> output=new ArrayList<String>();
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                output.add(returnString);
+            }
+            for (int i = 0; i < output.size(); i++) {
+                String line=output.get(i);
+                String [] words=line.split("\\s\\|\\s");
+                if(!words[0].isEmpty()){
+                    txtServed.setText(words[0]);
+                }
+                if(!words[1].isEmpty()){
+                    txtCancelled.setText(words[1]);
+                }
+                if(!words[2].isEmpty()){
+                    docQueue.setText(words[2]);
+                }
+                if(!words[3].isEmpty()){
+                    deptQueue.setText(words[3]);
                 }
             }
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            in.close();
+
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
     }
 
@@ -220,15 +257,10 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
             z="";
 
             try {
-                Connection con = connectionClass.CONN();
-                Security sec =new Security();
-                if (con == null) {
-                    z = "Please check your internet connection";
-                } else {
                     createPdf();
-                    viewPdf();
+                    emailNote();
                     z="Report Generated";
-                }
+
             }
             catch (Exception ex)
             {
@@ -350,65 +382,30 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         ArrayList<String> data=new ArrayList<>();
         String error="";
         try {
-            Connection con = connectionClass.CONN();
-            Security sec =new Security();
-            if (con == null) {
-                error="Please check your internet connection";
-                Log.d("WENT HEHEHE", "Help");
-            } else {
 
-                //QUEUES SERVED
-                String queuesServed = QUEUES_SERVED;
-                PreparedStatement ps = con.prepareStatement(queuesServed);
-                ResultSet rs=ps.executeQuery();
 
-                while (rs.next())
-                {
-                    data.add("Queues Served: ");
-                    data.add(rs.getString(1));
-                    data.add(rs.getString(2));
-                    for(String num:data){
-                        Log.d("MEN", num+"YYYYY");
-                    }
-                }
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/GeneratePDFDataAdminServlet");
+            URLConnection connection = url.openConnection();
 
-                //QUEUES CANCELLED
-                String queuesCancelled = QUEUES_CANCELLED;
-                PreparedStatement ps2 = con.prepareStatement(queuesCancelled);
-                ResultSet rs2=ps2.executeQuery();
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-                while (rs2.next())
-                {
-                    data.add("Queues Cancelled: ");
-                    data.add(rs2.getString(1));
-                    data.add(rs2.getString(2));
-                }
 
-                //HIGHEST DOCTOR QUEUES
-                String doctorQueues = HIGHEST_DOC_QUEUES;
-                PreparedStatement ps3 = con.prepareStatement(doctorQueues);
-                ResultSet rs3=ps3.executeQuery();
 
-                while (rs3.next())
-                {
-                    data.add("Highest Doctor Queues: ");
-                    data.add(rs3.getString(1));
-                    data.add(rs3.getString(2));
-                }
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String returnString="";
 
-                //HIGHEST DEPARTMENT QUEUES
-                String deptQueues = HIGHEST_DEPT_QUEUES;
-                PreparedStatement ps4 = con.prepareStatement(deptQueues);
-                ResultSet rs4=ps4.executeQuery();
-
-                while (rs4.next())
-                {
-                    data.add("Highest Department Queues: ");
-                    data.add(rs4.getString(1));
-                    data.add(rs4.getString(2));
-                }
-
+            while ((returnString = in.readLine()) != null)
+            {
+                Log.d("returnString", returnString);
+                data.add(returnString);
             }
+
+            in.close();
+
+
         }
         catch (Exception ex)
         {

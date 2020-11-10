@@ -3,6 +3,7 @@ package com.kerux.admin_thesis_kerux.enrollment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,15 +35,23 @@ import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php"; /*10.0.2.2:89*/
-    private static String urlDocTypeSpinner = "http://192.168.1.13:89/kerux/doctorTypeSpinner.php";
+    private static String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet"; /*10.0.2.2:89*/
+    private static String urlDocTypeSpinner = "https://isproj2a.benilde.edu.ph/Sympl/doctorTypeSpinnerServlet";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -336,6 +345,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         String cboxFri = friday.getText().toString();
         String cboxSat = saturday.getText().toString();
         String docDays="";
+        String newdocid;
         int docType = (int)spinnerDocType.getSelectedItemId();
         int dept = (int)spinnerDep.getSelectedItemId();
         int clinic = Integer.parseInt(session.getclinicid());
@@ -348,115 +358,82 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         @Override
         protected String doInBackground(String... params) {
-            Connection con = connectionClass.CONN();
-            PreparedStatement ps1 = null;
             try {
-                ps1 = con.prepareStatement(VALIDATION_DOCTOR);
-                ps1.setString(1, docFName);
-                ps1.setString(2, docLName);
-                ps1.setInt(3, clinic);
-                ps1.setInt(4, dept);
 
-                ResultSet rs = ps1.executeQuery();
-
-                if (rs.next()) {
-                    hasRecord=true;
-
+                if(cboxMon!=null){
+                    docDays+=cboxMon;
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                if(cboxTues!=null){
+                    docDays+=cboxTues;
+                }
+                if(cboxWed!=null){
+                    docDays+=cboxWed;
+                }
+                if(cboxThurs!=null){
+                    docDays+=cboxThurs;
+                }
+                if(cboxFri!=null){
+                    docDays+=cboxFri;
+                }
+                if(cboxSat!=null){
+                    docDays+=cboxSat;
+                }
 
-            //checking if the record exists on the database
-            if (hasRecord){
-                message = "Record already exists";
-            }
-            else {
-                try {
-                    if (con == null) {
-                        message = "Unsuccessful";
-                    } else {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDoctor");
+                URLConnection connection = url.openConnection();
 
-                        if(cboxMon!=null){
-                            docDays+=cboxMon;
-                        }
-                        if(cboxTues!=null){
-                            docDays+=cboxTues;
-                        }
-                        if(cboxWed!=null){
-                            docDays+=cboxWed;
-                        }
-                        if(cboxThurs!=null){
-                            docDays+=cboxThurs;
-                        }
-                        if(cboxFri!=null){
-                            docDays+=cboxFri;
-                        }
-                        if(cboxSat!=null){
-                            docDays+=cboxSat;
-                        }
-                        //inserting doctor in the database
-                        String query = INSERT_DOCTOR;
-                        PreparedStatement ps = con.prepareStatement(query);
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                        ps.setInt (1, docType);
-                        ps.setInt (2, clinic);
-                        ps.setInt(3, reason);
-                        ps.setString(4, docFName);
-                        ps.setString(5, docLName);
-                        ps.setInt (6, dept);
-                        ps.setString(7, roomNum);
-                        ps.setString(8, sched1);
-                        ps.setString(9, sched2);
-                        ps.setString(10, docDays);
-                        ps.setString(11, status);
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("docFName", docFName)
+                        .appendQueryParameter("docLName", docLName)
+                        .appendQueryParameter("clinic", Integer.toString(clinic))
+                        .appendQueryParameter("dept", Integer.toString(dept))
+                        .appendQueryParameter("docType",  Integer.toString(docType))
+                        .appendQueryParameter("reason", Integer.toString(reason))
+                        .appendQueryParameter("roomNum", roomNum)
+                        .appendQueryParameter("sched1", sched1)
+                        .appendQueryParameter("sched2", sched2)
+                        .appendQueryParameter("docDays", docDays)
+                        .appendQueryParameter("status", status)
+                        .appendQueryParameter("getadminid", session.getadminid())
+                        .appendQueryParameter("getclinicid", session.getclinicid());
+                String query = builder.build().getEncodedQuery();
 
-                        ps.execute();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
 
-                        String query2=SELECT_NEW_DOCTOR_ID;
-                        PreparedStatement ps2 = con.prepareStatement(query2);
-                        ResultSet rs1 = ps2.executeQuery();
-                        while(rs1.next()){
-                            String newdocid=rs1.getString(1);
-                            String newdeptid=rs1.getString(1);
-
-                            //inserting into doctor_enrollment
-                            String query3=INSERT_DOC_ENROLLMENT;
-                            PreparedStatement ps3 = con.prepareStatement(query3);
-                            ps3.setString(1, session.getadminid());
-                            ps3.setString(2, session.getclinicid());
-                            ps3.setString(3, newdeptid);
-                            ps3.setString(4, newdocid);
-                            ps3.executeUpdate();
-
-                            //inserting to audit log
-                            String queryAUDIT=INSERT_AUDIT_LOG;
-                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("doctor"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Insert doctor record"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinic)+", "+reason+", "+dept+", "+status));
-                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                            //inserting to audit log
-                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("doctor_enrollment"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Insert into doctor_enrollment table record"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(session.getadminid()+", "+newdocid+", "+ ", "+ newdeptid + ", " + session.getclinicid()));
-                            psAUDIT.setString(6,sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                        }
-                        con.close();
-                        message = "ADDED";
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    isSuccess=true;
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                for (int i = 0; i < output.size(); i++) {
+                    String line=output.get(i);
+                    String notnullline = line.replaceAll("null", "0");
+                    String [] words=notnullline.split("\\s\\|\\s");
+                    message=words[0];
+                    if(!words[1].isEmpty()){
+                        newdocid=words[1];
                     }
-                } catch (Exception ex) {
-                    isSuccess = false;
-                    message = "Exceptions" + ex;
                 }
+                in.close();
+            }catch(Exception e){
+                message="Exceptions"+e;
             }
+
             return message;
         }
 
@@ -464,11 +441,61 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         protected void onPostExecute(String s) {
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
+            try{
+                insertAudit( sec.encrypt("doctor"),  sec.encrypt("insert"),  sec.encrypt("Insert doctor record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinic)+", "+reason+", "+dept+", "+status),  sec.encrypt(session.getusername()));
+                insertAudit(sec.encrypt("doctor_enrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into doctor_enrollment table record"),  sec.encrypt("none"),  sec.encrypt(session.getadminid()+", "+newdocid+", "+ ", "+ newdocid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
+            }catch(Exception e){
+                Log.d("insertAudit", e.getMessage());
+            }
+
             if (isSuccess) {
                 Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
                 startActivity(intent);
             }
 
+        }
+
+        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URLConnection connection = url.openConnection();
+
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("first", first)
+                        .appendQueryParameter("second", second)
+                        .appendQueryParameter("third", third)
+                        .appendQueryParameter("fourth", fourth)
+                        .appendQueryParameter("fifth", fifth)
+                        .appendQueryParameter("sixth", sixth);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                in.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -486,58 +513,46 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         }
         @Override
         protected String doInBackground(String... params) {
-            Connection con = connectionClass.CONN();
-            PreparedStatement ps = null;
 
             try {
-                ps = con.prepareStatement(VALIDATION_DOC_TYPE);
-                ps.setString(1, enrollDoctorType);
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollQMServlet");
+                URLConnection connection = url.openConnection();
 
-                ResultSet rs = ps.executeQuery();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                if (rs.next()) {
-                    hasRecord=true;
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("enrollDoctorType", enrollDoctorType);
+                String query = builder.build().getEncodedQuery();
 
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
 
-            message = "Record already exists";
-
-            if (enrollDoctorType.trim().equals("")) {
-                message = "Please enter all fields";
-            }
-            else if (hasRecord){
-                message = "Record already exists";
-            }
-            else {
-                try {
-                    if (con == null) {
-                        message = "CANNOT ADD RECORD";
-
-                    } else {
-                        //inserting data of department to the database
-                        String query = INSERT_DOC_TYPE_ENROLLMENT;
-                        PreparedStatement ps1 = null;
-                        try {
-                            ps1 = con.prepareStatement(query);
-                            ps1.setString(1, enrollDoctorType);
-                            ps1.executeUpdate();
-                            message = "Added Successfully!";
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
-                        }
-                        con.close();
-                    }
-                }
-                catch (Exception ex)
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
                 {
-                    isSuccess = false;
-                    message = "Exceptions"+ex;
-                    Log.d("ex", ex.getMessage () + " Jheca");
+                    isSuccess=true;
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
                 }
+                for (int i = 0; i < output.size(); i++) {
+                    message=output.get(i);
+
+                }
+                in.close();
+            }catch(Exception e){
+                message="Exceptions"+e;
             }
+
             return message;
         }
 
@@ -547,11 +562,15 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {
+
+
                 Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
                 startActivity(intent);
             }
 
         }
+
+
 
     }
 }

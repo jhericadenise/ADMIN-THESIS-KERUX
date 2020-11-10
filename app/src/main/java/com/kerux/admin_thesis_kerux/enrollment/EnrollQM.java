@@ -2,8 +2,10 @@ package com.kerux.admin_thesis_kerux.enrollment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,10 +32,18 @@ import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +57,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmEmail;
     private Spinner deptSpinner;
     ConnectionClass connectionClass;
-    private static String urlDeptSpinner = "http://192.168.1.13:89/kerux/departmentSpinner.php";
+    private static String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
 
     DrawerLayout drawerLayout;
 
@@ -293,6 +303,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     }
 
 
+
     //Enrolling or adding the record to the database for the queue manager
     private class DoEnrollQM extends AsyncTask<String, String, String> {
 
@@ -305,6 +316,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String QMuname = qmUname.getText().toString();
         String QMpw = qmPw.getText().toString();
         String status = "Active";
+        String newqmid="";
         boolean hasRecord = false;
         int reason = 0;
         int clinic = Integer.parseInt(session.getclinicid());
@@ -317,104 +329,60 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
         @Override
         protected String doInBackground(String... params) {
-            Connection con = connectionClass.CONN();
-            PreparedStatement ps = null;
+
             try {
-                ps = con.prepareStatement(VALIDATION_QM);
-                ps.setString(1, QMuname);
-                ps.setString(2, QMFname);
-                ps.setString(3, QMLname);
-                ps.setInt(4, clinic);
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollQMServlet");
+                    URLConnection connection = url.openConnection();
 
-                ResultSet rs=ps.executeQuery();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
 
-                if(rs.next()){
-                    hasRecord = true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("clinic", Integer.toString(clinic))
+                            .appendQueryParameter("dept", Integer.toString(dept))
+                            .appendQueryParameter("reason", Integer.toString(reason))
+                            .appendQueryParameter("secQMuname", sec.encrypt(QMuname))
+                            .appendQueryParameter("secQMpw", sec.encrypt(QMpw))
+                            .appendQueryParameter("QMFname", QMFname)
+                            .appendQueryParameter("QMLname", QMLname)
+                            .appendQueryParameter("QMEmail", QMEmail)
+                            .appendQueryParameter("status", status)
+                            .appendQueryParameter("getadminid", session.getadminid());
+                    String query = builder.build().getEncodedQuery();
 
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(
+                            new OutputStreamWriter(os, "UTF-8"));
+                    writer.write(query);
+                    writer.flush();
+                    writer.close();
+                    os.close();
 
-            if (hasRecord){
-                message = "Record already exists";
-            }
-            else {
-                try {
-                    if (con == null) {
-                        message = "Unsuccessful";
-                    } else {
-                        String query = INSERT_QM;
-                        PreparedStatement ps1 = con.prepareStatement(query);
-                        ps1.setInt(1, clinic);
-                        ps1.setInt(2, dept);
-                        ps1.setInt(3, reason);
-                        ps1.setString(4, sec.encrypt(QMuname));
-                        ps1.setString(5, sec.encrypt(QMpw));
-                        ps1.setString(6, QMFname);
-                        ps1.setString(7, QMLname);
-                        ps1.setString(8, QMEmail);
-                        ps1.setString(9, status);
-
-                        ps1.execute();
-
-                        //sending email
-                        String email = qmEmail.getText().toString().trim();
-                        String subject = "Kerux Queue Manager Enrollment Credentials";
-                        String message = "Good day!\n" +
-                                "We've successfully enrolled you as a Queue Manager\n\n\n" +
-                                "Here are your credentials" + "\n\nUsername: " + qmUname.getText().toString().trim() +
-                                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n" +
-                                "Please change your password immediately after receiving this email\n\n" +
-                                "\n\n Thank you!";
-
-                        SendMailTask sm = new SendMailTask(EnrollQM.this, email, subject, message);
-                        sm.execute();
-
-                        String query2 = SELECT_NEW_QUEUEMANAGER_ID;
-                        PreparedStatement ps2 = con.prepareStatement(query2);
-                        ResultSet rs1 = ps2.executeQuery();
-                        while (rs1.next()) {
-                            String newqmid = rs1.getString(1);
-                            String newdeptid = rs1.getString(1);
-
-                            //inserting to qm enrollment
-                            String query3 = INSERT_QM_ENROLLMENT;
-                            PreparedStatement ps3 = con.prepareStatement(query3);
-                            ps3.setString(1, newqmid);
-                            ps3.setString(2, session.getadminid());
-                            ps3.setString(3, String.valueOf(dept));
-                            ps3.setString(4, String.valueOf(clinic));
-                            ps3.executeUpdate();
-
-                            //inserting to audit log
-                            String queryAUDIT = INSERT_AUDIT_LOG;
-                            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("queue manager"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Inserting Queue Manager record"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status));
-                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                            //inserting to audit log
-                            PreparedStatement psAUDIT1 = con.prepareStatement(queryAUDIT);
-                            psAUDIT.setString(1, sec.encrypt("qmenrollment"));
-                            psAUDIT.setString(2, sec.encrypt("insert"));
-                            psAUDIT.setString(3, sec.encrypt("Insert into qmenrollment table"));
-                            psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(session.getadminid() + ", " + newqmid + ", " + ", " + newdeptid + ", " + session.getclinicid()));
-                            psAUDIT.setString(6, sec.encrypt(session.getusername()));
-                            psAUDIT.executeUpdate();
-                        }
-                        con.close();
-
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String returnString="";
+                    ArrayList<String> output=new ArrayList<String>();
+                    while ((returnString = in.readLine()) != null)
+                    {
+                        isSuccess=true;
+                        Log.d("returnString", returnString);
+                        output.add(returnString);
                     }
-                } catch (Exception ex) {
-                    isSuccess = false;
-                    message = "Exceptions" + ex;
+                    for (int i = 0; i < output.size(); i++) {
+                        String line=output.get(i);
+                        String notnullline = line.replaceAll("null", "0");
+                        String [] words=notnullline.split("\\s\\|\\s");
+                        message=words[0];
+                        if(!words[1].isEmpty()){
+                            newqmid=words[1];
+                        }
+                    }
+                    in.close();
+                }catch(Exception e){
+                    message="Exceptions"+e;
                 }
-            }
+
             return message;
         }
 
@@ -425,10 +393,60 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 */
 
             if (isSuccess) {
+                try{
+                    insertAudit( sec.encrypt("queue manager"),  sec.encrypt("insert"),  sec.encrypt("Inserting Queue Manager record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status),  sec.encrypt(session.getusername()));
+                    insertAudit( sec.encrypt("qmenrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into qmenrollment table"),  sec.encrypt("none"),  sec.encrypt(session.getadminid() + ", " + newqmid + ", " + ", " + newqmid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
+                }catch(Exception e){
+                    Log.d("insertAudit", e.getMessage());
+                }
+
                 Intent intent = new Intent(EnrollQM.this, EnrollQM.class);
                 startActivity(intent);
             }
 
+        }
+
+        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URLConnection connection = url.openConnection();
+
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("first", first)
+                        .appendQueryParameter("second", second)
+                        .appendQueryParameter("third", third)
+                        .appendQueryParameter("fourth", fourth)
+                        .appendQueryParameter("fifth", fifth)
+                        .appendQueryParameter("sixth", sixth);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                in.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
