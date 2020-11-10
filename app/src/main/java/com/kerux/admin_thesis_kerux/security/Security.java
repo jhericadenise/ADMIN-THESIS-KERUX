@@ -11,7 +11,6 @@ public class Security {
 
     String AES = "AES";
 
-
     public String encrypt(String strToEncrypt) throws  Exception{
         SecretKeySpec key = generateKey("kerux");
         Cipher c = Cipher.getInstance(AES);

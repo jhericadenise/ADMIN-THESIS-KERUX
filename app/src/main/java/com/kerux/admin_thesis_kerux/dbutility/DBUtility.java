@@ -91,10 +91,10 @@ public interface DBUtility {
     String UPDATE_PROFILE="UPDATE admin SET FirstName = ?, LastName = ?, Email = ?, Username = ?, Password = ? WHERE Admin_ID = ?";
 
     //sql statement for edit profile to not require the input of password when just editing basic patient information
-    String UPDATE_PROFILE_PASS = "UPDATE admin SET password = ?";
+    String UPDATE_PROFILE_PASS = "UPDATE admin SET password = ? WHERE Admin_ID = ?";
 
     //sql statement to compare the "old password" the patient has inputted in the text field from the one in the database
-    String CONFIRM_ADMIN_PASS = "SELECT Password FROM admin where Password = ?";
+    String CONFIRM_ADMIN_PASS = "SELECT Password FROM admin where Password = ? WHERE Admin_ID = ?";
 
     //COUNTING RECORDS
     String TOTAL_NUM_LOGIN = "SELECT COUNT(TableName) from audit_log WHERE TableName = 'login'";

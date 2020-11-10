@@ -32,7 +32,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -102,7 +102,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                                         DoEnrollReasonDoc doEnrollReason = new DoEnrollReasonDoc();
                                         doEnrollReason.execute();
                                         //for the spinner
-                                        Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType doc = new DownloaderDocType(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
                                         doc.execute();
                                     }
                                 })
@@ -166,7 +166,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         });
 
         //for the spinner
-        Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType doc = new DownloaderDocType(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
         doc.execute();
 
         //restrict going to another activity for unenroll

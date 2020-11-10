@@ -28,7 +28,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -102,7 +102,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                                         DoEnrollReasonAcc doEnrollReasonAcc = new DoEnrollReasonAcc();
                                         doEnrollReasonAcc.execute();
                                         //for refreshing the spinner
-                                        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
                                         dept.execute();
                                     }
                                 })
@@ -169,7 +169,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         });
 
         //spinner downloader
-        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
         dept.execute();
     }
 

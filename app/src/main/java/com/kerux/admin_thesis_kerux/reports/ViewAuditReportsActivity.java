@@ -244,7 +244,8 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                     z = "Please check your internet connection";
                 } else {
                     createPdf();
-                    viewPdf();
+                    /*viewPdf();*/
+                    emailNote();
                     z="Report Generated";
                 }
             }
@@ -266,7 +267,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
     private void createPdf() throws FileNotFoundException, DocumentException {
 
         File pdfFolder = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "pdfdemo");
+                Environment.DIRECTORY_DOCUMENTS), "KERUX AUDIT LOG REPORT");
         if (!pdfFolder.exists()) {
             pdfFolder.mkdir();
             Log.i("LOG_TAG", "Pdf Directory created");

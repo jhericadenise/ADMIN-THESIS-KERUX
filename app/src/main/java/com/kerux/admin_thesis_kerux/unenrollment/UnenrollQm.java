@@ -32,7 +32,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -100,7 +100,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                                         DoEnrollReasonQM doEnrollReasonQM = new DoEnrollReasonQM();
                                         doEnrollReasonQM.execute();
                                         //for refreshing the spinner
-                                        Downloader qm = new Downloader(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
                                         qm.execute();
 
                                     }
@@ -176,7 +176,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
-        Downloader qm = new Downloader(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
         qm.execute();
     }
 

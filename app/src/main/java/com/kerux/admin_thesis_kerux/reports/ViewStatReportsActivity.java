@@ -226,7 +226,8 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
                     z = "Please check your internet connection";
                 } else {
                     createPdf();
-                    viewPdf();
+                    /*viewPdf();*/
+                    emailNote();
                     z="Report Generated";
                 }
             }
@@ -248,7 +249,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     private void createPdf() throws FileNotFoundException, DocumentException {
 
         File pdfFolder = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "pdfdemo");
+                Environment.DIRECTORY_DOCUMENTS), "KERUX STATISTIC REPORT");
         if (!pdfFolder.exists()) {
             pdfFolder.mkdir();
             Log.i("LOG_TAG", "Pdf Directory created");

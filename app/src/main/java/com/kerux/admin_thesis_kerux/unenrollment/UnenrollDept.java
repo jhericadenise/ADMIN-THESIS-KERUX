@@ -32,7 +32,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -101,7 +101,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
                                         DoEnrollReasonDept doEnrollReasonDept = new DoEnrollReasonDept();
                                         doEnrollReasonDept.execute();
                                         //for refreshing the spinner
-                                        Downloader dept = new Downloader(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
                                         dept.execute();
                                     }
                                 })
@@ -163,7 +163,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
         });
 
-        Downloader dept = new Downloader(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
         dept.execute();
     }
 
@@ -338,6 +338,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             deptList.setAdapter(listAdapter);
         }
     }
+
     private class DoEnrollReasonDept extends AsyncTask<String, String, String> {
 
         Security sec = new Security();

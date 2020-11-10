@@ -54,7 +54,7 @@ public class DownloaderDocType extends AsyncTask<Void,Void,String> {//TO BE USED
 
         if(s != null)
         {
-            Parser p=new Parser(c,s,sp, columnName, headerValue);
+            ParserDocType p=new ParserDocType(c,s,sp, columnName, headerValue);
             p.execute();
 
         }else {
