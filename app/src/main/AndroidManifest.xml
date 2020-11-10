@@ -17,10 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".enrollment.EnrollDoctorType"></activity>
         <activity android:name=".reports.ViewAuditReportsActivity" />
         <activity android:name=".reports.ViewStatReportsActivity" />
-        <activity android:name=".reports.GenerateReport" />
         <activity android:name=".navigation.ManageAccounts" />
         <activity android:name=".navigation.MainActivity" />
         <activity android:name=".navigation.EditProfile" />

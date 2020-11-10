@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+
+    <TextView
+        android:id="@+id/txtReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text= "Other Reason: "/>
+
+    <EditText
+        android:id="@+id/txtboxReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/txtTableName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text= "Table Name: "/>
+
+    <EditText
+        android:id="@+id/txtboxTableName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="User Patient" />
+
+    <!--  <Button
+          android:id="@+id/bttnEnrollDocType"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="Add Doctor Type" />-->
+
+</LinearLayout>

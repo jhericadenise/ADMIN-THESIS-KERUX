@@ -1,11 +1,16 @@
 package com.kerux.admin_thesis_kerux.unenrollment;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -48,6 +53,11 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     Button deptDisplayList;
     private Spinner spinnerDeptReason;
 
+    Button addReasonDept;
+    private EditText otherReason;
+    private EditText table;
+    final Context context = this;
+
     DrawerLayout drawerLayout;
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerDept.php";
     KeruxSession session;
@@ -63,6 +73,51 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
         deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
         deptList = (ListView) findViewById(R.id.listEnrolledDept);
+
+        addReasonDept = findViewById(R.id.bttnAddDeptReason);
+        addReasonDept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(context);
+                View promptsView = li.inflate(R.layout.activity_add_reason_dept, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
+                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("ENROLL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        DoEnrollReasonDept doEnrollReasonDept = new DoEnrollReasonDept();
+                                        doEnrollReasonDept.execute();
+                                        //for refreshing the spinner
+                                        Downloader dept = new Downloader(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
+                                        dept.execute();
+                                    }
+                                })
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
+        });
 
         spinnerDeptReason = findViewById(R.id.spinnerDeptReason);
 
@@ -283,5 +338,71 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             deptList.setAdapter(listAdapter);
         }
     }
+    private class DoEnrollReasonDept extends AsyncTask<String, String, String> {
 
+        Security sec = new Security();
+        boolean isSuccess = false;
+        String message = "";
+        String reason = otherReason.getText().toString();
+        String tableName = table.getText().toString();
+        boolean hasRecord = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            Connection con = connectionClass.CONN();
+
+            if (reason.trim().equals("")) {
+                message = "Please enter all fields";
+            }
+            else if (hasRecord){
+                message = "Record already exists";
+            }
+            else {
+                try {
+                    if (con == null) {
+                        message = "CANNOT ADD RECORD";
+
+                    } else {
+                        //inserting data of department to the database
+                        String query = INSERT_REASON;
+                        PreparedStatement ps1 = null;
+                        try {
+                            ps1 = con.prepareStatement(query);
+                            ps1.setString(1, reason);
+                            ps1.setString(2, tableName);
+                            ps1.executeUpdate();
+                            message = "Added Successfully!";
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                        con.close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    message = "Exceptions"+ex;
+                    Log.d("ex", ex.getMessage () + " Jheca");
+                }
+            }
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
+
+            if (isSuccess) {
+                Intent intent = new Intent(UnenrollDept.this, UnenrollDept.class);
+                startActivity(intent);
+            }
+
+        }
+
+    }
 }

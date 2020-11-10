@@ -102,6 +102,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
         highestDocQueues = i.getStringExtra("HighestDeptQueues");
         statID=i.getStringExtra("Statistics_ID");
 
+        bttnGenerateStatReports = findViewById(R.id.bttnGenerateStat);
 
         bttnGenerateStatReports.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +112,7 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
             }
         });
     }
+
     //Getting time stamp
     public String timeStamp() {
         Calendar calendar = Calendar.getInstance();

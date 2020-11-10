@@ -1,13 +1,16 @@
 package com.kerux.admin_thesis_kerux.unenrollment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -49,6 +52,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     private ListAdapter listAdapter;
     Button docDisplayList;
     private Spinner spinnerReasonDoc;
+    final Context context = this;
+
+    Button addReasonDoc;
+    private EditText otherReason;
+    private EditText table;
 
     DrawerLayout drawerLayout;
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerDoctor.php";
@@ -67,13 +75,58 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         docDisplayList = (Button) findViewById(R.id.bttnDisplayDoc);
         docList = (ListView) findViewById(R.id.listEnrolledDoc);
 
+        addReasonDoc = findViewById(R.id.bttnAddDocReason);
+        addReasonDoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(context);
+                View promptsView = li.inflate(R.layout.activity_add_reason_doc, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
+                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("ENROLL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        DoEnrollReasonDoc doEnrollReason = new DoEnrollReasonDoc();
+                                        doEnrollReason.execute();
+                                        //for the spinner
+                                        Downloader doc = new Downloader(UnenrollDoc.this, urlReasonSpinner, spinnerReasonDoc, "Reason", "Choose Reason to Revoke");
+                                        doc.execute();
+                                    }
+                                })
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
+        });
+
         spinnerReasonDoc = findViewById(R.id.spinnerDocReason);
 
         //display enrolled doctor on listview
         docDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc();
+                ListDoc docListdisp = new ListDoc();
                 docListdisp.execute();
             }
         });
@@ -346,4 +399,71 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         }
     }
 
+    private class DoEnrollReasonDoc extends AsyncTask<String, String, String> {
+
+        Security sec = new Security();
+        boolean isSuccess = false;
+        String message = "";
+        String reason = otherReason.getText().toString();
+        String tableName = table.getText().toString();
+        boolean hasRecord = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            Connection con = connectionClass.CONN();
+
+            if (reason.trim().equals("")) {
+                message = "Please enter all fields";
+            }
+            else if (hasRecord){
+                message = "Record already exists";
+            }
+            else {
+                try {
+                    if (con == null) {
+                        message = "CANNOT ADD RECORD";
+
+                    } else {
+                        //inserting data of department to the database
+                        String query = INSERT_REASON;
+                        PreparedStatement ps1 = null;
+                        try {
+                            ps1 = con.prepareStatement(query);
+                            ps1.setString(1, reason);
+                            ps1.setString(2, tableName);
+                            ps1.executeUpdate();
+                            message = "Added Successfully!";
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                        con.close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    message = "Exceptions"+ex;
+                    Log.d("ex", ex.getMessage () + " Jheca");
+                }
+            }
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
+
+            if (isSuccess) {
+                Intent intent = new Intent(UnenrollDoc.this, UnenrollDoc.class);
+                startActivity(intent);
+            }
+
+        }
+
+    }
 }

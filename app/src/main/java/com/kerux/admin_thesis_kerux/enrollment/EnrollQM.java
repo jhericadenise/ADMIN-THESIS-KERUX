@@ -69,7 +69,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername() || !validatePassword()) {
+                if (!validateFName() | !validateLName() | !validateEmail() | !validateUsername() | !validatePassword()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollQM.this);
@@ -265,8 +265,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             qmFirstName.setError("First Name too short");
             return false;
-        } else if(firstname.matches("[^a-zA-Z]")) {
-            qmFirstName.setError("First name cannot have number values");
+        } else if(!firstname.matches("[\"~#^|$%&*!]")) {
+            qmFirstName.setError("First name must only be in characters");
             return false;
         } else {
             qmFirstName.setError(null);
@@ -283,8 +283,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             qmLastName.setError("Last Name too short");
             return false;
-        } else if(lastname.matches("^[^a-zA-Z]")) {
-            qmLastName.setError("Last name cannot have number values");
+        } else if(!lastname.matches("[\"~#^|$%&*!]")) {
+            qmLastName.setError("Last name must only be in characters");
             return false;
         } else {
             qmLastName.setError(null);

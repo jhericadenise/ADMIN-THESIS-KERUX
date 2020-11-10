@@ -27,24 +27,24 @@
         <Spinner
             android:id="@+id/spinnerDepType"
             android:layout_width="175dp"
-            android:layout_height="46dp"
+            android:layout_height="49dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.756"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.83" />
+            app:layout_constraintVertical_bias="0.88" />
 
         <Spinner
             android:id="@+id/spinnerDocType"
             android:layout_width="175dp"
-            android:layout_height="46dp"
+            android:layout_height="49dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.756"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.741" />
+            app:layout_constraintVertical_bias="0.752" />
 
         <EditText
             android:id="@+id/txtboxDocFName"
@@ -58,7 +58,7 @@
             app:layout_constraintHorizontal_bias="0.781"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.2" />
+            app:layout_constraintVertical_bias="0.238" />
 
         <EditText
             android:id="@+id/txtboxDocLName"
@@ -72,7 +72,7 @@
             app:layout_constraintHorizontal_bias="0.781"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.309" />
+            app:layout_constraintVertical_bias="0.335" />
 
         <CheckBox
             android:id="@+id/cBoxWed"
@@ -81,34 +81,10 @@
             android:text="@string/wednesday"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.917"
+            app:layout_constraintHorizontal_bias="0.933"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.588" />
-
-        <CheckBox
-            android:id="@+id/cBoxTues"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:text="@string/tuesday"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.561"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.588" />
-
-        <CheckBox
-            android:id="@+id/cBoxThurs"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:text="@string/thursday"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.292"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.631" />
+            app:layout_constraintVertical_bias="0.613" />
 
         <CheckBox
             android:id="@+id/cBoxMon"
@@ -117,10 +93,34 @@
             android:text="@string/monday"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.284"
+            app:layout_constraintHorizontal_bias="0.255"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.588" />
+            app:layout_constraintVertical_bias="0.613" />
+
+        <CheckBox
+            android:id="@+id/cBoxTues"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="@string/tuesday"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.556"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.613" />
+
+        <CheckBox
+            android:id="@+id/cBoxThurs"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="@string/thursday"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.286"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.669" />
 
         <CheckBox
             android:id="@+id/cBoxFriday"
@@ -132,7 +132,8 @@
             app:layout_constraintHorizontal_bias="0.579"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.631" />
+            app:layout_constraintVertical_bias="0.668" />
+
 
         <CheckBox
             android:id="@+id/cBoxSat"
@@ -141,35 +142,34 @@
             android:text="@string/saturday"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.886"
+            app:layout_constraintHorizontal_bias="0.878"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.631" />
-
+            app:layout_constraintVertical_bias="0.668" />
 
         <EditText
             android:id="@+id/txtboxSched2"
-            android:layout_width="85dp"
-            android:layout_height="42dp"
+            android:layout_width="76dp"
+            android:layout_height="48dp"
             android:inputType="time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.81"
+            app:layout_constraintHorizontal_bias="0.792"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.414" />
+            app:layout_constraintVertical_bias="0.434" />
 
         <EditText
             android:id="@+id/txtboxSched1"
-            android:layout_width="80dp"
-            android:layout_height="42dp"
+            android:layout_width="76dp"
+            android:layout_height="48dp"
             android:inputType="time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.442"
+            app:layout_constraintHorizontal_bias="0.443"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.414" />
+            app:layout_constraintVertical_bias="0.435" />
 
         <EditText
             android:id="@+id/txtboxRoomNo"
@@ -178,39 +178,40 @@
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.756"
+            app:layout_constraintHorizontal_bias="0.681"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.521" />
+            app:layout_constraintVertical_bias="0.533" />
 
         <Button
             android:id="@+id/bttnEnrollDoc"
-            android:layout_width="242dp"
-            android:layout_height="45dp"
+            android:layout_width="260dp"
+            android:layout_height="42dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.989" />
+            app:layout_constraintVertical_bias="0.978" />
 
         <Button
             android:id="@+id/bttnAddDocType"
-            android:layout_width="30dp"
-            android:layout_height="39dp"
-            android:text="+"
+            android:layout_width="158dp"
+            android:layout_height="26dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.954"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.743" />
+            app:layout_constraintVertical_bias="0.807" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="-6dp"
+        tools:layout_editor_absoluteY="-10dp">
 
         <include layout="@layout/main_toolbar" />
 

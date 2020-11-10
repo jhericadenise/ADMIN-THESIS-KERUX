@@ -90,8 +90,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         saturday = (CheckBox) findViewById(R.id.cBoxSat);
         spinnerDocType = (Spinner) findViewById(R.id.spinnerDocType);
         spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
-        docType = findViewById(R.id.txtboxDoctorType);
-
         bttnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,7 +104,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                final EditText userInput = (EditText) promptsView.findViewById(R.id.txtboxDoctorType);
+                docType = (EditText)promptsView.findViewById(R.id.txtboxDoctorType);
 
                 // set dialog message
                 alertDialogBuilder
@@ -118,6 +116,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                                         // edit text
                                         DoEnrollDocType doEnrollDocType = new DoEnrollDocType();
                                         doEnrollDocType.execute();
+                                        Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
+                                        docType.execute();
                                     }
                                 })
                         .setNegativeButton("CANCEL",
@@ -137,7 +137,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() || !validateLName() ||!validateRoomNo() || !validateSched()) {
+                if (!validateFName() | !validateLName() | !validateRoomNo() | !validateSched1() | !validateSched2()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollDoctor.this);
@@ -169,10 +169,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         dep.execute();
         Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
         docType.execute();
-
-    }
-
-    public  void openDialog(){
 
     }
 
@@ -246,8 +242,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             doctorFName.setError("First Name too short");
             return false;
-        } else if(firstname.matches("[^a-zA-Z]")) {
-            doctorLName.setError("Last name cannot have number values");
+        } else if(!firstname.matches("[\"~#^|$%&*!]")) {
+            doctorFName.setError("First name must only be in characters");
             return false;
         } else {
             doctorFName.setError(null);
@@ -264,28 +260,34 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             doctorLName.setError("Last Name too short");
             return false;
-        } else if(lastname.matches("[^a-zA-Z]")) {
-            doctorLName.setError("Last name cannot have number values");
+        } else if(!lastname.matches("[\"~#^|$%&*!]")) {
+            doctorLName.setError("First name must only be in characters");
             return false;
-        }
-        else {
+        } else {
             doctorLName.setError(null);
             return true;
         }
     }
 
-    private boolean validateSched() {
+    private boolean validateSched1() {
         String sched1 = schedule1.getText().toString().trim();
-        String sched2 = schedule2.getText().toString().trim();
 
         if(sched1.isEmpty()){
             schedule1.setError("Field can't be empty");
             return false;
-        } else if(sched2.isEmpty()){
+        } else {
+            schedule1.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateSched2() {
+        String sched2 = schedule2.getText().toString().trim();
+
+       if(sched2.isEmpty()){
             schedule2.setError("Field can't be empty");
             return false;
         } else {
-            schedule1.setError(null);
             schedule2.setError(null);
             return true;
         }

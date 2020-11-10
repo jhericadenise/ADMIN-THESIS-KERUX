@@ -3,11 +3,11 @@ package com.kerux.admin_thesis_kerux.dbutility;
 public interface DBUtility {
 
     String jdbcDriverName = "com.mysql.jdbc.Driver";//vxcd9lOiVlb9DcyuaKAzLr5qD7AQB+5gr7zwfl1MXhY=
-    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux";//jdbc:mysql://192.168.1.1/keruxdb
+    String jdbcUrl ="jdbc:mysql://192.168.1.13/kerux-db";//jdbc:mysql://192.168.1.1/keruxdb
     String dbUserName = "user";//user//o9gPQILs8mlgWTtuaBMBFA==
     String dbPassword = "admin";//admin//oCeOPEBYh4uhgDL4d2Q/8g==
 
-/*    String jdbcDriverName = "com.mysql.jdbc.Driver";
+/*  String jdbcDriverName = "com.mysql.jdbc.Driver";
     String jdbcUrl ="jdbc:mysql://10.70.0.17/keruxdbupdate";
     String dbUserName = "KeruxAdmin";
     String dbPassword = "admin";*/
@@ -51,8 +51,6 @@ public interface DBUtility {
     String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, reasonrevoke_id, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?,?)";
 
-
-
     String SELECT_NEW_DEPARTMENT_ID = "Select MAX(department_id) from department";
     String SELECT_NEW_DOCTOR_ID = "Select MAX(doctor_id) from doctor";
     String SELECT_NEW_QUEUEMANAGER_ID = "Select MAX(queuemanager_id) from queuemanager";
@@ -62,6 +60,7 @@ public interface DBUtility {
     String INSERT_QM_ENROLLMENT = "INSERT INTO qmenrollment (QueueManager_ID, Admin_ID, Department_ID, Clinic_ID) values (?,?,?,?)";
     String INSERT_DOC_ENROLLMENT = "INSERT INTO doctor_enrollment (Admin_ID, Clinic_ID, Department_ID, Doctor_ID) values (?,?,?,?)";
     String INSERT_DOC_TYPE_ENROLLMENT = "INSERT INTO doctor_type (DoctorType) values (?)";
+    String INSERT_REASON = "INSERT INTO reason_revoke (Reason, TableName) values (?,?)";
 
     //INSERTING DATAS IN AUDIT
     String INSERT_AUDIT_LOG = "INSERT INTO audit_log (TableName, EventType, SqlCommand, OldData, NewData, LoginName)" +

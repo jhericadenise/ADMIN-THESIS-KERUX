@@ -23,29 +23,30 @@
 
         <ListView
             android:id="@+id/listAccounts"
-            android:layout_width="280dp"
-            android:layout_height="222dp"
+            android:layout_width="281dp"
+            android:layout_height="189dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.483" />
 
         <Button
             android:id="@+id/bttnViewAcc"
-            android:layout_width="248dp"
-            android:layout_height="47dp"
+            android:layout_width="255dp"
+            android:layout_height="41dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.127" />
+            app:layout_constraintVertical_bias="0.156" />
 
         <ListView
             android:id="@+id/listBlocked"
-            android:layout_width="294dp"
-            android:layout_height="154dp"
+            android:layout_width="281dp"
+            android:layout_height="198dp"
             android:layout_marginEnd="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,15 +57,15 @@
 
         <Button
             android:id="@+id/bttnViewBlocked"
-            android:layout_width="238dp"
-            android:layout_height="46dp"
+            android:layout_width="285dp"
+            android:layout_height="37dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.717" />
+            app:layout_constraintVertical_bias="0.659" />
 
         <Spinner
             android:id="@+id/spinnerAccReason"
@@ -76,6 +77,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.264" />
+
+        <Button
+            android:id="@+id/bttnAddAccReason"
+            android:layout_width="191dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.327" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

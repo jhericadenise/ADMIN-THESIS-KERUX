@@ -26,51 +26,51 @@
 
         <Button
             android:id="@+id/bttnUnenrollDoc"
-            android:layout_width="242dp"
-            android:layout_height="45dp"
+            android:layout_width="260dp"
+            android:layout_height="47dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintHorizontal_bias="0.16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.592" />
+            app:layout_constraintVertical_bias="0.586" />
 
         <Button
             android:id="@+id/bttnDept"
-            android:layout_width="242dp"
-            android:layout_height="45dp"
+            android:layout_width="260dp"
+            android:layout_height="47dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintHorizontal_bias="0.16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.38" />
+            app:layout_constraintVertical_bias="0.386" />
 
         <Button
             android:id="@+id/bttnQm"
-            android:layout_width="242dp"
-            android:layout_height="45dp"
+            android:layout_width="260dp"
+            android:layout_height="47dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintHorizontal_bias="0.16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.268" />
+            app:layout_constraintVertical_bias="0.285" />
 
         <Button
             android:id="@+id/bttnDoctor"
-            android:layout_width="242dp"
-            android:layout_height="45dp"
+            android:layout_width="260dp"
+            android:layout_height="47dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintHorizontal_bias="0.16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.482" />
+            app:layout_constraintVertical_bias="0.485" />
 
         <TextView
             android:id="@+id/txtEnrollDate"

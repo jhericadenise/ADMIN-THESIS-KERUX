@@ -74,7 +74,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    DoEnroll doEnroll=new DoEnroll();
+                                    DoEnroll doEnroll = new DoEnroll();
                                     doEnroll.execute();
                                     deptName.getText().clear();
                                 }
@@ -174,8 +174,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         } else if (name.length() < 2){
             deptName.setError("Department name too short");
             return false;
-        } else if(name.matches("[^a-zA-Z]")) {
-            deptName.setError("Department name cannot have number values");
+        } else if(!name.matches("[\"~#^|$%&*!]")) {
+            deptName.setError("Department name must only be in characters");
             return false;
         }
         else {

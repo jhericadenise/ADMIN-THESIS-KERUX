@@ -1,12 +1,16 @@
 package com.kerux.admin_thesis_kerux.navigation;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -22,6 +26,7 @@ import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
@@ -47,6 +52,11 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
     Button displayAccounts;
     Button displayBlocked;
 
+    Button addReasonAcc;
+    private EditText otherReason;
+    private EditText table;
+    final Context context = this;
+
     DrawerLayout drawerLayout;
     private Spinner spinnerReasonPatient;
     private static String urlReasonSpinner = "http://192.168.1.13:89/kerux/reasonSpinnerPatient.php";
@@ -65,6 +75,50 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         displayAccounts = (Button) findViewById(R.id.bttnViewAcc);
         blockedList = (ListView) findViewById(R.id.listBlocked);
         displayBlocked = (Button) findViewById(R.id.bttnViewBlocked);
+        addReasonAcc = findViewById(R.id.bttnAddAccReason);
+        addReasonAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(context);
+                View promptsView = li.inflate(R.layout.activity_add_reason_acc, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
+                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("ENROLL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        DoEnrollReasonAcc doEnrollReasonAcc = new DoEnrollReasonAcc();
+                                        doEnrollReasonAcc.execute();
+                                        //for refreshing the spinner
+                                        Downloader dept = new Downloader(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+                                        dept.execute();
+                                    }
+                                })
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
+        });
 
         //button for displaying enrolled accounts in a list view
         displayAccounts.setOnClickListener(new View.OnClickListener() {
@@ -344,5 +398,73 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         protected void onPostExecute(String s) {
             blockedList.setAdapter(listAdapterBlockedAcc);
         }
+    }
+
+    private class DoEnrollReasonAcc extends AsyncTask<String, String, String> {
+
+        Security sec = new Security();
+        boolean isSuccess = false;
+        String message = "";
+        String reason = otherReason.getText().toString();
+        String tableName = table.getText().toString();
+        boolean hasRecord = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            Connection con = connectionClass.CONN();
+
+            if (reason.trim().equals("")) {
+                message = "Please enter all fields";
+            }
+            else if (hasRecord){
+                message = "Record already exists";
+            }
+            else {
+                try {
+                    if (con == null) {
+                        message = "CANNOT ADD RECORD";
+
+                    } else {
+                        //inserting data of department to the database
+                        String query = INSERT_REASON;
+                        PreparedStatement ps1 = null;
+                        try {
+                            ps1 = con.prepareStatement(query);
+                            ps1.setString(1, reason);
+                            ps1.setString(2, tableName);
+                            ps1.executeUpdate();
+                            message = "Added Successfully!";
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                        con.close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    message = "Exceptions"+ex;
+                    Log.d("ex", ex.getMessage () + " Jheca");
+                }
+            }
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
+
+            if (isSuccess) {
+                Intent intent = new Intent(ManageAccounts.this, ManageAccounts.class);
+                startActivity(intent);
+            }
+
+        }
+
     }
 }
