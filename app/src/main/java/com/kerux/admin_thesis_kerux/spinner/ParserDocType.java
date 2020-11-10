@@ -12,22 +12,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE HAVE A SERVER
+public class ParserDocType extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE HAVE A SERVER
 
     Context c;
     String data;
     ArrayList names=new ArrayList();
     Spinner sp;
     String columnName;
-    String clinicid;
     String headerValue;
 
-    public Parser(Context c, String data,Spinner sp, String columnName, String clinicid, String headerValue) {
+    public ParserDocType(Context c, String data,Spinner sp, String columnName, String headerValue) {
         this.c = c;
         this.data = data;
         this.sp=sp;
-        this.columnName=columnName;
-        this.clinicid=clinicid;
+        this.columnName = columnName;
         this.headerValue = headerValue;
     }
 
@@ -40,7 +38,7 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
 
-        if(integer==1)
+        if(integer>=1)
         {
             ArrayAdapter adapter=new ArrayAdapter(c,android.R.layout.simple_list_item_1,names);
             sp.setAdapter(adapter);
@@ -57,20 +55,12 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
             JSONArray ja=new JSONArray(data);
             JSONObject jo=null;
             names.add(headerValue);
-
-            for (int i=0;i<ja.length();i++)
+            for (int i=0; i<ja.length(); i++)
             {
                 jo=ja.getJSONObject(i);
-                String[] arr = columnName.split(" ");
-                String word="";
-                for (String s : arr)
-                    word+=" "+jo.getString(s);
+                String name=jo.getString(columnName);
+                names.add(name);
 
-                String cid=jo.getString("Clinic_ID");
-                if(cid.equals(clinicid)){
-                    names.add(word);
-                }
-//                names.add(name);
             }
 
             return 1;

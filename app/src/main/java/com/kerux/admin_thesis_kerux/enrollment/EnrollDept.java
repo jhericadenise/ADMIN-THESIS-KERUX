@@ -174,11 +174,10 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         } else if (name.length() < 2){
             deptName.setError("Department name too short");
             return false;
-        } else if(!name.matches("[\"~#^|$%&*!]")) {
-            deptName.setError("Department name must only be in characters");
+        } else if(name.matches("^[0-9]+$")){
+            deptName.setError("Department name cannot contain number values");
             return false;
-        }
-        else {
+        } else {
             deptName.setError(null);
             return true;
         }
@@ -213,8 +212,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
             PreparedStatement ps = null;
             try {
                 ps = con.prepareStatement(VALIDATION_DEPT);
-                ps.setInt (1, clinicName);
-                ps.setString(2, depName);
+                ps.setString(1, depName);
+                ps.setInt(2, clinicName);
 
                 ResultSet rs=ps.executeQuery();
 
@@ -225,20 +224,11 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                 e.printStackTrace();
             }
 
-            message = "Record already exists";
 
-
-            if (depName.trim().equals("")) {
-                message = "Please enter all fields";
-            }
-            else if (!depName.matches("^[A-Za-z]+$")) {
-                message = "Check format";
-            }
-            else if (hasRecord){
+            if (hasRecord){
                 message = "Record already exists";
             }
-            else
-            {
+            else {
                 try {
                     if (con == null) {
                         message = "CANNOT ADD RECORD";
@@ -254,48 +244,46 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
                         ps1.executeUpdate();
 
-                        String query2=SELECT_NEW_DEPARTMENT_ID; //DON'T NEED TO LOG, IT JUST GETS THE DEP_ID OF THE NEWLY INSERTED DEPARTMENT
+                        String query2 = SELECT_NEW_DEPARTMENT_ID; //DON'T NEED TO LOG, IT JUST GETS THE DEP_ID OF THE NEWLY INSERTED DEPARTMENT
                         PreparedStatement ps2 = con.prepareStatement(query2);
                         ResultSet rs1 = ps2.executeQuery();
-                        while(rs1.next()){
-                            String newdeptid=rs1.getString(1);
+                        while (rs1.next()) {
+                            String newdeptid = rs1.getString(1);
 
                             //insert department into department_enrollment table
-                            String query3=INSERT_DEPT_ENROLLMENT;
+                            String query3 = INSERT_DEPT_ENROLLMENT;
                             PreparedStatement ps3 = con.prepareStatement(query3);
                             ps3.setString(1, session.getadminid());
                             ps3.setString(2, newdeptid);
                             ps3.setString(3, session.getclinicid());
                             ps3.executeUpdate();
                             //insert to audit log table
-                            String queryAUDIT=INSERT_AUDIT_LOG;
-                            PreparedStatement psAUDIT=con.prepareStatement(queryAUDIT);
+                            String queryAUDIT = INSERT_AUDIT_LOG;
+                            PreparedStatement psAUDIT = con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, sec.encrypt("department"));
                             psAUDIT.setString(2, sec.encrypt("insert"));
                             psAUDIT.setString(3, sec.encrypt("Inserting a Department record"));
                             psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinicName)+", "+reason+", "+depName+", "+Status));
+                            psAUDIT.setString(5, sec.encrypt(String.valueOf(clinicName) + ", " + reason + ", " + depName + ", " + Status));
                             psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                             //inserting to audit log
-                            PreparedStatement psAUDIT1=con.prepareStatement(queryAUDIT);
+                            PreparedStatement psAUDIT1 = con.prepareStatement(queryAUDIT);
                             psAUDIT.setString(1, sec.encrypt("department_enrollment"));
                             psAUDIT.setString(2, sec.encrypt("insert"));
                             psAUDIT.setString(3, sec.encrypt("Inserting into department_enrollment table"));
                             psAUDIT.setString(4, sec.encrypt("none"));
-                            psAUDIT.setString(5, sec.encrypt(session.getadminid()+", "+newdeptid+", "+session.getclinicid()));
+                            psAUDIT.setString(5, sec.encrypt(session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()));
                             psAUDIT.setString(6, sec.encrypt(session.getusername()));
                             psAUDIT.executeUpdate();
                         }
                         con.close();
                         message = "ADDED SUCCESSFULLY!";
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     isSuccess = false;
-                    message = "Exceptions"+ex;
-                    Log.d("ex", ex.getMessage () + " Jheca");
+                    message = "Exceptions" + ex;
+                    Log.d("ex", ex.getMessage() + " Jheca");
                 }
             }
             return message;

@@ -3,7 +3,6 @@ package com.kerux.admin_thesis_kerux.spinner;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -13,21 +12,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class Downloader extends AsyncTask<Void,Void,String> {//TO BE USED WHEN WE HAVE A SERVER
+public class DownloaderDocType extends AsyncTask<Void,Void,String> {//TO BE USED WHEN WE HAVE A SERVER
+
     Context c;
     String urlAddress;
     Spinner sp;
     ProgressDialog pd;
     String columnName;
-    String clinicid;
     String headerValue;
 
-    public Downloader(Context c, String urlAddress, Spinner sp, String columnName, String clinicid, String headerValue) {
+    public DownloaderDocType(Context c, String urlAddress, Spinner sp,String columnName, String headerValue) {
         this.c = c;
         this.urlAddress = urlAddress;
         this.sp = sp;
-        this.columnName=columnName;
-        this.clinicid=clinicid;
+        this.columnName = columnName;
         this.headerValue=headerValue;
     }
 
@@ -56,8 +54,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {//TO BE USED WHEN W
 
         if(s != null)
         {
-            Parser p=new Parser(c,s,sp, columnName, clinicid, headerValue);
-            Log.d("CLINICID", clinicid);
+            Parser p=new Parser(c,s,sp, columnName, headerValue);
             p.execute();
 
         }else {

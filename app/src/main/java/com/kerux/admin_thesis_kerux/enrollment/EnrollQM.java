@@ -69,7 +69,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() | !validateLName() | !validateEmail() | !validateUsername() | !validatePassword()) {
+                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername() || !validatePassword()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollQM.this);
@@ -79,7 +79,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                                 public void onClick(DialogInterface dialog, int id) {
                                     EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
                                     doenroll.execute();
-                                    sendEmail();
                                     qmFirstName.getText().clear();
                                     qmLastName.getText().clear();
                                     qmEmail.getText().clear();
@@ -105,7 +104,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         qmPw = (EditText) findViewById(R.id.txtboxQMpw);
 
 
-        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "Name", "Choose Department");
+        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "Name", session.getclinicid(), "Choose Department");
         dep.execute();
 
     }
@@ -181,20 +180,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         Intent intent = new Intent(this, EnrollmentPage.class);
         startActivity(intent);
     }
-    private void sendEmail() {
-        String email = qmEmail.getText().toString().trim();
-        String subject = "Kerux Queue Manager Enrollment Credentials";
-        String message = "Good day!\n" +
-                "We've successfully enrolled you as a Queue Manager\n\n\n" +
-                "Here are your credentials" + "\n\nUsername: " + qmUname.getText().toString().trim() +
-                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n" +
-                "Please change your password immediately after receiving this email\n\n" +
-                "\n\n Thank you!";
 
-        SendMailTask sm = new SendMailTask(this, email, subject, message);
-        sm.execute();
-    }
-    
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -265,10 +251,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             qmFirstName.setError("First Name too short");
             return false;
-        } else if(!firstname.matches("[\"~#^|$%&*!]")) {
-            qmFirstName.setError("First name must only be in characters");
+        } else if(firstname.matches("^[0-9]+$")){
+            qmFirstName.setError("Last name cannot contain number values");
             return false;
-        } else {
+        }  else {
             qmFirstName.setError(null);
             return true;
         }
@@ -283,10 +269,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             qmLastName.setError("Last Name too short");
             return false;
-        } else if(!lastname.matches("[\"~#^|$%&*!]")) {
-            qmLastName.setError("Last name must only be in characters");
+        }else if(lastname.matches("^[0-9]+$")){
+            qmLastName.setError("Last name cannot contain number values");
             return false;
-        } else {
+        }  else {
             qmLastName.setError(null);
             return true;
         }
@@ -335,9 +321,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             PreparedStatement ps = null;
             try {
                 ps = con.prepareStatement(VALIDATION_QM);
-                ps.setInt (1, clinic);
+                ps.setString(1, QMuname);
                 ps.setString(2, QMFname);
                 ps.setString(3, QMLname);
+                ps.setInt(4, clinic);
 
                 ResultSet rs=ps.executeQuery();
 
@@ -347,8 +334,12 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            message = "Record already exists";
 
+
+            if (hasRecord){
+                message = "Record already exists";
+            }
+            else {
                 try {
                     if (con == null) {
                         message = "Unsuccessful";
@@ -366,6 +357,19 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                         ps1.setString(9, status);
 
                         ps1.execute();
+
+                        //sending email
+                        String email = qmEmail.getText().toString().trim();
+                        String subject = "Kerux Queue Manager Enrollment Credentials";
+                        String message = "Good day!\n" +
+                                "We've successfully enrolled you as a Queue Manager\n\n\n" +
+                                "Here are your credentials" + "\n\nUsername: " + qmUname.getText().toString().trim() +
+                                "\nPassword: " + qmPw.getText().toString().trim() + "\n\n You can now login on the kerux app using this credentials. \n" +
+                                "Please change your password immediately after receiving this email\n\n" +
+                                "\n\n Thank you!";
+
+                        SendMailTask sm = new SendMailTask(EnrollQM.this, email, subject, message);
+                        sm.execute();
 
                         String query2 = SELECT_NEW_QUEUEMANAGER_ID;
                         PreparedStatement ps2 = con.prepareStatement(query2);
@@ -410,6 +414,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                     isSuccess = false;
                     message = "Exceptions" + ex;
                 }
+            }
             return message;
         }
 

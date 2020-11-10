@@ -31,6 +31,7 @@ import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
+import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.sql.Connection;
@@ -116,7 +117,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                                         // edit text
                                         DoEnrollDocType doEnrollDocType = new DoEnrollDocType();
                                         doEnrollDocType.execute();
-                                        Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
+                                        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
                                         docType.execute();
                                     }
                                 })
@@ -137,7 +138,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         bttnEnrollDoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() | !validateLName() | !validateRoomNo() | !validateSched1() | !validateSched2()) {
+                if (!validateFName() || !validateLName() || !validateRoomNo() || !validateSched1() || !validateSched2()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollDoctor.this);
@@ -165,9 +166,9 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             }
         });
 
-        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name", "Choose Department");
+        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name", session.getclinicid(), "Choose Department");
         dep.execute();
-        Downloader docType = new Downloader(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
+        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
         docType.execute();
 
     }
@@ -242,8 +243,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (firstname.length() < 3){
             doctorFName.setError("First Name too short");
             return false;
-        } else if(!firstname.matches("[\"~#^|$%&*!]")) {
-            doctorFName.setError("First name must only be in characters");
+        } else if(firstname.matches("^[0-9]+$")){
+            doctorFName.setError("First name cannot contain number values");
             return false;
         } else {
             doctorFName.setError(null);
@@ -260,10 +261,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         } else if (lastname.length() < 2){
             doctorLName.setError("Last Name too short");
             return false;
-        } else if(!lastname.matches("[\"~#^|$%&*!]")) {
-            doctorLName.setError("First name must only be in characters");
+        } else if(lastname.matches("^[0-9]+$")){
+            doctorLName.setError("Last name cannot contain number values");
             return false;
-        } else {
+        }  else {
             doctorLName.setError(null);
             return true;
         }
@@ -352,6 +353,9 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             try {
                 ps1 = con.prepareStatement(VALIDATION_DOCTOR);
                 ps1.setString(1, docFName);
+                ps1.setString(2, docLName);
+                ps1.setInt(3, clinic);
+                ps1.setInt(4, dept);
 
                 ResultSet rs = ps1.executeQuery();
 
@@ -483,22 +487,23 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         @Override
         protected String doInBackground(String... params) {
             Connection con = connectionClass.CONN();
-          /*  PreparedStatement ps = null;
+            PreparedStatement ps = null;
+
             try {
                 ps = con.prepareStatement(VALIDATION_DOC_TYPE);
                 ps.setString(1, enrollDoctorType);
 
-                ResultSet rs=ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
 
-                if(rs.next()){
-                    hasRecord = true;
+                if (rs.next()) {
+                    hasRecord=true;
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
             message = "Record already exists";
-*/
 
             if (enrollDoctorType.trim().equals("")) {
                 message = "Please enter all fields";

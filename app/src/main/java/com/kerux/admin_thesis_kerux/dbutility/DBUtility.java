@@ -42,13 +42,13 @@ public interface DBUtility {
 
     //INSERTING RECORDS
     //Doctor
-    String INSERT_DOCTOR = "insert into doctor (DoctorType_ID, Clinic_ID, reasonrevoke_id, FirstName, LastName, Department_ID, " +
+    String INSERT_DOCTOR = "INSERT INTO doctor (DoctorType_ID, Clinic_ID, reasonrevoke_id, FirstName, LastName, Department_ID, " +
             "RoomNo, Schedule1, Schedule2, Days, Status) values " +
             "(?,?,?,?,?,?,?,?,?,?,?)";
     //Department
-    String INSERT_DEPT = "insert into department (Clinic_ID, ReasonRevoke_ID, Name, Status) values (?,?,?,?)";
+    String INSERT_DEPT = "INSERT INTO department (Clinic_ID, ReasonRevoke_ID, Name, Status) values (?,?,?,?)";
     //Queue Manager
-    String INSERT_QM = "insert into queuemanager (Clinic_ID, Department_ID, reasonrevoke_id, Username, " +
+    String INSERT_QM = "INSERT INTO queuemanager (Clinic_ID, Department_ID, reasonrevoke_id, Username, " +
             "Password, FirstName, LastName, Email, Status) values (?,?,?,?,?,?,?,?,?)";
 
     String SELECT_NEW_DEPARTMENT_ID = "Select MAX(department_id) from department";
@@ -67,9 +67,9 @@ public interface DBUtility {
             "values (?,?,?,?,?,?)";
 
     //VALIDATION
-    String VALIDATION_DEPT = "SELECT * from department where name = ? AND Status = 'Active' AND Clinic_ID = ? AND Clinic_ID = ?";
-    String VALIDATION_DOCTOR = "SELECT * from doctor where firstName = ? AND lastName = ? AND Status = 'Active' AND Clinic_ID = ?";
-    String VALIDATION_QM = "SELECT * from queuemanager where firstName = ? AND LastName = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_DEPT = "SELECT * FROM department WHERE Name = ? AND Status = 'Active' AND Clinic_ID = ?";
+    String VALIDATION_DOCTOR = "SELECT * FROM doctor WHERE firstName = ? AND lastName = ? AND Status = 'Active' AND Clinic_ID = ? AND Department_ID = ?";
+    String VALIDATION_QM = "SELECT * FROM queuemanager WHERE Username = ? AND FirstName = ? AND LastName = ? AND Status = 'Active' AND Clinic_ID = ?";
     String VALIDATION_DOC_TYPE = "SELECT * FROM doctor_type WHERE DoctorType = ?";
 
     //UNENROLLING RECORDS
