@@ -84,7 +84,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {//TO BE USED WHEN W
             {
                 receivedData.append(line+"n");
             }
-
+            Log.d("to parse",receivedData.toString());
             br.close();
             is.close();
 

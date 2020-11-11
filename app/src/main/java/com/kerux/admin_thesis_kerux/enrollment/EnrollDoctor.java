@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,8 +51,8 @@ import java.util.ArrayList;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet"; /*10.0.2.2:89*/
-    private static String urlDocTypeSpinner = "https://isproj2a.benilde.edu.ph/Sympl/doctorTypeSpinnerServlet";
+    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet"; /*10.0.2.2:89*/
+    private static final String urlDocTypeSpinner = "https://isproj2a.benilde.edu.ph/Sympl/doctorTypeSpinnerServlet";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -87,19 +88,19 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
         Button bttnEnrollDoc = findViewById(R.id.bttnEnrollDoc);
         Button bttnAdd = findViewById(R.id.bttnAddDocType);
-        doctorFName = (EditText) findViewById(R.id.txtboxDocFName);
-        doctorLName = (EditText) findViewById(R.id.txtboxDocLName);
-        roomNo = (EditText) findViewById(R.id.txtboxRoomNo);
-        schedule1 = (EditText) findViewById(R.id.txtboxSched1);
-        schedule2 = (EditText) findViewById(R.id.txtboxSched2);
-        monday = (CheckBox) findViewById(R.id.cBoxMon);
-        tuesday = (CheckBox) findViewById(R.id.cBoxTues);
-        wednesday = (CheckBox) findViewById(R.id.cBoxWed);
-        thursday = (CheckBox) findViewById(R.id.cBoxThurs);
-        friday = (CheckBox) findViewById(R.id.cBoxFriday);
-        saturday = (CheckBox) findViewById(R.id.cBoxSat);
-        spinnerDocType = (Spinner) findViewById(R.id.spinnerDocType);
-        spinnerDep = (Spinner) findViewById(R.id.spinnerDepType);
+        doctorFName = findViewById(R.id.txtboxDocFName);
+        doctorLName = findViewById(R.id.txtboxDocLName);
+        roomNo = findViewById(R.id.txtboxRoomNo);
+        schedule1 = findViewById(R.id.txtboxSched1);
+        schedule2 = findViewById(R.id.txtboxSched2);
+        monday = findViewById(R.id.cBoxMon);
+        tuesday = findViewById(R.id.cBoxTues);
+        wednesday = findViewById(R.id.cBoxWed);
+        thursday = findViewById(R.id.cBoxThurs);
+        friday = findViewById(R.id.cBoxFriday);
+        saturday = findViewById(R.id.cBoxSat);
+        spinnerDocType = findViewById(R.id.spinnerDocType);
+        spinnerDep = findViewById(R.id.spinnerDepType);
         bttnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +115,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                docType = (EditText)promptsView.findViewById(R.id.txtboxDoctorType);
+                docType = promptsView.findViewById(R.id.txtboxDoctorType);
 
                 // set dialog message
                 alertDialogBuilder
@@ -126,7 +127,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                                         // edit text
                                         DoEnrollDocType doEnrollDocType = new DoEnrollDocType();
                                         doEnrollDocType.execute();
-                                        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
+                                        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "doctor_type", "Choose Doctor Type");
                                         docType.execute();
                                     }
                                 })
@@ -175,9 +176,9 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             }
         });
 
-        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "Name", session.getclinicid(), "Choose Department");
+        Downloader dep = new Downloader(EnrollDoctor.this, urlDeptSpinner, spinnerDep, "name", session.getclinicid(), "Choose Department");
         dep.execute();
-        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "DoctorType", "Choose Doctor Type");
+        DownloaderDocType docType = new DownloaderDocType(EnrollDoctor.this, urlDocTypeSpinner, spinnerDocType, "doctor_type", "Choose Doctor Type");
         docType.execute();
 
     }
@@ -405,7 +406,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();
@@ -442,7 +443,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             try{
-                insertAudit( sec.encrypt("doctor"),  sec.encrypt("insert"),  sec.encrypt("Insert doctor record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinic)+", "+reason+", "+dept+", "+status),  sec.encrypt(session.getusername()));
+                insertAudit( sec.encrypt("doctor"),  sec.encrypt("insert"),  sec.encrypt("Insert doctor record"),  sec.encrypt("none"),  sec.encrypt(clinic +", "+reason+", "+dept+", "+status),  sec.encrypt(session.getusername()));
                 insertAudit(sec.encrypt("doctor_enrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into doctor_enrollment table record"),  sec.encrypt("none"),  sec.encrypt(session.getadminid()+", "+newdocid+", "+ ", "+ newdocid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
             }catch(Exception e){
                 Log.d("insertAudit", e.getMessage());
@@ -477,7 +478,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();
@@ -529,7 +530,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();

@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,7 +58,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmEmail;
     private Spinner deptSpinner;
     ConnectionClass connectionClass;
-    private static String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
+    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
 
     DrawerLayout drawerLayout;
 
@@ -74,7 +75,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
-        deptSpinner = (Spinner) findViewById(R.id.spinnerDept);
+        deptSpinner = findViewById(R.id.spinnerDept);
 
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,14 +108,14 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             }
         });
 
-        qmFirstName = (EditText) findViewById(R.id.txtboxQMFname);
-        qmLastName = (EditText) findViewById(R.id.txtboxQmLname);
-        qmEmail = (EditText) findViewById(R.id.txtboxQMEmail);
-        qmUname = (EditText) findViewById(R.id.txtboxQMun);
-        qmPw = (EditText) findViewById(R.id.txtboxQMpw);
+        qmFirstName = findViewById(R.id.txtboxQMFname);
+        qmLastName = findViewById(R.id.txtboxQmLname);
+        qmEmail = findViewById(R.id.txtboxQMEmail);
+        qmUname = findViewById(R.id.txtboxQMun);
+        qmPw = findViewById(R.id.txtboxQMpw);
 
 
-        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "Name", session.getclinicid(), "Choose Department");
+        Downloader dep = new Downloader(EnrollQM.this, urlDeptSpinner, deptSpinner, "name", session.getclinicid(), "Choose Department");
         dep.execute();
 
     }
@@ -354,7 +355,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
-                            new OutputStreamWriter(os, "UTF-8"));
+                            new OutputStreamWriter(os, StandardCharsets.UTF_8));
                     writer.write(query);
                     writer.flush();
                     writer.close();
@@ -394,7 +395,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
             if (isSuccess) {
                 try{
-                    insertAudit( sec.encrypt("queue manager"),  sec.encrypt("insert"),  sec.encrypt("Inserting Queue Manager record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinic) + ", " + reason + ", " + dept + ", " + status),  sec.encrypt(session.getusername()));
+                    insertAudit( sec.encrypt("queue manager"),  sec.encrypt("insert"),  sec.encrypt("Inserting Queue Manager record"),  sec.encrypt("none"),  sec.encrypt(clinic + ", " + reason + ", " + dept + ", " + status),  sec.encrypt(session.getusername()));
                     insertAudit( sec.encrypt("qmenrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into qmenrollment table"),  sec.encrypt("none"),  sec.encrypt(session.getadminid() + ", " + newqmid + ", " + ", " + newqmid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
                 }catch(Exception e){
                     Log.d("insertAudit", e.getMessage());
@@ -428,7 +429,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();

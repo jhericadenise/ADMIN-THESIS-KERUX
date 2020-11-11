@@ -66,7 +66,7 @@ public class Parser extends AsyncTask<Void,Void,Integer> {//TO BE USED WHEN WE H
                 for (String s : arr)
                     word+=" "+jo.getString(s);
 
-                String cid=jo.getString("Clinic_ID");
+                String cid=jo.getString("clinic_id");
                 if(cid.equals(clinicid)){
                     names.add(word);
                 }

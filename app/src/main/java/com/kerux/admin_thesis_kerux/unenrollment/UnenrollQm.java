@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -71,7 +72,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     private EditText table;
     final Context context = this;
 
-    private static String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerQMServlet";
+    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerQMServlet";
     KeruxSession session;
 
     @Override
@@ -82,7 +83,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        spinnerQMReason = (Spinner) findViewById(R.id.spinnerQMReason);
+        spinnerQMReason = findViewById(R.id.spinnerQMReason);
 
         addReasonQm = findViewById(R.id.bttnAddQMReason);
         addReasonQm.setOnClickListener(new View.OnClickListener() {
@@ -97,8 +98,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
-                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+                otherReason = promptsView.findViewById(R.id.txtboxReason);
+                table = promptsView.findViewById(R.id.txtboxTableName);
 
                 // set dialog message
                 alertDialogBuilder
@@ -111,7 +112,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                                         DoEnrollReasonQM doEnrollReasonQM = new DoEnrollReasonQM();
                                         doEnrollReasonQM.execute();
                                         //for refreshing the spinner
-                                        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "reason", "Choose Reason to Revoke");
                                         qm.execute();
 
                                     }
@@ -130,8 +131,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
-        qmDisplayList = (Button) findViewById(R.id.bttnDisplayQm);
-        qmList = (ListView) findViewById(R.id.listEnrolledQm);
+        qmDisplayList = findViewById(R.id.bttnDisplayQm);
+        qmList = findViewById(R.id.listEnrolledQm);
 
         qmDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +188,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
-        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "reason", "Choose Reason to Revoke");
         qm.execute();
     }
 
@@ -274,7 +275,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -312,7 +313,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -351,7 +352,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -409,7 +410,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
-                qmList = (ListView) findViewById(R.id.listEnrolledQm);
+                qmList = findViewById(R.id.listEnrolledQm);
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListQMServlet");
                 URLConnection connection = url.openConnection();
 
@@ -494,7 +495,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
-                            new OutputStreamWriter(os, "UTF-8"));
+                            new OutputStreamWriter(os, StandardCharsets.UTF_8));
                     writer.write(query);
                     writer.flush();
                     writer.close();

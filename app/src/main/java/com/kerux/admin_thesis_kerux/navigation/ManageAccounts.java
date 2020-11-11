@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +71,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
     DrawerLayout drawerLayout;
     private Spinner spinnerReasonPatient;
-    private static String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/resonSpinnerPatientServlet";
+    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/resonSpinnerPatientServlet";
     KeruxSession session;
 
     @Override
@@ -82,10 +83,10 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         session=new KeruxSession(getApplicationContext());
         spinnerReasonPatient = findViewById(R.id.spinnerAccReason);
 
-        accountsList = (ListView) findViewById(R.id.listAccounts);
-        displayAccounts = (Button) findViewById(R.id.bttnViewAcc);
-        blockedList = (ListView) findViewById(R.id.listBlocked);
-        displayBlocked = (Button) findViewById(R.id.bttnViewBlocked);
+        accountsList = findViewById(R.id.listAccounts);
+        displayAccounts = findViewById(R.id.bttnViewAcc);
+        blockedList = findViewById(R.id.listBlocked);
+        displayBlocked = findViewById(R.id.bttnViewBlocked);
         addReasonAcc = findViewById(R.id.bttnAddAccReason);
         addReasonAcc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,8 +100,8 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
-                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+                otherReason = promptsView.findViewById(R.id.txtboxReason);
+                table = promptsView.findViewById(R.id.txtboxTableName);
 
                 // set dialog message
                 alertDialogBuilder
@@ -113,7 +114,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
                                         DoEnrollReasonAcc doEnrollReasonAcc = new DoEnrollReasonAcc();
                                         doEnrollReasonAcc.execute();
                                         //for refreshing the spinner
-                                        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "reason", "Choose Reason to Revoke");
                                         dept.execute();
                                     }
                                 })
@@ -180,7 +181,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         });
 
         //spinner downloader
-        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType dept = new DownloaderDocType(ManageAccounts.this, urlReasonSpinner, spinnerReasonPatient, "reason", "Choose Reason to Revoke");
         dept.execute();
     }
 
@@ -266,7 +267,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -305,7 +306,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -353,7 +354,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled accounts
-                accountsList = (ListView) findViewById(R.id.listAccounts);
+                accountsList = findViewById(R.id.listAccounts);
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListEnrolledAcctAdminServlet");
                 URLConnection connection = url.openConnection();
 
@@ -415,7 +416,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
-                blockedList = (ListView) findViewById(R.id.listBlocked);
+                blockedList = findViewById(R.id.listBlocked);
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListBlockedAcctAdminServlet");
                 URLConnection connection = url.openConnection();
 

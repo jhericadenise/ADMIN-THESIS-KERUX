@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +71,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     final Context context = this;
 
     DrawerLayout drawerLayout;
-    private static String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerDeptServlet";
+    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerDeptServlet";
     KeruxSession session;
 
     @Override
@@ -82,8 +83,8 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        deptDisplayList = (Button) findViewById(R.id.bttnDisplayDept);
-        deptList = (ListView) findViewById(R.id.listEnrolledDept);
+        deptDisplayList = findViewById(R.id.bttnDisplayDept);
+        deptList = findViewById(R.id.listEnrolledDept);
 
         addReasonDept = findViewById(R.id.bttnAddDeptReason);
         addReasonDept.setOnClickListener(new View.OnClickListener() {
@@ -98,8 +99,8 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                otherReason = (EditText)promptsView.findViewById(R.id.txtboxReason);
-                table = (EditText)promptsView.findViewById(R.id.txtboxTableName);
+                otherReason = promptsView.findViewById(R.id.txtboxReason);
+                table = promptsView.findViewById(R.id.txtboxTableName);
 
                 // set dialog message
                 alertDialogBuilder
@@ -112,7 +113,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
                                         DoEnrollReasonDept doEnrollReasonDept = new DoEnrollReasonDept();
                                         doEnrollReasonDept.execute();
                                         //for refreshing the spinner
-                                        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
+                                        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "reason", "Choose Reason to Revoke");
                                         dept.execute();
 
                                     }
@@ -175,7 +176,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
         });
 
-        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "Reason", "Choose Reason to Revoke");
+        DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "reason", "Choose Reason to Revoke");
         dept.execute();
 
     }
@@ -262,7 +263,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -302,7 +303,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -346,7 +347,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
-                deptList = (ListView) findViewById(R.id.listEnrolledDept);
+                deptList = findViewById(R.id.listEnrolledDept);
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDepServlet");
                 URLConnection connection = url.openConnection();
 
@@ -431,7 +432,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
-                            new OutputStreamWriter(os, "UTF-8"));
+                            new OutputStreamWriter(os, StandardCharsets.UTF_8));
                     writer.write(query);
                     writer.flush();
                     writer.close();
