@@ -347,7 +347,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("qmStatus", qmStatus);
+                    .appendQueryParameter("qmStatus", qmStatus)
+                    .appendQueryParameter("clinicid", session.getclinicid());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -426,7 +427,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 ArrayList<String> output=new ArrayList<String>();
                 while ((returnString = in.readLine()) != null)
                 {
-                    receivedData.append(returnString+"n");
+                    receivedData.append(returnString+"\n");
                     output.add(returnString);
                 }
                 for (int i = 0; i < output.size(); i++) {

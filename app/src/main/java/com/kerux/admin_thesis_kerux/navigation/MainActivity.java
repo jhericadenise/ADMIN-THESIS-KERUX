@@ -5,20 +5,28 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
@@ -33,6 +41,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
  public class MainActivity extends AppCompatActivity implements View.OnClickListener, DBUtility {
     //Initialize Variable
@@ -40,6 +50,9 @@ import java.util.ArrayList;
     TextView deptCount;
     TextView qmCount;
     ConnectionClass connectionClass;
+     private KeruxSession session;
+     String qmC;
+     String depC;
 
 
     @Override
@@ -48,74 +61,87 @@ import java.util.ArrayList;
         setContentView(R.layout.activity_main);
         //Assign variable
         drawerLayout = findViewById(R.id.drawer_layout);
-
+        session = new KeruxSession(getApplicationContext());
         connectionClass = new ConnectionClass (); //create ConnectionClass
 
         deptCount = findViewById(R.id.txtCountDept);
         qmCount = findViewById(R.id.txtCountQM);
 
-        totalDept();
-        totalQm();
+        qmC="0";
+        depC="0";
+        ShowQMDept sm =new ShowQMDept();
+        sm.execute();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        final Runnable r = new Runnable() {
+
+            public void run() {
+
+
+
+                deptCount.setText(qmC);
+                qmCount.setText(depC);
+            }
+        };
+
+        handler.postDelayed(r, 100);
+
 
     }
 
-    public void totalDept(){
 
-        try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalDeptAdminServlet");
-            URLConnection connection = url.openConnection();
+     private class ShowQMDept extends AsyncTask<String, String, String> {
+         String message = "";
 
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+         @Override
+         protected void onPreExecute() {
+             Toast.makeText(getBaseContext(), "Please wait..", Toast.LENGTH_LONG).show();
+             super.onPreExecute();
+         }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String returnString="";
-            ArrayList<String> output=new ArrayList<String>();
-            while ((returnString = in.readLine()) != null)
-            {
-                Log.d("returnString", returnString);
-                output.add(returnString);
-            }
-            for (int i = 0; i < output.size(); i++) {
-                deptCount.setText(output.get(i));
+         @Override
+         protected String doInBackground(String... strings) {
+             try {
+                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalQMDeptAdminServlet");
+                 URLConnection connection = url.openConnection();
 
-            }
+                 connection.setReadTimeout(10000);
+                 connection.setConnectTimeout(15000);
+                 connection.setDoInput(true);
+                 connection.setDoOutput(true);
 
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                 String returnString="";
+                 ArrayList<String> output=new ArrayList<String>();
+                 while ((returnString = in.readLine()) != null)
+                 {
+                     Log.d("returnString", returnString);
+                     output.add(returnString);
+                 }
+                 for (int i = 0; i < output.size(); i++) {
+                     if (i==0){
+                         qmC=output.get(i);
+                     } else if (i==1){
+                         depC=output.get(i);
+                     }
 
-     public void totalQm(){
-         try {
-             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalQMAdminServlet");
-             URLConnection connection = url.openConnection();
+                    Log.d("ACACAC", output.get(i));
+                 }
 
-             connection.setReadTimeout(10000);
-             connection.setConnectTimeout(15000);
-             connection.setDoInput(true);
-             connection.setDoOutput(true);
-
-             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-             String returnString="";
-             ArrayList<String> output=new ArrayList<String>();
-             while ((returnString = in.readLine()) != null)
-             {
-                 Log.d("returnString", returnString);
-                 output.add(returnString);
-             }
-             for (int i = 0; i < output.size(); i++) {
-                 qmCount.setText(output.get(i));
+                 in.close();
+             } catch (Exception e) {
+                 e.printStackTrace();
              }
 
-             in.close();
-         } catch (Exception e) {
-             e.printStackTrace();
+             return message;
+         }
+
+         @Override
+         protected void onPostExecute(String s) {
+//             Toast.makeText(getBaseContext(), "" + qmC+depC, Toast.LENGTH_LONG).show();
          }
      }
+
 
     public void ClickMenu (View view){
         //open drawer

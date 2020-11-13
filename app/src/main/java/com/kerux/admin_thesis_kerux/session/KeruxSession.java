@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class KeruxSession {
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
 
     public KeruxSession(Context cntx) {
         // TODO Auto-generated constructor stub
@@ -94,5 +94,22 @@ public class KeruxSession {
         prefs.edit().putString("Log_ID", auditID).commit();
     }
 
+    public String getQMCount(){
+        String QMCount = prefs.getString("QMCount", "");
+        return  QMCount;
+    }
+
+    public void setQMCount(String QMCount){
+        prefs.edit().putString("QMCount", QMCount).commit();
+    }
+
+    public String getDepCount(){
+        String DepCount = prefs.getString("DepCount", "");
+        return  DepCount;
+    }
+
+    public void setDepCount(String DepCount){
+        prefs.edit().putString("DepCount", DepCount).commit();
+    }
 
 }

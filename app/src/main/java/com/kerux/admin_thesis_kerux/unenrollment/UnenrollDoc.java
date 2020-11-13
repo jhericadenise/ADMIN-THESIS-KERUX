@@ -156,11 +156,10 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String firstName = selectedFromList.substring(3, selectedFromList.length()-1);
                                 String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Successfully revoked privilege",Toast.LENGTH_LONG).show();
-                                unenrollDoc (selectedFromList, reason);
+                                unenrollDoc(selectedFromList, reason);
                                 UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc ();
                                 docListdisp.execute();
                                 insertAudit();
@@ -357,7 +356,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("docStatus", docStatus);
+                    .appendQueryParameter("docStatus", docStatus)
+                    .appendQueryParameter("clinicid", session.getclinicid());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -439,7 +439,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 ArrayList<String> output=new ArrayList<String>();
                 while ((returnString = in.readLine()) != null)
                 {
-                    receivedData.append(returnString+"n");
+                    receivedData.append(returnString+"\n");
                     output.add(returnString);
                 }
                 for (int i = 0; i < output.size(); i++) {
@@ -447,9 +447,11 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 }
                 in.close();
                 String retrieved=receivedData.toString();
+                Log.d("STRRRING", retrieved);
                 List<Map<String, String>> data= new ArrayList<Map<String, String>>();
 
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
+
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
                         R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 

@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -69,7 +70,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         drawerLayout = findViewById(R.id.drawer_layout);
 
         Button bttnEnrollDept = findViewById(R.id.bttnEnrollDept);
-        deptName = (EditText)findViewById(R.id.txtboxDeptName);
+        deptName = findViewById(R.id.txtboxDeptName);
 
         //what the button of enroll dept will do when its clicked
         bttnEnrollDept.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +240,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();
@@ -277,8 +278,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
             if(isSuccess) {
                 try{
-                    insertAudit( sec.encrypt("department"),  sec.encrypt("insert"),  sec.encrypt("Inserting a Department record"),  sec.encrypt("none"),  sec.encrypt(String.valueOf(clinicName) + ", " + reason + ", " + depName + ", " + Status),  sec.encrypt(session.getusername()));
-                    insertAudit( sec.encrypt("department_enrollment"),  sec.encrypt("insert"),  sec.encrypt("Inserting into department_enrollment table"),  sec.encrypt("none"),  sec.encrypt(session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
+                    insertAudit( "department",  "insert",  "Inserting a Department record",  "none", (clinicName + ", " + reason + ", " + depName + ", " + Status),  session.getusername());
+                    insertAudit( "department_enrollment",  "insert",  "Inserting into department_enrollment table", "none",  (session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()),  session.getusername());
                 }catch(Exception e){
                     Log.d("insertAudit", e.getMessage());
                 }
@@ -311,7 +312,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(query);
                 writer.flush();
                 writer.close();

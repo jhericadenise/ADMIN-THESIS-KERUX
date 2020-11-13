@@ -401,8 +401,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                     Log.d("insertAudit", e.getMessage());
                 }
 
-                Intent intent = new Intent(EnrollQM.this, EnrollQM.class);
-                startActivity(intent);
+//                Intent intent = new Intent(EnrollQM.this, EnrollQM.class);
+//                startActivity(intent);
             }
 
         }

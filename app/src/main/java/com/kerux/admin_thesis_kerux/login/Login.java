@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,6 +46,8 @@ public class Login extends AppCompatActivity implements DBUtility {
     private KeruxSession session;
     private SecurityWEB secweb;
     private Security sec;
+    String deptNum;
+    String qmNum;
 
     ProgressDialog progressDialog; //
     ConnectionClass connectionClass;
@@ -57,9 +60,9 @@ public class Login extends AppCompatActivity implements DBUtility {
 
         progressDialog=new ProgressDialog(this);//
 
-        username = (EditText)findViewById(R.id.txtboxUname);
-        password = (EditText)findViewById(R.id.txtboxPass);
-        button_login = (Button)findViewById(R.id.bttnLogin);
+        username = findViewById(R.id.txtboxUname);
+        password = findViewById(R.id.txtboxPass);
+        button_login = findViewById(R.id.bttnLogin);
         secweb=new SecurityWEB();
         session = new KeruxSession(getApplicationContext());
         /*bttnDashboard = findViewById(R.id.bttnDashboard);*/
@@ -108,7 +111,7 @@ public class Login extends AppCompatActivity implements DBUtility {
 
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(query);
             writer.flush();
             writer.close();
@@ -136,7 +139,7 @@ public class Login extends AppCompatActivity implements DBUtility {
         String uname=username.getText().toString();
         String pw=password.getText().toString();
         int adminId;
-        int clinicid;
+        String clinicid;
         String z="";
 
         boolean isSuccess=false;
@@ -168,13 +171,13 @@ public class Login extends AppCompatActivity implements DBUtility {
                     connection.setDoOutput(true);
 
                     Uri.Builder builder = new Uri.Builder()
-                            .appendQueryParameter("username", secweb.encrypt(uname))
-                            .appendQueryParameter("password", secweb.encrypt(pw));
+                            .appendQueryParameter("username", SecurityWEB.encrypt(uname))
+                            .appendQueryParameter("password", SecurityWEB.encrypt(pw));
                     String query = builder.build().getEncodedQuery();
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
-                            new OutputStreamWriter(os, "UTF-8"));
+                            new OutputStreamWriter(os, StandardCharsets.UTF_8));
                     writer.write(query);
                     writer.flush();
                     writer.close();
@@ -204,7 +207,7 @@ public class Login extends AppCompatActivity implements DBUtility {
                             email=output.get(i);
                         }
                         else if(i==4){
-                            clinicid=Integer.parseInt(output.get(i));
+                            clinicid=output.get(i);
                         }
                         else if(i==5){
                             usernam=output.get(i);
@@ -230,12 +233,15 @@ public class Login extends AppCompatActivity implements DBUtility {
             Toast.makeText(getBaseContext(),""+z,Toast.LENGTH_LONG).show();
 
             if(isSuccess) {
+
                 session.setadminid(String.valueOf(adminId));
                 session.setfirstname(firstName);
                 session.setlastname(lastName);
                 session.setemail(email);
-                session.setclinicid(String.valueOf(clinicid));
+                session.setclinicid(clinicid);
                 session.setusername(usernam);
+                session.setQMCount(qmNum);
+                session.setDepCount(deptNum);
                 Intent intent=new Intent(Login.this, MainActivity.class);
                 intent.putExtra("adminname", firstName+" "+lastName);
                 startActivity(intent);
@@ -243,4 +249,5 @@ public class Login extends AppCompatActivity implements DBUtility {
             progressDialog.hide();
         }
     }
+
 }
