@@ -371,10 +371,16 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                         String line=output.get(i);
                         String notnullline = line.replaceAll("null", "0");
                         String [] words=notnullline.split("\\s\\|\\s");
-                        message=words[0];
-                        if(!words[1].isEmpty()){
-                            newqmid=words[1];
+                        for (int x=0; x<words.length;x++){
+                            if(x==0){
+                                message=words[x];
+                            }
+                            if(x==1){
+                                newqmid=words[1];
+                            }
                         }
+
+
                     }
                     in.close();
                 }catch(Exception e){

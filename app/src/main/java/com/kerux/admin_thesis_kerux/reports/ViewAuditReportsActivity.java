@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -33,6 +35,7 @@ import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
+import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDept;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
@@ -176,26 +179,33 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         protected String doInBackground(String... params) {
             try {
                 listAudit = findViewById(R.id.listAuditReports);
-                String result = "Database Connection Successful\n";
-                Statement st = con.createStatement();
-                ResultSet rset = st.executeQuery(SELECT_AUDIT);
-                ResultSetMetaData rsmd = rset.getMetaData();
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListAuditAdminServlet");
+                URLConnection connection = url.openConnection();
 
-                List<Map<String, String>> data = null;
-                data = new ArrayList<Map<String, String>> ();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-                while (rset.next()) {
-                    HashMap<String, String> datanum = new HashMap<String, String>();
-                    datanum.put("first", rset.getString(1).toString());
-                    datanum.put("second", rset.getString(2).toString());
-                    datanum.put("third", rset.getString(3).toString());
-                    datanum.put("fourth", rset.getString(4).toString());
-                    datanum.put("fifth", rset.getString(5).toString());
-                    datanum.put("sixth", rset.getString(6).toString());
-                    datanum.put("seventh", rset.getString(7).toString());
-                    datanum.put("eight", rset.getString(8).toString());
-                    data.add(datanum);
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                StringBuffer receivedData=new StringBuffer();
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    receivedData.append(returnString+"\n");
+                    output.add(returnString);
                 }
+                for (int i = 0; i < output.size(); i++) {
+                    message = output.get(i);
+                }
+                in.close();
+                String retrieved=receivedData.toString();
+                Log.d("STRRRING", retrieved);
+                List<Map<String, String>> data= new ArrayList<Map<String, String>>();
+
+                data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapter = new SimpleAdapter (ViewAuditReportsActivity.this, data,
                         R.layout.listview_row_audit, new String[] {"first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eight"},
@@ -203,10 +213,10 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                                     R.id.SEVENTH_COL, R.id.EIGHT_COL});
 
 
-                while (rset.next()) {
-                    result += rset.getString(1).toString() + "\n";
-                }
-                message = result;
+
+                message = "Audit Log";
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 message = e.toString();
