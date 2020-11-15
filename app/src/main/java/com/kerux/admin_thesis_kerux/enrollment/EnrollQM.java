@@ -20,7 +20,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
-import com.kerux.admin_thesis_kerux.email.SendMailTask;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
@@ -40,10 +39,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -344,6 +339,8 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             .appendQueryParameter("clinic", Integer.toString(clinic))
                             .appendQueryParameter("dept", Integer.toString(dept))
                             .appendQueryParameter("reason", Integer.toString(reason))
+                            .appendQueryParameter("QMuname", QMuname)
+                            .appendQueryParameter("QMpw", QMpw)
                             .appendQueryParameter("secQMuname", sec.encrypt(QMuname))
                             .appendQueryParameter("secQMpw", sec.encrypt(QMpw))
                             .appendQueryParameter("QMFname", QMFname)
@@ -389,9 +386,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
         @Override
         protected void onPostExecute(String s) {
-/*
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
-*/
 
             if (isSuccess) {
                 try{

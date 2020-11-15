@@ -38,10 +38,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -284,8 +280,8 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                     Log.d("insertAudit", e.getMessage());
                 }
 
-                Intent intent=new Intent(EnrollDept.this,EnrollDept.class);
-                startActivity(intent);
+                /*Intent intent=new Intent(EnrollDept.this,EnrollDept.class);
+                startActivity(intent);*/
             }
 
         }

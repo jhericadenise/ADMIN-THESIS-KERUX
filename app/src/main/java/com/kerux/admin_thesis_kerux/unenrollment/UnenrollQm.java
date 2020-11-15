@@ -35,7 +35,6 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
 import java.io.BufferedReader;
@@ -47,13 +46,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +78,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         drawerLayout = findViewById(R.id.drawer_layout);
         spinnerQMReason = findViewById(R.id.spinnerQMReason);
 
+        //bttn for adding other reason for unenrolling
         addReasonQm = findViewById(R.id.bttnAddQMReason);
         addReasonQm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,9 +125,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
+        //bttn for displaying enrolled queue manager
         qmDisplayList = findViewById(R.id.bttnDisplayQm);
-        qmList = findViewById(R.id.listEnrolledQm);
-
         qmDisplayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +135,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
+        //click on list view
+        qmList = findViewById(R.id.listEnrolledQm);
         qmList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -150,8 +145,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollQm.this);
-                builder.setMessage("Are you sure you want to revoke the privilege of this queue manager" +
-                        "?")
+                builder.setMessage("Are you sure you want to revoke the privilege of this queue manager?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -174,6 +168,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
+        //button for going to unenroll department activity
         Button bttnDept = findViewById(R.id.bttnUnenrollDept);
         bttnDept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,8 +177,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                     Intent intent5 = new Intent(UnenrollQm.this, UnenrollDept.class);
                     startActivity(intent5);
                 }else{
-                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Department, Must UNENROLL all Queue Managers to proceed.", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Department, Must unenroll ALL Queue Managers to proceed.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -192,6 +186,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         qm.execute();
     }
 
+    //navigation drawer
     public void ClickMenu (View view){
         //open drawer
         MainActivity.openDrawer(drawerLayout);
@@ -235,7 +230,6 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
-
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -247,6 +241,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
+    //method for inserting into audit table
     public void insertAudit(){
 
         Security sec = new Security();
@@ -265,8 +260,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("queue manager"))
-                    .appendQueryParameter("second", sec.encrypt("unenroll queue manager"))
+                    .appendQueryParameter("first", sec.encrypt("Queue Manager"))
+                    .appendQueryParameter("second", sec.encrypt("Unenroll Queue Manager"))
                     .appendQueryParameter("third", sec.encrypt("Unenrolling a queue manager record"))
                     .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
                     .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))
@@ -332,8 +327,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             e.printStackTrace();
         }
     }
-    //deleting a record in the database
 
+    //method for checking if there is still an active record of queue manager
     public boolean checkQMList(){
         boolean allInactiveRec = false;
         String qmStatus="Active";
@@ -531,8 +526,9 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {
-                Intent intent = new Intent(UnenrollQm.this, UnenrollQm.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(UnenrollQm.this, UnenrollQm.class);
+                startActivity(intent);*/
+                Toast.makeText(getBaseContext(), "Unenrolled Successfully", Toast.LENGTH_LONG).show();
             }
 
         }

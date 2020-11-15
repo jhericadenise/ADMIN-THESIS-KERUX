@@ -1,5 +1,6 @@
 package com.kerux.admin_thesis_kerux.reports;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,7 +13,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import android.app.ProgressDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -44,7 +44,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -171,7 +170,6 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         protected void onPreExecute() {
             super.onPreExecute();
             Toast.makeText(ViewAuditReportsActivity.this, "Please wait...", Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
@@ -191,8 +189,6 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                     datanum.put("first", rset.getString(1).toString());
                     datanum.put("second", rset.getString(2).toString());
                     datanum.put("third", rset.getString(3).toString());
-                  /*  Log.d( "AUDIT", rset.getString(2));
-                    Log.d( "AUDIT", rset.getString(3));*/
                     datanum.put("fourth", rset.getString(4).toString());
                     datanum.put("fifth", rset.getString(5).toString());
                     datanum.put("sixth", rset.getString(6).toString());
@@ -201,8 +197,6 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                     data.add(datanum);
                 }
 
-
-                /*int[] viewswhere = {R.id.lblDeptList};*/
                 listAdapter = new SimpleAdapter (ViewAuditReportsActivity.this, data,
                         R.layout.listview_row_audit, new String[] {"first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eight"},
                         new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL, R.id.SIXTH_COL,

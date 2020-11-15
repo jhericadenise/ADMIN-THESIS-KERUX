@@ -2,7 +2,6 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 
 import java.io.BufferedReader;
@@ -47,13 +45,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -468,8 +460,9 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {
-                Intent intent = new Intent(UnenrollDept.this, UnenrollDept.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(UnenrollDept.this, UnenrollDept.class);
+                startActivity(intent);*/
+                Toast.makeText(getBaseContext(), "Unenrolled Successfully", Toast.LENGTH_LONG).show();
             }
 
         }

@@ -43,10 +43,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
@@ -450,8 +446,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             }
 
             if (isSuccess) {
-                Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
+                startActivity(intent);*/
             }
 
         }
@@ -563,10 +559,10 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {
+               /* Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
+                startActivity(intent);*/
 
-
-                Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
-                startActivity(intent);
+                Toast.makeText(getBaseContext(), "Enrolled Successfully", Toast.LENGTH_LONG).show();
             }
 
         }

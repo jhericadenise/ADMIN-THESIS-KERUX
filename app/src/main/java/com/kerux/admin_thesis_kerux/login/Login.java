@@ -30,9 +30,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -95,8 +92,8 @@ public class Login extends AppCompatActivity implements DBUtility {
             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(30000);
+            connection.setConnectTimeout(60000);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 

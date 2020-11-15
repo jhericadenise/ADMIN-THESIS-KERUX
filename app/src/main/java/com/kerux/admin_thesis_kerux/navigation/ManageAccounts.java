@@ -2,7 +2,6 @@ package com.kerux.admin_thesis_kerux.navigation;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -45,12 +43,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -259,7 +252,7 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("first", "patient accounts")
                     .appendQueryParameter("second", "block user patient")
-                    .appendQueryParameter("third", BLOCK_PRIVILEGES)
+                    .appendQueryParameter("third", "blocking user account")
                     .appendQueryParameter("fourth", "Status = " + statusActive)
                     .appendQueryParameter("fifth", "Status = " + statusInactive + ", " + "Reason = " + reason)
                     .appendQueryParameter("sixth", session.getusername());
@@ -489,31 +482,47 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             }
             else {
                 try {
-                    if (con == null) {
-                        message = "CANNOT ADD RECORD";
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDocReasonServlet");
+                    URLConnection connection = url.openConnection();
 
-                    } else {
-                        //inserting data of department to the database
-                        String query = INSERT_REASON;
-                        PreparedStatement ps1 = null;
-                        try {
-                            ps1 = con.prepareStatement(query);
-                            ps1.setString(1, reason);
-                            ps1.setString(2, tableName);
-                            ps1.executeUpdate();
-                            message = "Added Successfully!";
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
-                        }
-                        con.close();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("reason", reason)
+                            .appendQueryParameter("tableName", tableName);
+                    String query = builder.build().getEncodedQuery();
+
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(
+                            new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                    writer.write(query);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String returnString="";
+                    ArrayList<String> output=new ArrayList<String>();
+                    while ((returnString = in.readLine()) != null)
+                    {
+                        isSuccess=true;
+                        Log.d("returnString", returnString);
+                        output.add(returnString);
                     }
-                }
-                catch (Exception ex)
-                {
+                    for (int i = 0; i < output.size(); i++) {
+                        message = output.get(i);
+                    }
+                    in.close();
+                } catch (Exception e) {
                     isSuccess = false;
-                    message = "Exceptions"+ex;
-                    Log.d("ex", ex.getMessage () + " Jheca");
+                    message = "Exceptions"+e;
+                    Log.d("ex", e.getMessage () + " Jheca");
+                    e.printStackTrace();
                 }
+
             }
             return message;
         }
@@ -524,8 +533,9 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
             if (isSuccess) {
-                Intent intent = new Intent(ManageAccounts.this, ManageAccounts.class);
-                startActivity(intent);
+               /* Intent intent = new Intent(UnenrollDoc.this, UnenrollDoc.class);
+                startActivity(intent);*/
+                Toast.makeText(getBaseContext(), "Added Successfully", Toast.LENGTH_LONG).show();
             }
 
         }
