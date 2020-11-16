@@ -82,6 +82,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                                 public void onClick(DialogInterface dialog, int id) {
                                     DoEnroll doEnroll = new DoEnroll();
                                     doEnroll.execute();
+
                                     deptName.getText().clear();
                                 }
                             })
@@ -96,6 +97,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
             }
         });
     }
+
 
     public void ClickMenu (View view){
         //open drawer
@@ -274,8 +276,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
             if(isSuccess) {
                 try{
-                    insertAudit( "department",  "insert",  "Inserting a Department record",  "none", (clinicName + ", " + reason + ", " + depName + ", " + Status),  session.getusername());
-                    insertAudit( "department_enrollment",  "insert",  "Inserting into department_enrollment table", "none",  (session.getadminid() + ", " + newdeptid + ", " + session.getclinicid()),  session.getusername());
+                    Toast.makeText(getBaseContext(),""+message,Toast.LENGTH_LONG).show();
                 }catch(Exception e){
                     Log.d("insertAudit", e.getMessage());
                 }
@@ -286,7 +287,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
         }
 
-        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+        public void insertAudit(){
 
             try {
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
@@ -298,12 +299,12 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", first)
-                        .appendQueryParameter("second", second)
-                        .appendQueryParameter("third", third)
-                        .appendQueryParameter("fourth", fourth)
-                        .appendQueryParameter("fifth", fifth)
-                        .appendQueryParameter("sixth", sixth);
+                        .appendQueryParameter("first", "Department Enrollment")
+                        .appendQueryParameter("second", "insert")
+                        .appendQueryParameter("third", "insert department record")
+                        .appendQueryParameter("fourth", "none")
+                        .appendQueryParameter("fifth", "Department ID: " + depName)
+                        .appendQueryParameter("sixth", session.getadminid());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

@@ -289,8 +289,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         input += "\n";
         input += "Username: " + qmUname.getText().toString();
         input += "\n";
-        input += "Password: " + qmPw.getText().toString();
-        input += "\n";
         input += "First Name: " + qmFirstName.getText().toString();
         input += "\n";
         input += "Last Name: " + qmLastName.getText().toString();
@@ -420,12 +418,12 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", first)
-                        .appendQueryParameter("second", second)
-                        .appendQueryParameter("third", third)
-                        .appendQueryParameter("fourth", fourth)
-                        .appendQueryParameter("fifth", fifth)
-                        .appendQueryParameter("sixth", sixth);
+                        .appendQueryParameter("first", "Queue Manager Enrollment")
+                        .appendQueryParameter("second", "insert")
+                        .appendQueryParameter("third", "insert queue manager record")
+                        .appendQueryParameter("fourth", "none")
+                        .appendQueryParameter("fifth", "Queue Manager ID: " + newqmid)
+                        .appendQueryParameter("sixth", session.getusername());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

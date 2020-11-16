@@ -25,38 +25,13 @@
       <Button
           android:id="@+id/bttnDisplayDoc"
           android:layout_width="258dp"
-          android:layout_height="42dp"
+          android:layout_height="55dp"
           android:background="@android:color/transparent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.504"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintVertical_bias="0.159" />
-
-      <ListView
-          android:id="@+id/listEnrolledDoc"
-          android:layout_width="271dp"
-          android:layout_height="345dp"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.516"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintVertical_bias="0.802" />
-
-      <Button
-          android:id="@+id/bttnGoToUnenrollQM"
-          android:layout_width="290dp"
-          android:layout_height="37dp"
-          android:background="@android:color/transparent"
-          android:visibility="visible"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.528"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintVertical_bias="0.966" />
+          app:layout_constraintVertical_bias="0.148" />
 
       <Spinner
           android:id="@+id/spinnerDocReason"
@@ -64,21 +39,43 @@
           android:layout_height="50dp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.511"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintVertical_bias="0.28" />
+          app:layout_constraintVertical_bias="0.269" />
+
+      <ListView
+          android:id="@+id/listEnrolledDoc"
+          android:layout_width="271dp"
+          android:layout_height="330dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.505"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintVertical_bias="0.779" />
+
+      <Button
+          android:id="@+id/bttnGoToUnenrollQM"
+          android:layout_width="290dp"
+          android:layout_height="50dp"
+          android:background="@android:color/transparent"
+          android:visibility="visible"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintVertical_bias="0.952" />
 
       <Button
           android:id="@+id/bttnAddDocReason"
           android:layout_width="290dp"
-          android:layout_height="37dp"
+          android:layout_height="43dp"
           android:background="@android:color/transparent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintVertical_bias="0.386" />
+          app:layout_constraintVertical_bias="0.396" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

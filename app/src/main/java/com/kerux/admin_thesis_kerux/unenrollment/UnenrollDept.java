@@ -2,6 +2,7 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     Button deptDisplayList;
     private Spinner spinnerDeptReason;
 
+    Button bttnBack;
     Button addReasonDept;
     private EditText otherReason;
     private EditText table;
@@ -168,10 +170,25 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
 
         });
 
+        bttnBack = findViewById(R.id.bttnGoBack);
+        bttnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
+            }
+        });
+
         DownloaderDocType dept = new DownloaderDocType(UnenrollDept.this, urlReasonSpinner, spinnerDeptReason, "reason", "Choose Reason to Revoke");
         dept.execute();
 
     }
+
+    //go back to the previous page
+    public void goBack() {
+        Intent intent = new Intent(this, UnenrollQm.class);
+        startActivity(intent);
+    }
+
 
     public void ClickMenu (View view){
         //open drawer
@@ -245,8 +262,8 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("department"))
-                    .appendQueryParameter("second", sec.encrypt("unenroll department"))
+                    .appendQueryParameter("first", sec.encrypt("Unenroll Department"))
+                    .appendQueryParameter("second", sec.encrypt("delete"))
                     .appendQueryParameter("third", sec.encrypt("Unenrolling a department record"))
                     .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
                     .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))

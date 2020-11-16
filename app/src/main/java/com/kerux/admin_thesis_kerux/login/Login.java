@@ -30,7 +30,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Login extends AppCompatActivity implements DBUtility {
@@ -86,6 +85,7 @@ public class Login extends AppCompatActivity implements DBUtility {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
     public void insertAudit(){
 
         try {
@@ -98,11 +98,11 @@ public class Login extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("login"))
-                    .appendQueryParameter("second", sec.encrypt("login"))
-                    .appendQueryParameter("third", sec.encrypt("Logging in to the app"))
-                    .appendQueryParameter("fourth", sec.encrypt("none"))
-                    .appendQueryParameter("fifth", sec.encrypt("login"))
+                    .appendQueryParameter("first", "login")
+                    .appendQueryParameter("second", "login")
+                    .appendQueryParameter("third", "Logging in to the app")
+                    .appendQueryParameter("fourth", "none")
+                    .appendQueryParameter("fifth", "login")
                     .appendQueryParameter("sixth", session.getusername());
             String query = builder.build().getEncodedQuery();
 
@@ -123,9 +123,6 @@ public class Login extends AppCompatActivity implements DBUtility {
                 output.add(returnString);
             }
             in.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

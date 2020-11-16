@@ -464,12 +464,12 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", first)
-                        .appendQueryParameter("second", second)
-                        .appendQueryParameter("third", third)
-                        .appendQueryParameter("fourth", fourth)
-                        .appendQueryParameter("fifth", fifth)
-                        .appendQueryParameter("sixth", sixth);
+                        .appendQueryParameter("first", "Doctor Enrollment")
+                        .appendQueryParameter("second", "insert")
+                        .appendQueryParameter("third", "insert doctor record")
+                        .appendQueryParameter("fourth", "none")
+                        .appendQueryParameter("fifth", "Doctor ID: " + newdocid)
+                        .appendQueryParameter("sixth", session.getusername());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

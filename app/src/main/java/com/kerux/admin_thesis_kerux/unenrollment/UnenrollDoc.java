@@ -263,8 +263,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("doctor"))
-                    .appendQueryParameter("second", sec.encrypt("unenroll doctor"))
+                    .appendQueryParameter("first", sec.encrypt("Unenroll Doctor"))
+                    .appendQueryParameter("second", sec.encrypt("delete"))
                     .appendQueryParameter("third", sec.encrypt("Unenrolling a doctor record"))
                     .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
                     .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))

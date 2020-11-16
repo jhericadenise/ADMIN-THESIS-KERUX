@@ -55,6 +55,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     private ListView qmList;
     private ListAdapter listAdapter;
     Button qmDisplayList;
+    Button goBack;
     private Spinner spinnerQMReason;
     ConnectionClass connectionClass;
 
@@ -182,6 +183,14 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
         });
 
+        goBack = findViewById(R.id.bttnGoBack);
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
+            }
+        });
+
         DownloaderDocType qm = new DownloaderDocType(UnenrollQm.this, urlReasonSpinner, spinnerQMReason, "reason", "Choose Reason to Revoke");
         qm.execute();
     }
@@ -260,8 +269,8 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("Queue Manager"))
-                    .appendQueryParameter("second", sec.encrypt("Unenroll Queue Manager"))
+                    .appendQueryParameter("first", sec.encrypt("Unenroll Queue Manager"))
+                    .appendQueryParameter("second", sec.encrypt("delete"))
                     .appendQueryParameter("third", sec.encrypt("Unenrolling a queue manager record"))
                     .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
                     .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))
