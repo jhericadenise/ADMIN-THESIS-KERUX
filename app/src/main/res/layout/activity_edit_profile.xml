@@ -35,7 +35,7 @@
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.371" />
+            app:layout_constraintVertical_bias="0.354" />
 
         <EditText
             android:id="@+id/txtboxEmail"
@@ -66,7 +66,7 @@
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.265" />
+            app:layout_constraintVertical_bias="0.251" />
 
         <EditText
             android:id="@+id/txtboxUsername"
@@ -94,7 +94,7 @@
             app:layout_constraintHorizontal_bias="0.821"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.74" />
+            app:layout_constraintVertical_bias="0.757" />
 
         <EditText
             android:id="@+id/txtboxNewPassword"
@@ -109,31 +109,31 @@
             app:layout_constraintHorizontal_bias="0.834"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.84" />
+            app:layout_constraintVertical_bias="0.862" />
 
         <Button
             android:id="@+id/button_save"
-            android:layout_width="140dp"
-            android:layout_height="41dp"
+            android:layout_width="160dp"
+            android:layout_height="48dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.072"
+            app:layout_constraintHorizontal_bias="0.055"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.924" />
+            app:layout_constraintVertical_bias="0.929" />
 
         <Button
             android:id="@+id/bttnConfirmPass"
-            android:layout_width="140dp"
-            android:layout_height="43dp"
+            android:layout_width="148dp"
+            android:layout_height="48dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.927"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.924" />
+            app:layout_constraintVertical_bias="0.928" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

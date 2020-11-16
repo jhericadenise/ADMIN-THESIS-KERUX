@@ -205,7 +205,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             qmPw.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(qmpassword).matches()) {
-            qmPw.setError("Password too weak");
+            qmPw.setError("Password must be 8 characters, with at least 1 uppercase, lowercase and special character");
             return false;
         } else {
             qmPw.setError(null);

@@ -324,7 +324,7 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                 try {
 
 
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdatePatientPass");
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdateAdminPass");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);
