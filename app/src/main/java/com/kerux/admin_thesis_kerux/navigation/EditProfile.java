@@ -68,10 +68,11 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         oldPassword = (EditText)findViewById(R.id.txtboxOldPassword);
         email = (EditText)findViewById(R.id.txtboxEmail);
 
+        Security sec = new Security();
+
         firstname.setText(session.getfirstname());
         lastname.setText(session.getlastname());
-        email.setText(session.getemail());
-        adminID=session.getadminid();
+        adminID = session.getadminid();
 
         saveChanges = (Button)findViewById(R.id.button_save);
         confirmPass = (Button)findViewById(R.id.bttnConfirmPass);

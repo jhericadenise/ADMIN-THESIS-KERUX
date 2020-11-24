@@ -35,7 +35,6 @@ import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
-import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDept;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
@@ -47,13 +46,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -195,7 +190,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                 while ((returnString = in.readLine()) != null)
                 {
                     receivedData.append(returnString+"\n");
-                    output.add(returnString);
+                    output.add(sec.decrypt(returnString.trim()));
                 }
                 for (int i = 0; i < output.size(); i++) {
                     message = output.get(i);
@@ -211,8 +206,6 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                         R.layout.listview_row_audit, new String[] {"first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eight"},
                         new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL, R.id.SIXTH_COL,
                                     R.id.SEVENTH_COL, R.id.EIGHT_COL});
-
-
 
                 message = "Audit Log";
 
@@ -246,12 +239,10 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
             z="";
 
             try {
-
-                    createPdf();
-                    /*viewPdf();*/
-                    emailNote();
-                    z="Report Generated";
-
+                createPdf();
+                /*viewPdf();*/
+                emailNote();
+                z="Report Generated";
             }
             catch (Exception ex)
             {
@@ -332,12 +323,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                     counter++;
                 }
             }
-
-
         }
-
-
-
         document.close();
     }
 

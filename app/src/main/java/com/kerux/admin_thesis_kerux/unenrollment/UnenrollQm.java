@@ -269,12 +269,12 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("Unenroll Queue Manager"))
-                    .appendQueryParameter("second", sec.encrypt("delete"))
-                    .appendQueryParameter("third", sec.encrypt("Unenrolling a queue manager record"))
-                    .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive))
-                    .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason))
-                    .appendQueryParameter("sixth", session.getusername());
+                    .appendQueryParameter("first", sec.encrypt("Unenroll Queue Manager").trim())
+                    .appendQueryParameter("second", sec.encrypt("delete").trim())
+                    .appendQueryParameter("third", sec.encrypt("Unenrolling a queue manager record").trim())
+                    .appendQueryParameter("fourth", sec.encrypt("Status = " + statusActive).trim())
+                    .appendQueryParameter("fifth", sec.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
+                    .appendQueryParameter("sixth", sec.encrypt(session.getusername()).trim());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();

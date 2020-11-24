@@ -61,14 +61,6 @@ public class Login extends AppCompatActivity implements DBUtility {
         button_login = findViewById(R.id.bttnLogin);
         secweb=new SecurityWEB();
         session = new KeruxSession(getApplicationContext());
-        /*bttnDashboard = findViewById(R.id.bttnDashboard);*/
-
-       /* bttnDashboard.setOnClickListener(new View.OnClickListener() {//
-            @Override
-            public void onClick(View v) {
-                GoToDashboard();
-            }
-        });*/
 
         button_login.setOnClickListener(new View.OnClickListener() {//
             @Override

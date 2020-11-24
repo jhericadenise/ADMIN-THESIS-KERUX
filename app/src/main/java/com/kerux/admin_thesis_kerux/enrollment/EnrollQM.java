@@ -377,10 +377,9 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                                 newqmid=words[1];
                             }
                         }
-
-
                     }
                     in.close();
+                    insertAudit();
                 }catch(Exception e){
                     message="Exceptions"+e;
                 }
@@ -392,21 +391,17 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         protected void onPostExecute(String s) {
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
-            if (isSuccess) {
+            if(isSuccess) {
                 try{
-                    insertAudit( sec.encrypt("queue manager"),  sec.encrypt("insert"),  sec.encrypt("Inserting Queue Manager record"),  sec.encrypt("none"),  sec.encrypt(clinic + ", " + reason + ", " + dept + ", " + status),  sec.encrypt(session.getusername()));
-                    insertAudit( sec.encrypt("qmenrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into qmenrollment table"),  sec.encrypt("none"),  sec.encrypt(session.getadminid() + ", " + newqmid + ", " + ", " + newqmid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
+                    Toast.makeText(getBaseContext(),""+message,Toast.LENGTH_LONG).show();
                 }catch(Exception e){
                     Log.d("insertAudit", e.getMessage());
                 }
 
-//                Intent intent = new Intent(EnrollQM.this, EnrollQM.class);
-//                startActivity(intent);
             }
-
         }
 
-        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+        public void insertAudit(){
 
             try {
                 URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
@@ -418,12 +413,12 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", "Queue Manager Enrollment")
-                        .appendQueryParameter("second", "insert")
-                        .appendQueryParameter("third", "insert queue manager record")
-                        .appendQueryParameter("fourth", "none")
-                        .appendQueryParameter("fifth", "Queue Manager ID: " + newqmid)
-                        .appendQueryParameter("sixth", session.getusername());
+                        .appendQueryParameter("first", sec.encrypt("Queue Manager Enrollment").trim())
+                        .appendQueryParameter("second", sec.encrypt("Insert").trim())
+                        .appendQueryParameter("third", sec.encrypt("Insert queue manager record").trim())
+                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
+                        .appendQueryParameter("fifth", sec.encrypt("Queue Manager ID: " + newqmid).trim())
+                        .appendQueryParameter("sixth", sec.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

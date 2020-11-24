@@ -427,6 +427,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                     }
                 }
                 in.close();
+                insertAudit();
             }catch(Exception e){
                 message="Exceptions"+e;
             }
@@ -438,21 +439,18 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         protected void onPostExecute(String s) {
             Toast.makeText(getBaseContext(), "" + message, Toast.LENGTH_LONG).show();
 
-            try{
-                insertAudit( sec.encrypt("doctor"),  sec.encrypt("insert"),  sec.encrypt("Insert doctor record"),  sec.encrypt("none"),  sec.encrypt(clinic +", "+reason+", "+dept+", "+status),  sec.encrypt(session.getusername()));
-                insertAudit(sec.encrypt("doctor_enrollment"),  sec.encrypt("insert"),  sec.encrypt("Insert into doctor_enrollment table record"),  sec.encrypt("none"),  sec.encrypt(session.getadminid()+", "+newdocid+", "+ ", "+ newdocid + ", " + session.getclinicid()),  sec.encrypt(session.getusername()));
-            }catch(Exception e){
-                Log.d("insertAudit", e.getMessage());
-            }
+            if(isSuccess) {
+                try{
+                    Toast.makeText(getBaseContext(),""+message,Toast.LENGTH_LONG).show();
+                }catch(Exception e){
+                    Log.d("insertAudit", e.getMessage());
+                }
 
-            if (isSuccess) {
-                /*Intent intent = new Intent(EnrollDoctor.this, EnrollDoctor.class);
-                startActivity(intent);*/
             }
 
         }
 
-        public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
+        public void insertAudit(){
 
             try {
                 URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
@@ -464,12 +462,12 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", "Doctor Enrollment")
-                        .appendQueryParameter("second", "insert")
-                        .appendQueryParameter("third", "insert doctor record")
-                        .appendQueryParameter("fourth", "none")
-                        .appendQueryParameter("fifth", "Doctor ID: " + newdocid)
-                        .appendQueryParameter("sixth", session.getusername());
+                        .appendQueryParameter("first", sec.encrypt("Doctor Enrollment").trim())
+                        .appendQueryParameter("second", sec.encrypt("Insert").trim())
+                        .appendQueryParameter("third", sec.encrypt("Insert doctor record").trim())
+                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
+                        .appendQueryParameter("fifth", sec.encrypt("Doctor ID: " + newdocid).trim())
+                        .appendQueryParameter("sixth", sec.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
