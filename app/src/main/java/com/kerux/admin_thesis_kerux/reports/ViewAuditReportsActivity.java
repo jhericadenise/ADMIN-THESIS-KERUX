@@ -174,13 +174,12 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         protected String doInBackground(String... params) {
             try {
                 listAudit = findViewById(R.id.listAuditReports);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListAuditAdminServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/ListAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
                 connection.setConnectTimeout(15000);
                 connection.setDoInput(true);
-                connection.setDoOutput(true);
 
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -361,7 +360,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         try {
 
 
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/AuditReportAdminServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/AuditReportAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);

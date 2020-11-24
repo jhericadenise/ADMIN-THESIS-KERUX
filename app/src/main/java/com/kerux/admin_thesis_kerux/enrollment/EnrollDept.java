@@ -288,7 +288,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
         public void insertAudit(){
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
