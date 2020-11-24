@@ -297,12 +297,12 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", sec.encrypt("Department Enrollment").trim())
-                        .appendQueryParameter("second", sec.encrypt("insert").trim())
-                        .appendQueryParameter("third", sec.encrypt("insert department record").trim())
-                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
-                        .appendQueryParameter("fifth", sec.encrypt("Department ID: " + depName).trim())
-                        .appendQueryParameter("sixth", sec.encrypt(session.getadminid()).trim());
+                        .appendQueryParameter("first", "Department Enrollment")
+                        .appendQueryParameter("second", "Insert")
+                        .appendQueryParameter("third", "Insert department record")
+                        .appendQueryParameter("fourth", "none")
+                        .appendQueryParameter("fifth", "Department ID: " + depName)
+                        .appendQueryParameter("sixth", session.getadminid());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

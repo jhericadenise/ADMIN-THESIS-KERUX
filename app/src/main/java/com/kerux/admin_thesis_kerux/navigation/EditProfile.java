@@ -114,11 +114,11 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", sec.encrypt("Edit Profile"))
-                    .appendQueryParameter("second", sec.encrypt("Patient Edit profile"))
-                    .appendQueryParameter("third", sec.encrypt("Patient editing profile"))
-                    .appendQueryParameter("fourth", sec.encrypt("none"))
-                    .appendQueryParameter("fifth", sec.encrypt("Patient ID: " + session.getadminid()))
+                    .appendQueryParameter("first", "Edit Profile")
+                    .appendQueryParameter("second", "Patient Edit profile")
+                    .appendQueryParameter("third", "Patient editing profile")
+                    .appendQueryParameter("fourth", "none")
+                    .appendQueryParameter("fifth", "Patient ID: " + session.getadminid())
                     .appendQueryParameter("sixth", session.getadminid());
             String query = builder.build().getEncodedQuery();
 
