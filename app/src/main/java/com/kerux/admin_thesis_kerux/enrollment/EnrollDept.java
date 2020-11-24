@@ -219,7 +219,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDepartmentServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDepartmentServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);

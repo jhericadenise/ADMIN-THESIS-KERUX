@@ -66,7 +66,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     private EditText table;
     final Context context = this;
 
-    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerQMServlet";
+    private static final String urlReasonSpinner = "http://192.168.1.22:8080/RootAdmin/reasonSpinnerQMServlet";
     KeruxSession session;
 
     @Override
@@ -260,7 +260,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         String reason = ((Spinner)findViewById(R.id.spinnerQMReason)).getSelectedItem().toString();
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -302,7 +302,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
     public void unenrollQM(String firstName, String reason){
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollQMServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/UnenrollQMServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -416,7 +416,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             try {
                 //listview, list the names of all enrolled department
                 qmList = findViewById(R.id.listEnrolledQm);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListQMServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/ListQMServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -485,7 +485,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             }
             else {
                 try {
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollReasonQM");
+                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollReasonQM");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);

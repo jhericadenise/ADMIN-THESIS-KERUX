@@ -53,7 +53,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmEmail;
     private Spinner deptSpinner;
     ConnectionClass connectionClass;
-    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
+    private static final String urlDeptSpinner = "http://192.168.1.22:8080/RootAdmin/departmentSpinnerServlet";
 
     DrawerLayout drawerLayout;
 
@@ -325,7 +325,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollQMServlet");
+                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollQMServlet");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);
@@ -409,7 +409,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
 
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);

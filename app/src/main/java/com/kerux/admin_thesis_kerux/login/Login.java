@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity implements DBUtility {
     public void insertAudit(){
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(30000);
@@ -156,7 +156,7 @@ public class Login extends AppCompatActivity implements DBUtility {
             {
                 try {
                     z = "Incorrect username or password";
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/LoginAdminServlet");
+                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/LoginAdminServlet");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);

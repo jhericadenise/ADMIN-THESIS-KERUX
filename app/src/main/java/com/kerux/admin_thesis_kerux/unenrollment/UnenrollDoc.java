@@ -64,7 +64,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     private EditText table;
 
     DrawerLayout drawerLayout;
-    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerDoctorServlet";
+    private static final String urlReasonSpinner = "http://192.168.1.22:8080/RootAdmin/reasonSpinnerDoctorServlet";
 
     KeruxSession session;
 
@@ -254,7 +254,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -298,7 +298,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     public void unenrollDoc(String firstName, String reason){
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollDocServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/UnenrollDocServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -340,7 +340,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         String docStatus = "Active";
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/CheckDocList");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/CheckDocList");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -403,7 +403,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
     //function for displaying the enrolled doctors
     private class ListDoc extends AsyncTask<String, String, String> {
-        Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
 
@@ -417,13 +416,13 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             try {
                 //listview, list the names of all enrolled department
                 docList = findViewById(R.id.listEnrolledDoc);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDocServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/ListDocServlet");
                 URLConnection connection = url.openConnection();
 
-                connection.setReadTimeout(10000);
-                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setConnectTimeout(20000);
                 connection.setDoInput(true);
-                connection.setDoOutput(true);
+                
 
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -487,7 +486,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             }
             else {
                 try {
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDocReasonServlet");
+                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDocReasonServlet");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);

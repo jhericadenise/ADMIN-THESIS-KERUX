@@ -47,8 +47,8 @@ import java.util.ArrayList;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet"; /*10.0.2.2:89*/
-    private static final String urlDocTypeSpinner = "https://isproj2a.benilde.edu.ph/Sympl/doctorTypeSpinnerServlet";
+    private static final String urlDeptSpinner = "http://192.168.1.22:8080/RootAdmin/departmentSpinnerServlet"; /*10.0.2.2:89*/
+    private static final String urlDocTypeSpinner = "http://192.168.1.22:8080/RootAdmin/doctorTypeSpinnerServlet";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -376,7 +376,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                     docDays+=cboxSat;
                 }
 
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDoctor");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDoctor");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -455,7 +455,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         public void insertAudit(String first, String second, String third, String fourth, String fifth, String sixth){
 
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -512,7 +512,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDocType");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDocType");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);

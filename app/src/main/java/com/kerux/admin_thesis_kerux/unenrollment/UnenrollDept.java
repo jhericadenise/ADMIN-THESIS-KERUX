@@ -65,7 +65,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     final Context context = this;
 
     DrawerLayout drawerLayout;
-    private static final String urlReasonSpinner = "https://isproj2a.benilde.edu.ph/Sympl/reasonSpinnerDeptServlet";
+    private static final String urlReasonSpinner = "http://192.168.1.22:8080/RootAdmin/reasonSpinnerDeptServlet";
     KeruxSession session;
 
     @Override
@@ -253,7 +253,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
         String reason = ((Spinner)findViewById(R.id.spinnerDeptReason)).getSelectedItem().toString();
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -297,7 +297,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
     public void unenrollDept(String name, String reason){
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollDepServlet");
+            URL url = new URL("http://192.168.1.22:8080/RootAdmin/UnenrollDepServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -357,7 +357,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             try {
                 //listview, list the names of all enrolled department
                 deptList = findViewById(R.id.listEnrolledDept);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDepServlet");
+                URL url = new URL("http://192.168.1.22:8080/RootAdmin/ListDepServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -427,7 +427,7 @@ public class UnenrollDept extends AppCompatActivity implements DBUtility {
             }
             else {
                 try {
-                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollReasonDept");
+                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollReasonDept");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);
