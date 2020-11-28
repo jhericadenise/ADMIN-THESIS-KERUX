@@ -189,7 +189,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                 while ((returnString = in.readLine()) != null)
                 {
                     receivedData.append(returnString+"\n");
-                    output.add(sec.decrypt(returnString.trim()));
+                    output.add(returnString.trim());
                 }
                 for (int i = 0; i < output.size(); i++) {
                     message = output.get(i);
