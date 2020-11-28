@@ -30,6 +30,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.spinner.DownloaderDocType;
@@ -47,8 +48,8 @@ import java.util.ArrayList;
 
 public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
-    private static final String urlDeptSpinner = "http://192.168.1.22:8080/RootAdmin/departmentSpinnerServlet"; /*10.0.2.2:89*/
-    private static final String urlDocTypeSpinner = "http://192.168.1.22:8080/RootAdmin/doctorTypeSpinnerServlet";
+    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet"; /*10.0.2.2:89*/
+    private static final String urlDocTypeSpinner = "https://isproj2a.benilde.edu.ph/Sympl/doctorTypeSpinnerServlet";
     private EditText doctorFName;
     private EditText doctorLName;
     private EditText roomNo;
@@ -326,6 +327,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
     private class DoEnrollDoc extends AsyncTask<String, String, String> {
 
         Security sec = new Security();
+        SecurityWEB secw = new SecurityWEB();
         boolean isSuccess = false;
         boolean hasRecord = false;
         String message = "";
@@ -376,7 +378,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                     docDays+=cboxSat;
                 }
 
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDoctor");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/RootAdmin/DoEnrollDoctor");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -453,7 +455,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         public void insertAudit(){
 
             try {
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -462,12 +464,12 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", sec.encrypt("Doctor Enrollment").trim())
-                        .appendQueryParameter("second", sec.encrypt("Insert").trim())
-                        .appendQueryParameter("third", sec.encrypt("Insert doctor record").trim())
-                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
-                        .appendQueryParameter("fifth", sec.encrypt("Doctor ID: " + newdocid).trim())
-                        .appendQueryParameter("sixth", sec.encrypt(session.getusername()).trim());
+                        .appendQueryParameter("first", secw.encrypt("Doctor Enrollment").trim())
+                        .appendQueryParameter("second", secw.encrypt("Insert").trim())
+                        .appendQueryParameter("third", secw.encrypt("Insert doctor record").trim())
+                        .appendQueryParameter("fourth", secw.encrypt("none").trim())
+                        .appendQueryParameter("fifth", secw.encrypt("Doctor ID: " + newdocid).trim())
+                        .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
@@ -510,7 +512,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDocType");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/RootAdmin/DoEnrollDocType");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);

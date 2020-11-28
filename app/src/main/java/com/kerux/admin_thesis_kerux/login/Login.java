@@ -81,7 +81,7 @@ public class Login extends AppCompatActivity implements DBUtility {
     public void insertAudit(){
 
         try {
-            URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(30000);
@@ -90,12 +90,12 @@ public class Login extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", "login")
-                    .appendQueryParameter("second", "login")
-                    .appendQueryParameter("third", "Logging in to the app")
-                    .appendQueryParameter("fourth", "none")
-                    .appendQueryParameter("fifth", "login")
-                    .appendQueryParameter("sixth", session.getusername());
+                    .appendQueryParameter("first", SecurityWEB.encrypt("login"))
+                    .appendQueryParameter("second", SecurityWEB.encrypt("login"))
+                    .appendQueryParameter("third", SecurityWEB.encrypt("Logging in to the app"))
+                    .appendQueryParameter("fourth", SecurityWEB.encrypt("none"))
+                    .appendQueryParameter("fifth", SecurityWEB.encrypt("login"))
+                    .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()));
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -148,7 +148,7 @@ public class Login extends AppCompatActivity implements DBUtility {
             {
                 try {
                     z = "Incorrect username or password";
-                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/LoginAdminServlet");
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/LoginAdminServlet");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);

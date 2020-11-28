@@ -27,6 +27,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.spinner.Downloader;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
@@ -53,7 +54,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private EditText qmEmail;
     private Spinner deptSpinner;
     ConnectionClass connectionClass;
-    private static final String urlDeptSpinner = "http://192.168.1.22:8080/RootAdmin/departmentSpinnerServlet";
+    private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
 
     DrawerLayout drawerLayout;
 
@@ -300,7 +301,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
 
     //Enrolling or adding the record to the database for the queue manager
     private class DoEnrollQM extends AsyncTask<String, String, String> {
-
+        SecurityWEB secw = new SecurityWEB();
         Security sec = new Security();
         boolean isSuccess = false;
         String message = "";
@@ -325,7 +326,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                    URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollQMServlet");
+                    URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollQMServlet");
                     URLConnection connection = url.openConnection();
 
                     connection.setReadTimeout(10000);
@@ -404,7 +405,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         public void insertAudit(){
 
             try {
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -413,12 +414,12 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", sec.encrypt("Queue Manager Enrollment").trim())
-                        .appendQueryParameter("second", sec.encrypt("Insert").trim())
-                        .appendQueryParameter("third", sec.encrypt("Insert queue manager record").trim())
-                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
-                        .appendQueryParameter("fifth", sec.encrypt("Queue Manager ID: " + newqmid).trim())
-                        .appendQueryParameter("sixth", sec.encrypt(session.getusername()).trim());
+                        .appendQueryParameter("first", secw.encrypt("Queue Manager Enrollment").trim())
+                        .appendQueryParameter("second", secw.encrypt("Insert").trim())
+                        .appendQueryParameter("third", secw.encrypt("Insert queue manager record").trim())
+                        .appendQueryParameter("fourth", secw.encrypt("none").trim())
+                        .appendQueryParameter("fifth", secw.encrypt("Queue Manager ID: " + newqmid).trim())
+                        .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

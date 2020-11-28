@@ -27,6 +27,7 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -51,7 +52,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
     private KeruxSession session;
     DrawerLayout drawerLayout;
 
-    private Security sec;
+    private SecurityWEB sec;
 
 
     @Override
@@ -201,6 +202,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
     private class DoEnroll extends AsyncTask<String, String, String> {
 
         Security sec = new Security();
+        SecurityWEB secw = new SecurityWEB();
         boolean isSuccess = false;
         String message = "";
         String depName = deptName.getText().toString();
@@ -219,7 +221,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/DoEnrollDepartmentServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDepartmentServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -288,7 +290,7 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
 
         public void insertAudit(){
             try {
-                URL url = new URL("http://192.168.1.22:8080/RootAdmin/InsertAuditAdminServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -297,12 +299,12 @@ public class EnrollDept extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", sec.encrypt("Department Enrollment").trim())
-                        .appendQueryParameter("second", sec.encrypt("insert").trim())
-                        .appendQueryParameter("third", sec.encrypt("insert department record").trim())
-                        .appendQueryParameter("fourth", sec.encrypt("none").trim())
-                        .appendQueryParameter("fifth", sec.encrypt("Department ID: " + depName).trim())
-                        .appendQueryParameter("sixth", sec.encrypt(session.getadminid()).trim());
+                        .appendQueryParameter("first", secw.encrypt("Department Enrollment"))
+                        .appendQueryParameter("second", secw.encrypt("insert"))
+                        .appendQueryParameter("third", secw.encrypt("insert department record"))
+                        .appendQueryParameter("fourth", secw.encrypt("none"))
+                        .appendQueryParameter("fifth", secw.encrypt("Department ID: " + depName))
+                        .appendQueryParameter("sixth", secw.encrypt(session.getadminid()));
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();

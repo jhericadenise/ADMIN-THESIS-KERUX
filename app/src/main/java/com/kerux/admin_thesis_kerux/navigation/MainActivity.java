@@ -87,7 +87,7 @@ import java.util.ArrayList;
          @Override
          protected String doInBackground(String... strings) {
              try {
-                 URL url = new URL("http://192.168.1.22:8080/RootAdmin/TotalQMDeptAdminServlet");
+                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/TotalQMDeptAdminServlet");
                  URLConnection connection = url.openConnection();
 
                  connection.setReadTimeout(10000);

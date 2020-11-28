@@ -20,6 +20,7 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -39,8 +40,10 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
     private EditText lastname;
     private EditText newPassword;
     private EditText oldPassword;
+    private EditText userName;
     private EditText email;
     private String adminID;
+    private SecurityWEB secweb;
 
     private Button saveChanges;
     private Button confirmPass;
@@ -66,12 +69,15 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         lastname = (EditText)findViewById(R.id.txtboxLastName);
         newPassword = (EditText)findViewById(R.id.txtboxNewPassword);
         oldPassword = (EditText)findViewById(R.id.txtboxOldPassword);
+        userName=(EditText)findViewById(R.id.txtboxUsername);
         email = (EditText)findViewById(R.id.txtboxEmail);
-
+        secweb = new SecurityWEB();
         Security sec = new Security();
 
         firstname.setText(session.getfirstname());
         lastname.setText(session.getlastname());
+        email.setText(secweb.decrypt(session.getemail()));
+        userName.setText(secweb.decrypt(session.getusername()));
         adminID = session.getadminid();
 
         saveChanges = (Button)findViewById(R.id.button_save);
@@ -207,6 +213,7 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         String adminFname =firstname.getText().toString();
         String adminLname=lastname.getText().toString();
         String adminEmail = email.getText().toString();
+        String username=userName.getText().toString();
 
         String z = "";
         boolean isSuccess = false;
@@ -228,7 +235,7 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         @Override
         protected String doInBackground(String... params) {
             if(adminFname.trim().equals("")||adminLname.trim().equals("")||adminEmail.trim().equals(""))
-                z = "Please enter values in the First Name, Last Name and Email";
+                z = "Please enter values in the First Name, Last Name, Email and Username";
             else
             {
                 try {
@@ -242,9 +249,10 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                     connection.setDoOutput(true);
 
                     Uri.Builder builder = new Uri.Builder()
-                            .appendQueryParameter("adminEmail", adminEmail)
+                            .appendQueryParameter("adminEmail", secweb.encrypt(adminEmail))
                             .appendQueryParameter("adminFname", adminFname)
                             .appendQueryParameter("adminLname", adminLname)
+                            .appendQueryParameter("userName", secweb.encrypt(username))
                             .appendQueryParameter("adminID", adminID);
                     String query = builder.build().getEncodedQuery();
 
@@ -261,9 +269,10 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
                     ArrayList<String> output=new ArrayList<String>();
                     while ((returnString = in.readLine()) != null)
                     {
-                        session.setemail(adminEmail);
+                        session.setemail(secweb.encrypt(adminEmail));
                         session.setfirstname(adminFname);
                         session.setlastname(adminLname);
+                        session.setusername(secweb.encrypt(username));
                         isSuccess=true;
                         z = "Profile successfully edited!";
                         output.add(returnString);
@@ -335,8 +344,8 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
                     Uri.Builder builder = new Uri.Builder()
                             .appendQueryParameter("adminID", adminID)
-                            .appendQueryParameter("adminOldPw", adminOldPw)
-                            .appendQueryParameter("adminNewPw", adminNewPw);
+                            .appendQueryParameter("adminOldPw", secweb.encrypt(adminOldPw))
+                            .appendQueryParameter("adminNewPw", secweb.encrypt(adminNewPw));
                     String query = builder.build().getEncodedQuery();
 
                     OutputStream os = connection.getOutputStream();
