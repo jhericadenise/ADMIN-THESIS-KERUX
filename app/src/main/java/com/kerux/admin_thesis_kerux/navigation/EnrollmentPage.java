@@ -11,6 +11,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
@@ -107,7 +109,13 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
     public void ClickViewAudit(View view){
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
 
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
+    }
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }

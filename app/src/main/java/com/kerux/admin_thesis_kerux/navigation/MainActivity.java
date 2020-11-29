@@ -20,6 +20,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
@@ -183,6 +185,14 @@ import java.util.ArrayList;
 
     public void ClickViewAudit(View view){
         redirectActivity(this, ViewAuditReportsActivity.class);
+    }
+
+    public void ClickEditQM(View view){
+        redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        redirectActivity(this, EditDoctor.class);
     }
 
     public void ClickLogout(View view){

@@ -27,6 +27,8 @@ import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
@@ -233,6 +235,13 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
+    }
 
     public void ClickLogout(View view){
         MainActivity.logout(this);
@@ -403,6 +412,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
 
     //function for displaying the enrolled doctors
+    //select department, lastname, firstname, email, prcLicense, verified from doctor where status = 'Active'
     private class ListDoc extends AsyncTask<String, String, String> {
         boolean isSuccess = false;
         String message = "";
@@ -446,7 +456,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth", "fifth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL});
 
 
                 message = "DELETED";

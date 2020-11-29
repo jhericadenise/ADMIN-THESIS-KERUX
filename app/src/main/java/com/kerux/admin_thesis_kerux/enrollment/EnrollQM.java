@@ -2,6 +2,7 @@ package com.kerux.admin_thesis_kerux.enrollment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
+import com.kerux.admin_thesis_kerux.email.SendMailTask;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
@@ -55,7 +59,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private Spinner deptSpinner;
     ConnectionClass connectionClass;
     private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
-
+    Button generatePass;
     DrawerLayout drawerLayout;
 
     KeruxSession session;
@@ -76,7 +80,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername() || !validatePassword()) {
+                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollQM.this);
@@ -86,6 +90,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                                 public void onClick(DialogInterface dialog, int id) {
                                     EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
                                     doenroll.execute();
+                                    sendEmail();
                                     qmFirstName.getText().clear();
                                     qmLastName.getText().clear();
                                     qmEmail.getText().clear();
@@ -101,6 +106,14 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                     AlertDialog alert = builder.create();
                     alert.show();
                 }
+            }
+        });
+
+        generatePass = findViewById(R.id.bttnGeneratePass);
+        generatePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                qmPw.setText(generateString(12));
             }
         });
 
@@ -159,6 +172,14 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
+    }
+
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -169,6 +190,20 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         //close drawer
         MainActivity.closeDrawer(drawerLayout);
     }
+
+    private void sendEmail() {
+        Resources res = getResources();
+        String email = qmEmail.getText().toString().trim();
+        String subject = res.getString(R.string.subjectEmail);
+        String message = res.getString(R.string.bodyEmail) + "\n\n" +
+                res.getString(R.string.username) + " " + qmUname.getText().toString().trim() + "\n" +
+                res.getString(R.string.password) + " " + qmPw.getText().toString().trim() + "\n\n" +
+                res.getString(R.string.footerEmail);
+
+        SendMailTask sm = new SendMailTask(this, email, subject, message);
+        sm.execute();
+    }
+
 
     private String generateString(int length){
         char[] chars = "QWERTYUIOPASDFGHJKLZXCVBNMmnbvcxzlkjhgfdsapoiuytrewq1234567890!@#$%^&*()".toCharArray();
@@ -188,6 +223,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         startActivity(intent);
     }
 
+/*
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -213,6 +249,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
             return true;
         }
     }
+*/
 
     private boolean validateEmail() {
         String emailInputQM = qmEmail.getText().toString().trim();
@@ -296,7 +333,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
         return false;
     }
-
 
 
     //Enrolling or adding the record to the database for the queue manager

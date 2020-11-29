@@ -58,4 +58,32 @@
     <string name="reason">Reason for Revoking Privilege</string>
     <string name="show">Show</string>
     <string name="choose">Choose to Show</string>
+    <string name="subjectEmail">
+        Kerux Queue Manager Enrollment Credentials
+    </string>
+    <string name="bodyEmail">Good day!
+        We have successfully enrolled you as a Queue Manager.
+        Here are your credentials
+
+    </string>
+    <string name="username">
+        Username:
+    </string>
+    <string name="password">
+        Password:
+    </string>
+    <string name="footerEmail">
+
+        Please login using the credentials above and please change your password immediately.
+        Thank you!
+    </string>
+
+    <string name="unenrollSubject">Privilege Revoked - Kerux</string>
+    <string name="unenrollEmail">Good day!
+
+        We regret to inform you that your privileges on the Kerux application have been revoked.
+        Please contact the administrator of the clinic, if you wish to know more about why your privilege has been revoked.
+
+        Thank you!
+    </string>
 </resources>

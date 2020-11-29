@@ -26,6 +26,8 @@ import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
@@ -219,6 +221,14 @@ public class ManageAccounts extends AppCompatActivity implements DBUtility{
 
     public void ClickViewAudit(View view){
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
+    }
+
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
     }
 
     public void ClickLogout(View view){

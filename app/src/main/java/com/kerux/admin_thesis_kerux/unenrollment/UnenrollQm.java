@@ -3,6 +3,7 @@ package com.kerux.admin_thesis_kerux.unenrollment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,9 @@ import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
+import com.kerux.admin_thesis_kerux.email.SendMailTask;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
@@ -240,6 +244,14 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
+    }
+
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -250,6 +262,17 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
         //close drawer
         MainActivity.closeDrawer(drawerLayout);
     }
+
+    private void sendEmail() {
+        Resources res = getResources();
+        String email = "";
+        String subject = res.getString(R.string.unenrollSubject);
+        String message = res.getString(R.string.unenrollEmail);
+
+        SendMailTask sm = new SendMailTask(this, email, subject, message);
+        sm.execute();
+    }
+
 
     //method for inserting into audit table
     public void insertAudit(){

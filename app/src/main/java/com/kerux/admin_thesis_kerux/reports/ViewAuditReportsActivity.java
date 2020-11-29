@@ -29,6 +29,8 @@ import com.kerux.admin_thesis_kerux.BuildConfig;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
+import com.kerux.admin_thesis_kerux.edit.EditDoctor;
+import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
@@ -139,6 +141,14 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
     public void ClickViewStat(View view){
         MainActivity.redirectActivity(this, ViewStatReportsActivity.class);
+    }
+
+    public void ClickEditQM(View view){
+        MainActivity.redirectActivity(this, EditQm.class);
+    }
+
+    public void ClickEditDoctor(View view){
+        MainActivity.redirectActivity(this, EditDoctor.class);
     }
 
     public void ClickViewAudit(View view){
