@@ -82,10 +82,9 @@ public class EditDoctor extends AppCompatActivity {
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String verify = "Verified";
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Doctor Verified",Toast.LENGTH_LONG).show();
-                                verifyDoc(selectedFromList, verify);
+                                verifyDoc(selectedFromList);
                                 ListDoc docListdisp = new ListDoc();
                                 docListdisp.execute();
                                 insertAudit();
@@ -225,10 +224,10 @@ public class EditDoctor extends AppCompatActivity {
     }
 
     //Update verified set verified = 'Verified' WHERE firstname = ?
-    public void verifyDoc(String firstName, String verify){
+    public void verifyDoc(String firstName){
 
         try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctor");
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctorServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -237,8 +236,7 @@ public class EditDoctor extends AppCompatActivity {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("firstName", firstName)
-                    .appendQueryParameter("verify", verify);
+                    .appendQueryParameter("firstName", firstName);
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -277,7 +275,7 @@ public class EditDoctor extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             try {
                 //listview, list the names of all enrolled department
-                docList = findViewById(R.id.listEnrolledDoc);
+                docList = findViewById(R.id.listDoctor);
                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDocServlet");
                 URLConnection connection = url.openConnection();
 

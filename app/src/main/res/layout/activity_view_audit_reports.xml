@@ -11,21 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/user_logs" />
-
         <Button
             android:id="@+id/bttnGenerateAudit"
             android:layout_width="245dp"
             android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:text="GENERATE"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.478"
@@ -37,7 +27,7 @@
             android:id="@+id/bttnViewAudit"
             android:layout_width="250dp"
             android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:text="VIEW"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,13 +36,13 @@
 
         <ListView
             android:id="@+id/listAuditReports"
-            android:layout_width="284dp"
-            android:layout_height="480dp"
+            android:layout_width="338dp"
+            android:layout_height="483dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.615">
+            app:layout_constraintVertical_bias="0.682">
 
         </ListView>
 
