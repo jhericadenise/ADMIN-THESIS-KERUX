@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -168,10 +167,6 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
         SecurityWEB secw = new SecurityWEB();
         Security sec = new Security();
 
-        String statusActive = "Active";
-        String statusInactive = "Inactive";
-        String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
-
         try {
             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/InsertAuditAdminServlet");
             URLConnection connection = url.openConnection();
@@ -182,11 +177,11 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", secw.encrypt("Unenroll Doctor").trim())
-                    .appendQueryParameter("second", secw.encrypt("delete").trim())
-                    .appendQueryParameter("third", secw.encrypt("Unenrolling a doctor record").trim())
-                    .appendQueryParameter("fourth", secw.encrypt("Status = " + statusActive).trim())
-                    .appendQueryParameter("fifth", secw.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
+                    .appendQueryParameter("first", secw.encrypt("Edit Doctor").trim())
+                    .appendQueryParameter("second", secw.encrypt("edit").trim())
+                    .appendQueryParameter("third", secw.encrypt("Setting doctor record to verified").trim())
+                    .appendQueryParameter("fourth", secw.encrypt("Unverified Doctor"))
+                    .appendQueryParameter("fifth", secw.encrypt("Verified Doctor"))
                     .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
             String query = builder.build().getEncodedQuery();
 
