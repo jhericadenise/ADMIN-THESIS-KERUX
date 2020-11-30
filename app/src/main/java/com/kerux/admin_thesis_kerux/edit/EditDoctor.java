@@ -84,7 +84,8 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
                             public void onClick(DialogInterface dialog, int id) {
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Doctor Verified",Toast.LENGTH_LONG).show();
-                                verifyDoc(selectedFromList);
+                                VerifyDoctor verify = new VerifyDoctor();
+                                verify.execute();
                                 ListDoc docListdisp = new ListDoc();
                                 docListdisp.execute();
                                 insertAudit();
@@ -219,44 +220,57 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
         return docString2;
     }
 
-    //Update doctor set verified = 'Verified' WHERE firstname = ?
-    public void verifyDoc(String firstName){
+    private class VerifyDoctor extends AsyncTask<String, String, String> {
+        boolean isSuccess = false;
+        String message = "";
 
-        try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctorServlet");
-            URLConnection connection = url.openConnection();
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctorServlet");
+                URLConnection connection = url.openConnection();
 
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-            Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("firstName", firstName);
-            String query = builder.build().getEncodedQuery();
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("firstName", firstName);
+                String query = builder.build().getEncodedQuery();
 
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
-            writer.write(query);
-            writer.flush();
-            writer.close();
-            os.close();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String returnString="";
-            ArrayList<String> output=new ArrayList<String>();
-            while ((returnString = in.readLine()) != null)
-            {
-                Log.d("returnString", returnString);
-                output.add(returnString);
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString = "";
+                ArrayList<String> output = new ArrayList<String>();
+                while ((returnString = in.readLine()) != null) {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                in.close();
+            } catch (Exception ex) {
+                isSuccess = false;
+                message = "Exceptions" + ex;
             }
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return message;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(getApplicationContext(),"Doctor Verified",Toast.LENGTH_LONG).show();
         }
     }
-
     private class ListDoc extends AsyncTask<String, String, String> {
         boolean isSuccess = false;
         String message = "";
