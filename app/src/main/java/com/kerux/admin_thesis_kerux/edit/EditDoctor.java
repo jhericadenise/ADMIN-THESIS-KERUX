@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
+import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
@@ -43,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EditDoctor extends AppCompatActivity {
+public class EditDoctor extends AppCompatActivity implements DBUtility {
 
     DrawerLayout drawerLayout;
     private ListView docList;
@@ -223,7 +224,7 @@ public class EditDoctor extends AppCompatActivity {
         return docString2;
     }
 
-    //Update verified set verified = 'Verified' WHERE firstname = ?
+    //Update doctor set verified = 'Verified' WHERE firstname = ?
     public void verifyDoc(String firstName){
 
         try {
@@ -261,7 +262,6 @@ public class EditDoctor extends AppCompatActivity {
         }
     }
 
-    //function for displaying the enrolled doctors
     private class ListDoc extends AsyncTask<String, String, String> {
         boolean isSuccess = false;
         String message = "";
@@ -283,6 +283,8 @@ public class EditDoctor extends AppCompatActivity {
                 connection.setConnectTimeout(20000);
                 connection.setDoInput(true);
 
+
+
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String returnString="";
                 StringBuffer receivedData=new StringBuffer();
@@ -303,8 +305,9 @@ public class EditDoctor extends AppCompatActivity {
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapter = new SimpleAdapter (EditDoctor.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth", "fifth"},
-                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth", "fifth", "sixth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL, R.id.SIXTH_COL});
+
 
                 message = "DELETED";
             } catch (Exception ex) {
