@@ -66,8 +66,10 @@ import java.util.ArrayList;
 
             public void run() {
 
-                deptCount.setText(depC);
-                qmCount.setText(qmC);
+                    deptCount.setText(depC);
+                    qmCount.setText(qmC);
+
+
             }
         };
 

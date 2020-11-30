@@ -195,9 +195,6 @@ public class Login extends AppCompatActivity implements DBUtility {
                         else if(i==4){
                             clinicid=output.get(i);
                         }
-                        else if(i==5){
-                            usernam=output.get(i);
-                        }
 
                     }
                     in.close();
@@ -219,7 +216,7 @@ public class Login extends AppCompatActivity implements DBUtility {
             Toast.makeText(getBaseContext(),""+z,Toast.LENGTH_LONG).show();
 
             if(isSuccess) {
-
+                usernam=firstName+" "+lastName;
                 session.setadminid(String.valueOf(adminId));
                 session.setfirstname(firstName);
                 session.setlastname(lastName);

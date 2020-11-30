@@ -50,6 +50,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
     private ListAdapter listAdapter;
     Button docDisplayList;
     KeruxSession session;
+    String firstName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
                             public void onClick(DialogInterface dialog, int id) {
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Doctor Verified",Toast.LENGTH_LONG).show();
+                                firstName=selectedFromList;
                                 VerifyDoctor verify = new VerifyDoctor();
                                 verify.execute();
                                 ListDoc docListdisp = new ListDoc();
@@ -178,12 +180,12 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", secw.encrypt("Edit Doctor").trim())
-                    .appendQueryParameter("second", secw.encrypt("edit").trim())
-                    .appendQueryParameter("third", secw.encrypt("Setting doctor record to verified").trim())
-                    .appendQueryParameter("fourth", secw.encrypt("Unverified Doctor"))
-                    .appendQueryParameter("fifth", secw.encrypt("Verified Doctor"))
-                    .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
+                    .appendQueryParameter("first", SecurityWEB.encrypt("Edit Doctor").trim())
+                    .appendQueryParameter("second", SecurityWEB.encrypt("edit").trim())
+                    .appendQueryParameter("third", SecurityWEB.encrypt("Setting doctor record to verified").trim())
+                    .appendQueryParameter("fourth", SecurityWEB.encrypt("Unverified Doctor"))
+                    .appendQueryParameter("fifth", SecurityWEB.encrypt("Verified Doctor"))
+                    .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()).trim());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -213,11 +215,11 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
     public String getDocString(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
 
-        String docString1=name.replaceAll("third=", "");
+        String docString1=name.replaceAll(".*third=", "");
         String docString2=docString1.replaceAll(",.+", "");
         Log.d("DOCSTRING:", docString2);
 
-        return docString2;
+        return docString2.trim();
     }
 
     private class VerifyDoctor extends AsyncTask<String, String, String> {
@@ -232,7 +234,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctorServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/VerifyDoctor");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -271,6 +273,8 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
             Toast.makeText(getApplicationContext(),"Doctor Verified",Toast.LENGTH_LONG).show();
         }
     }
+
+
     private class ListDoc extends AsyncTask<String, String, String> {
         boolean isSuccess = false;
         String message = "";
