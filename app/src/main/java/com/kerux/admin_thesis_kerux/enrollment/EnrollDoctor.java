@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.kerux.admin_thesis_kerux.R;
-import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.edit.EditDoctor;
 import com.kerux.admin_thesis_kerux.edit.EditQm;
@@ -57,6 +56,9 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
     private EditText roomNo;
     private EditText schedule1;
     private EditText schedule2;
+    private EditText prcNo;
+    private EditText email;
+    private EditText docType;
     private CheckBox monday;
     private CheckBox tuesday;
     private CheckBox wednesday;
@@ -65,21 +67,14 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
     private CheckBox saturday;
     private Spinner spinnerDocType;
     private Spinner spinnerDep;
-    private Spinner spinnerClinic;
-    private EditText docType;
-
-    ConnectionClass connectionClass;
 
     KeruxSession session;
-
     DrawerLayout drawerLayout;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_doctor);
-        connectionClass = new ConnectionClass(); //create ConnectionClass
         final Context context = this;
         session=new KeruxSession(getApplicationContext());
 
@@ -92,6 +87,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         roomNo = findViewById(R.id.txtboxRoomNo);
         schedule1 = findViewById(R.id.txtboxSched1);
         schedule2 = findViewById(R.id.txtboxSched2);
+        prcNo = findViewById(R.id.txtboxPRC);
+        email = findViewById(R.id.txtboxDocEmail);
         monday = findViewById(R.id.cBoxMon);
         tuesday = findViewById(R.id.cBoxTues);
         wednesday = findViewById(R.id.cBoxWed);
@@ -103,8 +100,6 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         bttnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Intent intent = new Intent(EnrollDoctor.this, EnrollDoctorType.class);
-                startActivity(intent);*/
                 // get prompts.xml view
                 LayoutInflater li = LayoutInflater.from(context);
                 View promptsView = li.inflate(R.layout.activity_enroll_doctor_type, null);
@@ -160,6 +155,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                                     doctorFName.getText().clear();
                                     doctorLName.getText().clear();
                                     roomNo.getText().clear();
+                                    email.getText().clear();
+                                    prcNo.getText().clear();
                                     schedule1.getText().clear();
                                     schedule2.getText().clear();
                                 }
@@ -353,6 +350,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         String cboxSat = saturday.getText().toString();
         String docDays="";
         String newdocid;
+        String docEmail = email.getText().toString();
+        int docPRC = Integer.parseInt(prcNo.getText().toString());
         int docType = (int)spinnerDocType.getSelectedItemId();
         int dept = (int)spinnerDep.getSelectedItemId();
         int clinic = Integer.parseInt(session.getclinicid());
@@ -406,6 +405,8 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         .appendQueryParameter("sched2", sched2)
                         .appendQueryParameter("docDays", docDays)
                         .appendQueryParameter("status", status)
+                        .appendQueryParameter("prcNo", Integer.toString(docPRC))
+                        .appendQueryParameter("email", docEmail)
                         .appendQueryParameter("getadminid", session.getadminid())
                         .appendQueryParameter("getclinicid", session.getclinicid());
                 String query = builder.build().getEncodedQuery();

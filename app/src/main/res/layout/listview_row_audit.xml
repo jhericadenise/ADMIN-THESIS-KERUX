@@ -13,59 +13,31 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/one"
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="Event"
+                    android:textAlignment="center" />
 
                 <TextView
                     android:id="@+id/two"
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="Person"
+                    android:textAlignment="center" />
 
                 <TextView
                     android:id="@+id/three"
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    tools:text="Time stamp" />
 
-                <TextView
-                    android:id="@+id/four"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/five"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/six"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/seven"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/eight"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/nine"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -90,40 +62,5 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/FOURTH_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/FIFTH_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/SIXTH_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/SEVENTH_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/EIGHT_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/NINTH_COL"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
         </LinearLayout>
 </LinearLayout>
