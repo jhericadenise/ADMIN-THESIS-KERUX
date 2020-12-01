@@ -77,9 +77,6 @@ public class Login extends AppCompatActivity implements DBUtility {
         }
 
 
-
-
-
         setContentView(R.layout.activity_login);
         connectionClass = new ConnectionClass();
 
