@@ -307,6 +307,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         protected void onPostExecute(String s) {
             Toast.makeText(getBaseContext(),""+s,Toast.LENGTH_LONG).show();
         }
+
     }
 
 

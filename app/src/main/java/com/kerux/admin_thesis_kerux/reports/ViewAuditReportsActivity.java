@@ -201,14 +201,17 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                 while ((returnString = in.readLine()) != null)
                 {
 
-                    output.add(returnString.trim());
+                    output.add(returnString);
                 }
                 for (int i = 0; i < output.size(); i++) {
                     try{
-                        message = secw.decrypt(output.get(i)).trim();//SecurityWEB dapat
+                        message = SecurityWEB.decrypt(output.get(i)).trim();//SecurityWEB dapat
+
                     }catch (Exception e){
+                        Log.d("ErrorNOww", e.getMessage());
                         message = output.get(i);
                     }
+                    Log.d("OUTPUT>GET", output.get(i));
                     receivedData.append(message+"\n");
                 }
                 in.close();
