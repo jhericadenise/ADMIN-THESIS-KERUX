@@ -67,6 +67,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         qmlist = findViewById(R.id.listQM);
         bttnDisplayQM = findViewById(R.id.bttnDisplayEditQm);
         bttnEditQM = findViewById(R.id.bttnUpdateQM);
+
         bttnGenerate = findViewById(R.id.bttnGeneratePass3);
         bttnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +122,17 @@ public class EditQm extends AppCompatActivity implements DBUtility {
             }
         });
 
+        bttnEditQM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fn = qmFirstName.getText().toString().trim();
+                String ln = qmLastName.getText().toString().trim();
+                String email = qmEmail.getText().toString().trim();
+                String pw = qmPassword.getText().toString().trim();
+                final String selectedFromListQMID = getQMID(String.valueOf(qmlist.getSelectedItem()));
+                updateQM(fn, ln, email, pw, Integer.parseInt(selectedFromListQMID));
+            }
+        });
     }
 
     private String generateString(int length){
