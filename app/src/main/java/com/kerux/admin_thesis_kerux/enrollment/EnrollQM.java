@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,7 +22,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.kerux.admin_thesis_kerux.FilePicker;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
@@ -41,7 +42,7 @@ import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -69,11 +70,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
     KeruxSession session;
 
     //for uploading file
-    private static final int REQUEST_PICK_FILE = 1;
-
-    private TextView filePath;
-    private Button Browse;
-    private File selectedFile;
+    private Button bttnAddPhotoDoc;
+    private ImageView image;
+    private final int IMG_REQUEST = 1;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,12 +84,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
         session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        bttnAddPhotoDoc  = findViewById(R.id.bttnAddPhoto);
+        image = findViewById(R.id.imageView);
 
-        //upload file
-        filePath = (TextView)findViewById(R.id.file_path);
-        Browse = (Button)findViewById(R.id.bttnAddPhoto);
-        Browse.setOnClickListener(this);
-
+        bttnAddPhotoDoc.setOnClickListener(this);
 
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
         deptSpinner = findViewById(R.id.spinnerDept);
@@ -238,34 +236,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
         startActivity(intent);
     }
 
-/*
-    private static final Pattern PASSWORD_PATTERN =
-            Pattern.compile("^" +
-                    //"(?=.*[0-9])" +         //at least 1 digit
-                    //"(?=.*[a-z])" +         //at least 1 lower case letter
-                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
-                    "(?=.*?[A-Z])" +      //any letter
-                    "(?=.*?[a-z])" +    //at least 1 special character
-                    "(?=.*?[0-9])" +           //no white spaces
-                    "(?=.*?[#?!@$%^&*-])"+
-                    ".{8,}"+
-                    "$");
-
-    private boolean validatePassword() {
-        String qmpassword = qmPw.getText().toString().trim();
-        if (qmpassword.isEmpty()) {
-            qmPw.setError("Field can't be empty");
-            return false;
-        } else if (!PASSWORD_PATTERN.matcher(qmpassword).matches()) {
-            qmPw.setError("Password must be 8 characters, with at least 1 uppercase, lowercase and special character");
-            return false;
-        } else {
-            qmPw.setError(null);
-            return true;
-        }
-    }
-*/
-
     private boolean validateEmail() {
         String emailInputQM = qmEmail.getText().toString().trim();
 
@@ -333,36 +303,34 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
         return false;
     }
 
-    //file upload
     @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-
+    public void onClick(View view) {
+        switch (view.getId())
+        {
             case R.id.bttnAddPhoto:
-                Intent intent = new Intent(this, FilePicker.class);
-                startActivityForResult(intent, REQUEST_PICK_FILE);
                 break;
         }
     }
 
-    //file upload
+    private void selectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, IMG_REQUEST);
+
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-
-            switch (requestCode) {
-
-                case REQUEST_PICK_FILE:
-
-                    if (data.hasExtra(FilePicker.EXTRA_FILE_PATH)) {
-
-                        selectedFile = new File
-                                (data.getStringExtra(FilePicker.EXTRA_FILE_PATH));
-                        filePath.setText(selectedFile.getPath());
-                    }
-                    break;
+        if(requestCode == IMG_REQUEST && resultCode == RESULT_OK && data!=null){
+            Uri path = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), path);
+                image.setImageBitmap(bitmap);
+                image.setVisibility(View.VISIBLE);
+            } catch (IOException e){
+                e.printStackTrace();
             }
         }
     }

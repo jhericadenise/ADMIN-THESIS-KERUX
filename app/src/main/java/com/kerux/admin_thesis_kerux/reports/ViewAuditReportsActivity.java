@@ -35,7 +35,7 @@ import com.kerux.admin_thesis_kerux.navigation.EditProfile;
 import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
-import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -173,7 +173,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         boolean isSuccess = false;
         String message = "";
 
-        Security sec = new Security();
+        SecurityWEB secw = new SecurityWEB();
 
         @Override
         protected void onPreExecute() {
@@ -197,13 +197,19 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
                 String returnString="";
                 StringBuffer receivedData=new StringBuffer();
                 ArrayList<String> output=new ArrayList<String>();
+
                 while ((returnString = in.readLine()) != null)
                 {
-                    receivedData.append(returnString+"\n");
+
                     output.add(returnString.trim());
                 }
                 for (int i = 0; i < output.size(); i++) {
-                    message = sec.decrypt(output.get(i)).trim();
+                    try{
+                        message = secw.decrypt(output.get(i)).trim();//SecurityWEB dapat
+                    }catch (Exception e){
+                        message = output.get(i);
+                    }
+                    receivedData.append(message+"\n");
                 }
                 in.close();
                 String retrieved=receivedData.toString();

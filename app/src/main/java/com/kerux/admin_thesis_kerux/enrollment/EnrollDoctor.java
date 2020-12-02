@@ -523,7 +523,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         protected String doInBackground(String... params) {
 
             try {
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/RootAdmin/DoEnrollDocType");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDocType");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);

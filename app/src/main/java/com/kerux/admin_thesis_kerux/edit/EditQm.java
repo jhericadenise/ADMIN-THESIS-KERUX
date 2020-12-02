@@ -54,6 +54,10 @@ public class EditQm extends AppCompatActivity implements DBUtility {
     Button bttnGenerate;
 
     private String qmidfin;
+    private String fn;
+    private String ln;
+    private String email;
+    private String pw;
 
     private EditText qmFirstName;
     private EditText qmLastName;
@@ -83,6 +87,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         qmEmail=findViewById(R.id.txtboxQMEmail3);
         qmPassword = findViewById(R.id.txtboxQMpw3);
         qmidfin="";
+
         bttnDisplayQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,7 +104,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                 final String selectedFromListE = getQMStringEmail(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromList = getQMStringLastname(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromListFN = getQMStringFirstname(String.valueOf((qmlist.getItemAtPosition(position))));
-                qmidfin=selectedFromListQMID;
+
                 Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditQm.this);
@@ -108,10 +113,10 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Toast.makeText(getApplicationContext(), selectedFromList, Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(), "Successfully revoked privilege", Toast.LENGTH_LONG).show();
                                 qmFirstName.setText(selectedFromListFN);
                                 qmLastName.setText(selectedFromList);
                                 qmEmail.setText(selectedFromListE);
+                                qmidfin=selectedFromListQMID;
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -128,11 +133,17 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         bttnEditQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String fn = qmFirstName.getText().toString().trim();
-                String ln = qmLastName.getText().toString().trim();
-                String email = qmEmail.getText().toString().trim();
-                String pw = qmPassword.getText().toString().trim();
-                updateQM(fn, ln, email, pw, qmidfin);
+                fn = qmFirstName.getText().toString().trim();
+                ln = qmLastName.getText().toString().trim();
+                email = qmEmail.getText().toString().trim();
+                pw = qmPassword.getText().toString().trim();
+                updateqm updqm = new updateqm();
+                updqm.execute();
+
+                qmFirstName.getText().clear();
+                qmLastName.getText().clear();
+                qmEmail.getText().clear();
+                qmPassword.getText().clear();
             }
         });
     }
@@ -154,7 +165,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         String qmString1=name.replaceAll(".*second=", "");
         String qmString2=qmString1.replaceAll(",.*", "");
 
-        return qmString1.trim();
+        return qmString2.trim();
     }
 
     public String getQMID(String rowFromListView){
@@ -241,44 +252,60 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    public void updateQM(String firstName, String lastName, String email, String password, String QmID){
 
-        try {
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdateQMServlet");
-            URLConnection connection = url.openConnection();
+    private class updateqm extends AsyncTask<String, String, String> {
 
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+        String message = "";
 
-            Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("QueueManager_ID", QmID)
-                    .appendQueryParameter("firstName", firstName)
-                    .appendQueryParameter("lastName", lastName)
-                    .appendQueryParameter("email", email)
-                    .appendQueryParameter("password", password);
-            String query = builder.build().getEncodedQuery();
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdateQMServlet");
+                URLConnection connection = url.openConnection();
 
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
-            writer.write(query);
-            writer.flush();
-            writer.close();
-            os.close();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("QueueManager_ID", qmidfin)
+                        .appendQueryParameter("firstname", fn)
+                        .appendQueryParameter("lastname", ln)
+                        .appendQueryParameter("email", email)
+                        .appendQueryParameter("password", pw);
+                String query = builder.build().getEncodedQuery();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String returnString="";
-            ArrayList<String> output=new ArrayList<String>();
-            while ((returnString = in.readLine()) != null)
-            {
-                Log.d("returnString", returnString);
-                output.add(returnString);
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                    message=returnString;
+                }
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return message;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(getBaseContext(),""+s,Toast.LENGTH_LONG).show();
         }
     }
 

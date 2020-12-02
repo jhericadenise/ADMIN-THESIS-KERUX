@@ -475,8 +475,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapter = new SimpleAdapter (UnenrollDoc.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth", "fifth"},
-                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth", "fifth", "sixth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL, R.id.FIFTH_COL, R.id.SIXTH_COL});
 
 
                 message = "DELETED";
