@@ -97,6 +97,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
         saturday = findViewById(R.id.cBoxSat);
         spinnerDocType = findViewById(R.id.spinnerDocType);
         spinnerDep = findViewById(R.id.spinnerDepType);
+
         bttnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -385,7 +386,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                     docDays+=cboxSat;
                 }
 
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/RootAdmin/DoEnrollDoctor");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/DoEnrollDoctor");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -407,6 +408,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         .appendQueryParameter("status", status)
                         .appendQueryParameter("prcNo", Integer.toString(docPRC))
                         .appendQueryParameter("email", docEmail)
+                        .appendQueryParameter("photo", "")
                         .appendQueryParameter("getadminid", session.getadminid())
                         .appendQueryParameter("getclinicid", session.getclinicid());
                 String query = builder.build().getEncodedQuery();

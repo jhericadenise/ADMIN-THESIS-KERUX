@@ -54,8 +54,6 @@ public class Login extends AppCompatActivity implements DBUtility {
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

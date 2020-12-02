@@ -25,6 +25,7 @@
         <activity android:name=".navigation.ManageAccounts" />
         <activity android:name=".navigation.MainActivity" />
         <activity android:name=".navigation.EditProfile" />
+        <activity android:name=".FilePicker"></activity>
         <activity
             android:name=".login.Login"
             android:theme="@style/SplashTheme">

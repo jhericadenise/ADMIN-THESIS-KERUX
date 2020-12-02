@@ -1,5 +1,6 @@
 package com.kerux.admin_thesis_kerux.enrollment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.kerux.admin_thesis_kerux.FilePicker;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
@@ -38,6 +41,7 @@ import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -49,11 +53,10 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EnrollQM extends AppCompatActivity implements DBUtility{
+public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnClickListener {
 
     private EditText qmFirstName;
     private EditText qmLastName;
-    private EditText qmUname;
     private EditText qmPw;
     private EditText qmEmail;
     private Spinner deptSpinner;
@@ -61,18 +64,32 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     private static final String urlDeptSpinner = "https://isproj2a.benilde.edu.ph/Sympl/departmentSpinnerServlet";
     Button generatePass;
     DrawerLayout drawerLayout;
+    Button bttnAdd;
 
     KeruxSession session;
+
+    //for uploading file
+    private static final int REQUEST_PICK_FILE = 1;
+
+    private TextView filePath;
+    private Button Browse;
+    private File selectedFile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_qm);
         connectionClass = new ConnectionClass(); //create ConnectionClass
-
+        final Context context = this;
         session=new KeruxSession(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
+
+        //upload file
+        filePath = (TextView)findViewById(R.id.file_path);
+        Browse = (Button)findViewById(R.id.bttnAddPhoto);
+        Browse.setOnClickListener(this);
+
 
         Button bttnEnrollQM = findViewById(R.id.bttnEnrollQM);
         deptSpinner = findViewById(R.id.spinnerDept);
@@ -80,7 +97,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         bttnEnrollQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateFName() || !validateLName() || !validateEmail() || !validateUsername()) {
+                if (!validateFName() || !validateLName() || !validateEmail()) {
                     confirmInput();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EnrollQM.this);
@@ -90,11 +107,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                                 public void onClick(DialogInterface dialog, int id) {
                                     EnrollQM.DoEnrollQM doenroll = new DoEnrollQM();
                                     doenroll.execute();
-                                    sendEmail();
+                                    /*sendEmail();*/
                                     qmFirstName.getText().clear();
                                     qmLastName.getText().clear();
                                     qmEmail.getText().clear();
-                                    qmUname.getText().clear();
                                     qmPw.getText().clear();
                                 }
                             })
@@ -120,7 +136,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         qmFirstName = findViewById(R.id.txtboxQMFname);
         qmLastName = findViewById(R.id.txtboxQmLname);
         qmEmail = findViewById(R.id.txtboxQMEmail);
-        qmUname = findViewById(R.id.txtboxQMun);
         qmPw = findViewById(R.id.txtboxQMpw);
 
 
@@ -196,7 +211,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String email = qmEmail.getText().toString().trim();
         String subject = res.getString(R.string.subjectEmail);
         String message = res.getString(R.string.bodyEmail) + "\n\n" +
-                res.getString(R.string.username) + " " + qmUname.getText().toString().trim() + "\n" +
+                "Email: " + " " + qmEmail.getText().toString().trim() + "\n" +
                 res.getString(R.string.password) + " " + qmPw.getText().toString().trim() + "\n\n" +
                 res.getString(R.string.footerEmail);
 
@@ -272,20 +287,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         }
     }
 
-    private boolean validateUsername() {
-        String usernameInputQM = qmUname.getText().toString().trim();
-        if (usernameInputQM.isEmpty()) {
-            qmUname.setError("Field can't be empty");
-            return false;
-        } else if (usernameInputQM.length() > 15) {
-            qmUname.setError("Username too long");
-            return false;
-        } else {
-            qmUname.setError(null);
-            return true;
-        }
-    }
-
     private boolean validateFName() {
         String firstname = qmFirstName.getText().toString().trim();
 
@@ -325,8 +326,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
     public boolean confirmInput() {
         String input = "Email: " + qmEmail.getText().toString();
         input += "\n";
-        input += "Username: " + qmUname.getText().toString();
-        input += "\n";
         input += "First Name: " + qmFirstName.getText().toString();
         input += "\n";
         input += "Last Name: " + qmLastName.getText().toString();
@@ -334,6 +333,39 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         return false;
     }
 
+    //file upload
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+
+            case R.id.bttnAddPhoto:
+                Intent intent = new Intent(this, FilePicker.class);
+                startActivityForResult(intent, REQUEST_PICK_FILE);
+                break;
+        }
+    }
+
+    //file upload
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+
+            switch (requestCode) {
+
+                case REQUEST_PICK_FILE:
+
+                    if (data.hasExtra(FilePicker.EXTRA_FILE_PATH)) {
+
+                        selectedFile = new File
+                                (data.getStringExtra(FilePicker.EXTRA_FILE_PATH));
+                        filePath.setText(selectedFile.getPath());
+                    }
+                    break;
+            }
+        }
+    }
 
     //Enrolling or adding the record to the database for the queue manager
     private class DoEnrollQM extends AsyncTask<String, String, String> {
@@ -344,7 +376,6 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
         String QMFname = qmFirstName.getText().toString();
         String QMLname = qmLastName.getText().toString();
         String QMEmail = qmEmail.getText().toString();
-        String QMuname = qmUname.getText().toString();
         String QMpw = qmPw.getText().toString();
         String status = "Active";
         String newqmid="";
@@ -374,14 +405,13 @@ public class EnrollQM extends AppCompatActivity implements DBUtility{
                             .appendQueryParameter("clinic", Integer.toString(clinic))
                             .appendQueryParameter("dept", Integer.toString(dept))
                             .appendQueryParameter("reason", Integer.toString(reason))
-                            .appendQueryParameter("QMuname", QMuname)
                             .appendQueryParameter("QMpw", QMpw)
-                            .appendQueryParameter("secQMuname", sec.encrypt(QMuname))
                             .appendQueryParameter("secQMpw", sec.encrypt(QMpw))
                             .appendQueryParameter("QMFname", QMFname)
                             .appendQueryParameter("QMLname", QMLname)
                             .appendQueryParameter("QMEmail", QMEmail)
                             .appendQueryParameter("status", status)
+                            .appendQueryParameter("photo", "")
                             .appendQueryParameter("getadminid", session.getadminid());
                     String query = builder.build().getEncodedQuery();
 

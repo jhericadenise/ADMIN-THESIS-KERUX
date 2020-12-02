@@ -1,6 +1,6 @@
  package com.kerux.admin_thesis_kerux.navigation;
 
-import android.app.Activity;
+ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,11 +43,11 @@ import java.util.ArrayList;
      String qmC;
      String depC;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Assign variable
         drawerLayout = findViewById(R.id.drawer_layout);
         session = new KeruxSession(getApplicationContext());
@@ -63,13 +63,9 @@ import java.util.ArrayList;
         Handler handler = new Handler(Looper.getMainLooper());
 
         final Runnable r = new Runnable() {
-
             public void run() {
-
-                    deptCount.setText(depC);
-                    qmCount.setText(qmC);
-
-
+                deptCount.setText(depC);
+                qmCount.setText(qmC);
             }
         };
 
@@ -77,28 +73,6 @@ import java.util.ArrayList;
 
 
     }
-/*
-    private void  requestStoragePermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            //put toast message explaining why the permission should be allowed
-        }
-        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        if (requestCode == STORAGE_PERMISSION_CODE){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
-            }
-        }
-    }*/
 
      private class ShowQMDept extends AsyncTask<String, String, String> {
          String message = "";

@@ -29,7 +29,6 @@ import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
-import com.kerux.admin_thesis_kerux.unenrollment.UnenrollQm;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,13 +39,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class EditQm extends AppCompatActivity implements DBUtility {
     ConnectionClass connectionClass;
@@ -55,6 +51,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
     private ListAdapter listAdapter;
     Button bttnEditQM;
     Button bttnDisplayQM;
+    Button bttnGenerate;
 
     private EditText qmFirstName;
     private EditText qmLastName;
@@ -70,10 +67,18 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         qmlist = findViewById(R.id.listQM);
         bttnDisplayQM = findViewById(R.id.bttnDisplayEditQm);
         bttnEditQM = findViewById(R.id.bttnUpdateQM);
+        bttnGenerate = findViewById(R.id.bttnGeneratePass3);
+        bttnGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                qmPassword.setText(generateString(8));
+            }
+        });
 
         qmFirstName=findViewById(R.id.txtboxQMFname3);
         qmLastName=findViewById(R.id.txtboxQmLname3);
         qmEmail=findViewById(R.id.txtboxQMEmail3);
+        qmPassword = findViewById(R.id.txtboxQMpw3);
 
         bttnDisplayQM.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,9 +92,10 @@ public class EditQm extends AppCompatActivity implements DBUtility {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("QMM",String.valueOf((qmlist.getItemAtPosition(position))));
+                final String selectedFromListQMID = getQMID(String.valueOf(qmlist.getItemAtPosition(position)));
+                final String selectedFromListE = getQMStringEmail(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromList = getQMStringLastname(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromListFN = getQMStringFirstname(String.valueOf((qmlist.getItemAtPosition(position))));
-                final String selectedFromListE = getQMStringEmail(String.valueOf((qmlist.getItemAtPosition(position))));
                 Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditQm.this);
@@ -117,13 +123,32 @@ public class EditQm extends AppCompatActivity implements DBUtility {
 
     }
 
+    private String generateString(int length){
+        char[] chars = "QWERTYUIOPASDFGHJKLZXCVBNMmnbvcxzlkjhgfdsapoiuytrewq1234567890!@#$%^&*()".toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Random random = new Random();
+        for(int i = 0; i < length; i++){
+            char c = chars[random.nextInt(chars.length)];
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+    }
+
     public String getQMStringLastname(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
-        Log.d("Stringg", name);
         String qmString1=name.replaceAll(".*second=", "");
-
+        String qmString2=qmString1.replaceAll(",.*", "");
 
         return qmString1.trim();
+    }
+
+    public String getQMID(String rowFromListView){
+        String name = rowFromListView.substring(1, rowFromListView.length()-1);
+        String qmString1=name.replaceAll(".*fourth=", "");
+        String qmString2=qmString1.replaceAll(",.*", "");
+
+        return qmString2.trim();
     }
 
     public String getQMStringFirstname(String rowFromListView){
@@ -134,7 +159,6 @@ public class EditQm extends AppCompatActivity implements DBUtility {
 
         return qmString2.trim();
     }
-
     public String getQMStringEmail(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
         String qmString1=name.replaceAll(".*third=", "");
@@ -203,7 +227,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    public void updateQM(String firstName, String lastName, String email, String password){
+    public void updateQM(String firstName, String lastName, String email, String password, int QmID){
 
         try {
             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdateQMServlet");
@@ -215,10 +239,11 @@ public class EditQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("QueueManager_ID", String.valueOf(QmID))
                     .appendQueryParameter("firstName", firstName)
                     .appendQueryParameter("lastName", lastName)
-                    .appendQueryParameter("lastName", email)
-                    .appendQueryParameter("lastName", password);
+                    .appendQueryParameter("email", email)
+                    .appendQueryParameter("password", password);
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -289,8 +314,8 @@ public class EditQm extends AppCompatActivity implements DBUtility {
 
 
                 listAdapter = new SimpleAdapter (EditQm.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third"},
-                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth"},
+                        new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL});
 
                 message = "ADDED SUCCESSFULLY!";
             } catch (Exception ex) {
