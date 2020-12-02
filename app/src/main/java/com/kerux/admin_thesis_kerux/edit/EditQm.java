@@ -53,6 +53,8 @@ public class EditQm extends AppCompatActivity implements DBUtility {
     Button bttnDisplayQM;
     Button bttnGenerate;
 
+    private String qmidfin;
+
     private EditText qmFirstName;
     private EditText qmLastName;
     private EditText qmEmail;
@@ -80,7 +82,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         qmLastName=findViewById(R.id.txtboxQmLname3);
         qmEmail=findViewById(R.id.txtboxQMEmail3);
         qmPassword = findViewById(R.id.txtboxQMpw3);
-
+        qmidfin="";
         bttnDisplayQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +99,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                 final String selectedFromListE = getQMStringEmail(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromList = getQMStringLastname(String.valueOf((qmlist.getItemAtPosition(position))));
                 final String selectedFromListFN = getQMStringFirstname(String.valueOf((qmlist.getItemAtPosition(position))));
+                qmidfin=selectedFromListQMID;
                 Toast.makeText(getApplicationContext(), "You selected: " + selectedFromList, Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditQm.this);
@@ -129,8 +132,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                 String ln = qmLastName.getText().toString().trim();
                 String email = qmEmail.getText().toString().trim();
                 String pw = qmPassword.getText().toString().trim();
-                final String selectedFromListQMID = getQMID(String.valueOf(qmlist.getSelectedItem()));
-                updateQM(fn, ln, email, pw, Integer.parseInt(selectedFromListQMID));
+                updateQM(fn, ln, email, pw, qmidfin);
             }
         });
     }
@@ -239,7 +241,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    public void updateQM(String firstName, String lastName, String email, String password, int QmID){
+    public void updateQM(String firstName, String lastName, String email, String password, String QmID){
 
         try {
             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UpdateQMServlet");
@@ -251,7 +253,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("QueueManager_ID", String.valueOf(QmID))
+                    .appendQueryParameter("QueueManager_ID", QmID)
                     .appendQueryParameter("firstName", firstName)
                     .appendQueryParameter("lastName", lastName)
                     .appendQueryParameter("email", email)
