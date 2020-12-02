@@ -28,6 +28,7 @@ import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
+import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
@@ -63,6 +64,8 @@ public class EditQm extends AppCompatActivity implements DBUtility {
     private EditText qmLastName;
     private EditText qmEmail;
     private EditText qmPassword;
+
+    Security sec = new Security();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,7 +279,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                         .appendQueryParameter("QueueManager_ID", qmidfin)
                         .appendQueryParameter("firstname", fn)
                         .appendQueryParameter("lastname", ln)
-                        .appendQueryParameter("email", email)
+                        .appendQueryParameter("email", sec.decrypt(email))
                         .appendQueryParameter("password", pw);
                 String query = builder.build().getEncodedQuery();
 
