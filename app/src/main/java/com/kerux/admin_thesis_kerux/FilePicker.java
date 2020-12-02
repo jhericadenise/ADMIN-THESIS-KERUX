@@ -21,9 +21,9 @@ import java.util.List;
 
 public class FilePicker extends ListActivity {
 
-    public final static String EXTRA_FILE_PATH = "file_path";
+    public final static String EXTRA_FILE_PATH = "storage";
     public final static String EXTRA_SHOW_HIDDEN_FILES = "show_hidden_files";
-    public final static String EXTRA_ACCEPTED_FILE_EXTENSIONS = "accepted_file_extensions";
+    public final static String EXTRA_ACCEPTED_FILE_EXTENSIONS = ".txt";
     private final static String DEFAULT_INITIAL_DIRECTORY = "/";
 
     protected File Directory;
