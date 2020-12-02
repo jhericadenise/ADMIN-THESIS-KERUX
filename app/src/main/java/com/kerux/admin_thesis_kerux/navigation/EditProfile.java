@@ -36,6 +36,8 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import se.aaro.gustav.passwordstrengthmeter.PasswordStrengthMeter;
+
 public class EditProfile extends AppCompatActivity implements DBUtility {
 
     private EditText firstname;
@@ -104,6 +106,9 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
         });
 
         drawerLayout = findViewById(R.id.drawer_layout);
+
+        PasswordStrengthMeter meter = findViewById(R.id.passwordInputMeter);
+        meter.setEditText(newPassword);
 
     }
 
