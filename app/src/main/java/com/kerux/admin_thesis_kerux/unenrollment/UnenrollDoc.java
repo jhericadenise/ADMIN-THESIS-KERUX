@@ -34,6 +34,7 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
@@ -145,7 +146,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
                 final String selectedFromList = getDocString(String.valueOf((docList.getItemAtPosition(position))));
-                final String selectedEmailFromList = getDocStringEmail(String.valueOf(docList.getItemAtPosition(position)));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnenrollDoc.this);
@@ -161,13 +161,6 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                                 docListdisp.execute();
                                 insertAudit();
 
-                              /*  //sending email
-                                Resources res = getResources();
-                                String email = selectedEmailFromList;
-                                String subject = "Privilege revoked";
-                                String message = "You have been revoked";
-                                SendMailTask sm = new SendMailTask(UnenrollDoc.this, email, subject, message);
-                                sm.execute();*/
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -251,7 +244,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     public void ClickEditDoctor(View view){
         MainActivity.redirectActivity(this, EditDoctor.class);
     }
-
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
+    }
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }
@@ -413,7 +408,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     public String getDocString(String rowFromListView){
         String name = rowFromListView.substring(1, rowFromListView.length()-1);
 
-        String docString1=name.replaceAll("third=", "");
+        String docString1=name.replaceAll(".*third=", "");
         String docString2=docString1.replaceAll(",.+", "");
         Log.d("DOCSTRING:", docString2);
 

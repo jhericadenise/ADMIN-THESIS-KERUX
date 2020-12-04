@@ -33,6 +33,7 @@ import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
@@ -191,6 +192,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
 
     public void ClickEditDoctor(View view){
         MainActivity.redirectActivity(this, EditDoctor.class);
+    }
+
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){

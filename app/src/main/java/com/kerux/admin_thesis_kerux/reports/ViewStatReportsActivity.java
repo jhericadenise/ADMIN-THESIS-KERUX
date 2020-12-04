@@ -234,6 +234,9 @@ public class ViewStatReportsActivity extends AppCompatActivity implements DBUtil
     public void ClickEditDoctor(View view){
         MainActivity.redirectActivity(this, EditDoctor.class);
     }
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
+    }
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }

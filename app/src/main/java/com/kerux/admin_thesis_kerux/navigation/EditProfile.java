@@ -20,6 +20,7 @@ import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.edit.EditDoctor;
 import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
 import com.kerux.admin_thesis_kerux.security.SecurityWEB;
@@ -35,8 +36,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-
-import se.aaro.gustav.passwordstrengthmeter.PasswordStrengthMeter;
 
 public class EditProfile extends AppCompatActivity implements DBUtility {
 
@@ -107,8 +106,8 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        PasswordStrengthMeter meter = findViewById(R.id.passwordInputMeter);
-        meter.setEditText(newPassword);
+        /*PasswordStrengthMeter meter = findViewById(R.id.passwordInputMeter);
+        meter.setEditText(newPassword);*/
 
     }
 
@@ -207,6 +206,10 @@ public class EditProfile extends AppCompatActivity implements DBUtility {
 
     public void ClickEditDoctor(View view){
         MainActivity.redirectActivity(this, EditDoctor.class);
+    }
+
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
     }
 
     public void ClickLogout(View view){

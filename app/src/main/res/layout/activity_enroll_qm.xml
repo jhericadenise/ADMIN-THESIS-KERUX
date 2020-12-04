@@ -174,18 +174,25 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.213" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="101dp"
-            android:layout_height="88dp"
-            android:layout_centerHorizontal="true"
+        <LinearLayout
+            android:id="@+id/linearImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:padding="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.095"
-            android:visibility="gone"/>
+            app:layout_constraintVertical_bias="0.114">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="24dp"
+                app:srcCompat="@drawable/ic_upload"></ImageView>
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
