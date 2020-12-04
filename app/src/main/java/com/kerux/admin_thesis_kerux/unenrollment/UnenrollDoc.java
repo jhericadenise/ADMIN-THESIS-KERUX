@@ -62,6 +62,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
     Button docDisplayList;
     private Spinner spinnerReasonDoc;
     final Context context = this;
+    String email;
+    String firstName;
+    String reason;
 
     Button addReasonDoc;
     private EditText otherReason;
@@ -153,10 +156,15 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String reason = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
+                                String reason1 = ((Spinner)findViewById(R.id.spinnerDocReason)).getSelectedItem().toString();
                                 Toast.makeText(getApplicationContext(),selectedFromList,Toast.LENGTH_LONG).show();
                                 Toast.makeText(getApplicationContext(),"Successfully revoked privilege",Toast.LENGTH_LONG).show();
-                                unenrollDoc(selectedFromList, reason);
+                                email=selectedEmailFromList;
+                                reason=reason1;
+                                firstName=selectedFromList;
+                                unenrollDoc ud =new unenrollDoc();
+                                ud.execute();
+//                                unenrollDoc(selectedFromList, reason, selectedEmailFromList);
                                 UnenrollDoc.ListDoc docListdisp = new UnenrollDoc.ListDoc ();
                                 docListdisp.execute();
                                 insertAudit();
@@ -183,13 +191,8 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         bttnQM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkDoctorList()) {
-                    Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
-                    startActivity(intent5);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
-                }
+                checkDocListAT cdl = new checkDocListAT();
+                cdl.execute();
             }
         });
     }
@@ -278,12 +281,12 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", secw.encrypt("Unenroll Doctor").trim())
-                    .appendQueryParameter("second", secw.encrypt("delete").trim())
-                    .appendQueryParameter("third", secw.encrypt("Unenrolling a doctor record").trim())
-                    .appendQueryParameter("fourth", secw.encrypt("Status = " + statusActive).trim())
-                    .appendQueryParameter("fifth", secw.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
-                    .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
+                    .appendQueryParameter("first", SecurityWEB.encrypt("Unenroll Doctor").trim())
+                    .appendQueryParameter("second", SecurityWEB.encrypt("delete").trim())
+                    .appendQueryParameter("third", SecurityWEB.encrypt("Unenrolling a doctor record").trim())
+                    .appendQueryParameter("fourth", SecurityWEB.encrypt("Status = " + statusActive).trim())
+                    .appendQueryParameter("fifth", SecurityWEB.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
+                    .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()).trim());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -309,9 +312,66 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         }
     }
 
-    //unenrolling doctor records
-    public void unenrollDoc(String firstName, String reason){
+    private class unenrollDoc extends AsyncTask<String, String, String> {
+        boolean isSuccess = false;
+        String message = "";
 
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollDocServlet");
+                URLConnection connection = url.openConnection();
+
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("firstName", firstName)
+                        .appendQueryParameter("email", email)
+                        .appendQueryParameter("reason", reason);
+
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                    message="Unenrolled";
+                }
+                in.close();
+            } catch (Exception e) {
+                message=e.getMessage();
+                e.printStackTrace();
+            }
+            return message;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(UnenrollDoc.this, s, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //unenrolling doctor records
+    public void unenrollDoc1(String firstName, String reason, String email){
+    Log.d("emaik", email);
         try {
             URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/UnenrollDocServlet");
             URLConnection connection = url.openConnection();
@@ -323,7 +383,9 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
 
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("firstName", firstName)
+                    .appendQueryParameter("email", email)
                     .appendQueryParameter("reason", reason);
+
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -345,6 +407,76 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
             in.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private class checkDocListAT extends AsyncTask<String, String, String> {
+        boolean isSuccess = false;
+        String message = "";
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(getBaseContext(),"Please wait..",Toast.LENGTH_LONG).show();
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            String allInactiveRec = "false";
+
+            String docStatus = "Active";
+
+            try {
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/CheckDocList");
+                URLConnection connection = url.openConnection();
+
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("docStatus", docStatus)
+                        .appendQueryParameter("clinicid", session.getclinicid());
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String returnString="";
+                ArrayList<String> output=new ArrayList<String>();
+                while ((returnString = in.readLine()) != null)
+                {
+                    Log.d("returnString", returnString);
+                    output.add(returnString);
+                }
+                String result=output.get(0);
+                if (result.equals("true")){
+
+                }
+                else{
+                    allInactiveRec="true";
+                }
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return allInactiveRec;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            if(s.equals("true")) {
+                Intent intent5 = new Intent(UnenrollDoc.this, UnenrollQm.class);
+                startActivity(intent5);
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Cannot go to Unenrollment of Queue Manager, Must UNENROLL all Doctors to proceed.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
