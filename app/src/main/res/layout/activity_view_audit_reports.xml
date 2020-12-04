@@ -23,26 +23,27 @@
 
         <Button
             android:id="@+id/bttnGenerateAudit"
-            android:layout_width="245dp"
-            android:layout_height="50dp"
-            android:text="GENERATE"
+            android:layout_width="319dp"
+            android:layout_height="56dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.907" />
+            app:layout_constraintVertical_bias="0.931" />
 
         <Button
             android:id="@+id/bttnViewAudit"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:text="VIEW"
+            android:layout_width="340dp"
+            android:layout_height="54dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.491"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.173" />
+            app:layout_constraintVertical_bias="0.153" />
 
         <ListView
             android:id="@+id/listAuditReports"
