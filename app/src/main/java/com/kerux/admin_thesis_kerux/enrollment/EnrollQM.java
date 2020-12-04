@@ -374,7 +374,7 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
                             .appendQueryParameter("dept", Integer.toString(dept))
                             .appendQueryParameter("reason", Integer.toString(reason))
                             .appendQueryParameter("QMpw", QMpw)
-                            .appendQueryParameter("secQMpw", sec.encrypt(QMpw))
+                            .appendQueryParameter("secQMpw", SecurityWEB.encrypt(QMpw))
                             .appendQueryParameter("QMFname", SecurityWEB.encrypt(QMFname))
                             .appendQueryParameter("QMLname", SecurityWEB.encrypt(QMLname))
                             .appendQueryParameter("QMEmail", SecurityWEB.encrypt(QMEmail))
