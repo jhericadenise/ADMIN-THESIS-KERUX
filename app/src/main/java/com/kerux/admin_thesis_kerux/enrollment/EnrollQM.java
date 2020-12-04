@@ -374,10 +374,10 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
                             .appendQueryParameter("dept", Integer.toString(dept))
                             .appendQueryParameter("reason", Integer.toString(reason))
                             .appendQueryParameter("QMpw", QMpw)
-                            .appendQueryParameter("secQMpw", sec.encrypt(QMpw))
-                            .appendQueryParameter("QMFname", QMFname)
-                            .appendQueryParameter("QMLname", QMLname)
-                            .appendQueryParameter("QMEmail", QMEmail)
+                            .appendQueryParameter("secQMpw", SecurityWEB.encrypt(QMpw))
+                            .appendQueryParameter("QMFname", SecurityWEB.encrypt(QMFname))
+                            .appendQueryParameter("QMLname", SecurityWEB.encrypt(QMLname))
+                            .appendQueryParameter("QMEmail", SecurityWEB.encrypt(QMEmail))
                             .appendQueryParameter("status", status)
                             .appendQueryParameter("photo", "")
                             .appendQueryParameter("getadminid", session.getadminid());
@@ -448,12 +448,12 @@ public class EnrollQM extends AppCompatActivity implements DBUtility, View.OnCli
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", secw.encrypt("Queue Manager Enrollment").trim())
-                        .appendQueryParameter("second", secw.encrypt("Insert").trim())
-                        .appendQueryParameter("third", secw.encrypt("Insert queue manager record").trim())
-                        .appendQueryParameter("fourth", secw.encrypt("none").trim())
-                        .appendQueryParameter("fifth", secw.encrypt("Queue Manager ID: " + newqmid).trim())
-                        .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
+                        .appendQueryParameter("first", SecurityWEB.encrypt("Queue Manager Enrollment").trim())
+                        .appendQueryParameter("second", SecurityWEB.encrypt("Insert").trim())
+                        .appendQueryParameter("third", SecurityWEB.encrypt("Insert queue manager record").trim())
+                        .appendQueryParameter("fourth", SecurityWEB.encrypt("none").trim())
+                        .appendQueryParameter("fifth", SecurityWEB.encrypt("Queue Manager ID: " + newqmid).trim())
+                        .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
