@@ -147,7 +147,7 @@ public class UnenrollDoc  extends AppCompatActivity implements DBUtility{
         docList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
+                final String selectedEmailFromList = getDocStringEmail(String.valueOf((docList.getItemAtPosition(position))));
                 final String selectedFromList = getDocString(String.valueOf((docList.getItemAtPosition(position))));
                 Toast.makeText(getApplicationContext(),"You selected: "+selectedFromList,Toast.LENGTH_LONG).show();
                 //Dialog box, for unenrolling
