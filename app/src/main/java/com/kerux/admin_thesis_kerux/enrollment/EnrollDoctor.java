@@ -406,7 +406,7 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                         .appendQueryParameter("sched2", sched2)
                         .appendQueryParameter("docDays", docDays)
                         .appendQueryParameter("status", status)
-                        .appendQueryParameter("prcNo", Integer.toString(docPRC))
+                        .appendQueryParameter("prclicense", Integer.toString(docPRC))
                         .appendQueryParameter("email", docEmail)
                         .appendQueryParameter("photo", "")
                         .appendQueryParameter("getadminid", session.getadminid())
@@ -475,12 +475,12 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
                 connection.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("first", secw.encrypt("Doctor Enrollment").trim())
-                        .appendQueryParameter("second", secw.encrypt("Insert").trim())
-                        .appendQueryParameter("third", secw.encrypt("Insert doctor record").trim())
-                        .appendQueryParameter("fourth", secw.encrypt("none").trim())
-                        .appendQueryParameter("fifth", secw.encrypt("Doctor ID: " + newdocid).trim())
-                        .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
+                        .appendQueryParameter("first", SecurityWEB.encrypt("Doctor Enrollment").trim())
+                        .appendQueryParameter("second", SecurityWEB.encrypt("Insert").trim())
+                        .appendQueryParameter("third", SecurityWEB.encrypt("Insert doctor record").trim())
+                        .appendQueryParameter("fourth", SecurityWEB.encrypt("none").trim())
+                        .appendQueryParameter("fifth", SecurityWEB.encrypt("Doctor ID: " + newdocid).trim())
+                        .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()).trim());
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
