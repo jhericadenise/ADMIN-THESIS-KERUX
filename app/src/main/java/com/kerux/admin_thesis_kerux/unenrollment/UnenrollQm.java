@@ -293,12 +293,12 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
             connection.setDoOutput(true);
 
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("first", secw.encrypt("Unenroll Queue Manager").trim())
-                    .appendQueryParameter("second", secw.encrypt("delete").trim())
-                    .appendQueryParameter("third", secw.encrypt("Unenrolling a queue manager record").trim())
-                    .appendQueryParameter("fourth", secw.encrypt("Status = " + statusActive).trim())
-                    .appendQueryParameter("fifth", secw.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
-                    .appendQueryParameter("sixth", secw.encrypt(session.getusername()).trim());
+                    .appendQueryParameter("first", SecurityWEB.encrypt("Unenroll Queue Manager").trim())
+                    .appendQueryParameter("second", SecurityWEB.encrypt("delete").trim())
+                    .appendQueryParameter("third", SecurityWEB.encrypt("Unenrolling a queue manager record").trim())
+                    .appendQueryParameter("fourth", SecurityWEB.encrypt("Status = " + statusActive).trim())
+                    .appendQueryParameter("fifth", SecurityWEB.encrypt("Status = " + statusInactive + ", " + "Reason = " + reason).trim())
+                    .appendQueryParameter("sixth", SecurityWEB.encrypt(session.getusername()).trim());
             String query = builder.build().getEncodedQuery();
 
             OutputStream os = connection.getOutputStream();
@@ -468,7 +468,7 @@ public class UnenrollQm extends AppCompatActivity implements DBUtility {
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
                 listAdapter = new SimpleAdapter (UnenrollQm.this, data,
-                        R.layout.listview_row, new String[] {"first", "second", "third"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
+                        R.layout.listview_row, new String[] {"first", "second", "third", "fourth"}, new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL, R.id.FOURTH_COL});
 
 
                 message = "DELETED";
