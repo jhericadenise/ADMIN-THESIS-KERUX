@@ -4,13 +4,17 @@
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
+ import android.graphics.Bitmap;
+ import android.graphics.BitmapFactory;
+ import android.net.Uri;
+ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+ import android.widget.ImageView;
+ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,10 +33,16 @@ import com.kerux.admin_thesis_kerux.session.KeruxSession;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
+ import java.io.BufferedWriter;
+ import java.io.File;
+ import java.io.InputStreamReader;
+ import java.io.OutputStream;
+ import java.io.OutputStreamWriter;
+ import java.net.URI;
+ import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
+ import java.nio.charset.StandardCharsets;
+ import java.util.ArrayList;
 
  public class MainActivity extends AppCompatActivity implements View.OnClickListener, DBUtility {
     //Initialize Variable
@@ -43,6 +53,7 @@ import java.util.ArrayList;
      private KeruxSession session;
      String qmC;
      String depC;
+     ImageView docI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +68,9 @@ import java.util.ArrayList;
         deptCount = findViewById(R.id.txtCountDept);
         qmCount = findViewById(R.id.txtCountQM);
 
+//        docI=findViewById(R.id.imgDoc);
+//        DocPhoto dp = new DocPhoto();
+//        dp.execute();
         qmC="0";
         depC="0";
         ShowQMDept sm =new ShowQMDept();
@@ -124,6 +138,87 @@ import java.util.ArrayList;
          @Override
          protected void onPostExecute(String s) {
 //             Toast.makeText(getBaseContext(), "" + qmC+depC, Toast.LENGTH_LONG).show();
+         }
+     }
+
+
+     private class DocPhoto extends AsyncTask<String,String,String> {
+         String z = "";
+         boolean isSuccess = false;
+         String qNumber, cCalling, path_i;
+
+         @Override
+         protected void onPreExecute() {
+             super.onPreExecute();
+         }
+
+         @Override
+         protected String doInBackground(String... params) {
+             try {
+
+                 URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/GetDocPhoto");
+                 URLConnection connection = url.openConnection();
+
+                 connection.setReadTimeout(300000);
+                 connection.setConnectTimeout(300000);
+                 connection.setDoInput(true);
+                 connection.setDoOutput(true);
+
+                 Uri.Builder builder = new Uri.Builder()
+                         .appendQueryParameter("firstname", "Yany")
+                         .appendQueryParameter("lastname", "Yabut");
+                 String query = builder.build().getEncodedQuery();
+
+                 OutputStream os = connection.getOutputStream();
+                 BufferedWriter writer = new BufferedWriter(
+                         new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                 writer.write(query);
+                 writer.flush();
+                 writer.close();
+                 os.close();
+
+                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                 String returnString="";
+                 ArrayList<String> output=new ArrayList<String>();
+                 while ((returnString = in.readLine()) != null)
+                 {
+
+                     output.add(returnString);
+                 }
+                 for (int i = 0; i < output.size(); i++) {
+                     path_i=output.get(i);
+
+                 }
+                 in.close();
+                    Log.d("PHOTO", path_i);
+
+
+                 isSuccess=true;
+                 z = "Queueing successfull";
+
+             }
+             catch (Exception ex)
+             {
+                 isSuccess = false;
+                 z = "Exceptions"+ex;
+             }
+
+             return z;
+         }
+
+         @Override
+         protected void onPostExecute(String s) {
+             Log.d("Message", z);
+             if(isSuccess) {
+                 try{
+                     Uri pathh=Uri.parse(path_i);
+                    docI.setImageURI(pathh);
+
+                 } catch(Exception e){
+                     e.printStackTrace();
+                 }
+
+             }
          }
      }
 
