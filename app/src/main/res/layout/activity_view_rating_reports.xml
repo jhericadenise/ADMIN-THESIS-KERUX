@@ -11,16 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/bttnDisplayRating"
+        <ImageView
+            android:id="@+id/imageView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DISPLAY"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.09" />
+            app:srcCompat="@drawable/statistics" />
+
+        <Button
+            android:id="@+id/bttnDisplayRating"
+            android:layout_width="331dp"
+            android:layout_height="56dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.156" />
 
         <ListView
             android:id="@+id/listRatingReports"
@@ -34,14 +44,15 @@
 
         <Button
             android:id="@+id/bttnGenerateRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Generate Rating Reports"
+            android:layout_width="336dp"
+            android:layout_height="56dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.959" />
+            app:layout_constraintVertical_bias="0.934" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
