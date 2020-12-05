@@ -24,14 +24,14 @@
 
         <ImageButton
             android:id="@+id/docPhoto"
-            android:layout_width="46dp"
-            android:layout_height="38dp"
+            android:layout_width="56dp"
+            android:layout_height="52dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.168"
+            app:layout_constraintHorizontal_bias="0.162"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.11"
+            app:layout_constraintVertical_bias="0.096"
             app:srcCompat="@drawable/ic_acc" />
 
         <TextView
