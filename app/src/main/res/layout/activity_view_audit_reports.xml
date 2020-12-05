@@ -23,8 +23,8 @@
 
         <Button
             android:id="@+id/bttnGenerateAudit"
-            android:layout_width="319dp"
-            android:layout_height="56dp"
+            android:layout_width="265dp"
+            android:layout_height="43dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

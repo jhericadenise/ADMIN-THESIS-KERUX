@@ -27,8 +27,6 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.kerux.admin_thesis_kerux.R;
-import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
-import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.edit.EditDoctor;
 import com.kerux.admin_thesis_kerux.edit.EditQm;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
@@ -47,23 +45,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ViewAuditReportsActivity extends AppCompatActivity implements DBUtility {
+public class ViewRatingReportsActivity extends AppCompatActivity {
 
-    ConnectionClass connectionClass;
     DrawerLayout drawerLayout;
-    private ListView listAudit;
-    private Button bttnViewAuditReports;
-    private Button bttnGenerateAuditReports;
+    Button bttnDisplayRate;
+    Button bttnGenerateRate;
+    private ListView listRating;
     private ListAdapter listAdapter;
-    private String tableName;
-    private String auditID;
 
     File myFile;
     ProgressDialog progressDialog;
@@ -73,39 +67,28 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_audit_reports);
-        connectionClass = new ConnectionClass (); //create ConnectionClass
-        session=new KeruxSession(getApplicationContext());
-
+        setContentView(R.layout.activity_view_rating_reports);
         drawerLayout = findViewById(R.id.drawer_layout);
-        bttnViewAuditReports = findViewById(R.id.bttnViewAudit);
-        bttnGenerateAuditReports = findViewById(R.id.bttnGenerateAudit);
-        listAudit = findViewById(R.id.listAuditReports);
 
-        progressDialog=new ProgressDialog(this);
-
-        Intent i= getIntent();
-        tableName=i.getStringExtra("TableName");
-        auditID=i.getStringExtra("Log_ID");
-
-
-        bttnViewAuditReports.setOnClickListener(new View.OnClickListener() {
+        listRating = findViewById(R.id.listRatingReports);
+        bttnDisplayRate = findViewById(R.id.bttnDisplayRating);
+        bttnDisplayRate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ListAudit viewAudit = new ListAudit();
-                viewAudit.execute();
+            public void onClick(View view) {
+                ListRating listRating = new ListRating();
+                listRating.execute();
             }
         });
-
-        bttnGenerateAuditReports.setOnClickListener(new View.OnClickListener() {
+        bttnGenerateRate = findViewById(R.id.bttnGenerateRating);
+        bttnGenerateRate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 GenerateRep generateRep = new GenerateRep();
                 generateRep.execute();
             }
         });
-
     }
+
     public void ClickMenu (View view){
         //open drawer
         MainActivity.openDrawer(drawerLayout);
@@ -153,11 +136,11 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
     }
 
     public void ClickViewAudit(View view){
-        recreate();
+        MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
 
     public void ClickViewRating(View view){
-        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
+        recreate();
     }
 
     public void ClickLogout(View view){
@@ -171,9 +154,8 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         MainActivity.closeDrawer(drawerLayout);
     }
 
-    private class ListAudit extends AsyncTask<String, Void, String> {
+    private class ListRating extends AsyncTask<String, Void, String> {
 
-        Connection con = connectionClass.CONN();
         boolean isSuccess = false;
         String message = "";
 
@@ -182,14 +164,14 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(ViewAuditReportsActivity.this, "Please wait...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ViewRatingReportsActivity.this, "Please wait...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected String doInBackground(String... params) {
             try {
-                listAudit = findViewById(R.id.listAuditReports);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListAuditAdminServlet");
+                listRating = findViewById(R.id.listRatingReports);
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListRatingAdminServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -225,7 +207,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
                 data= (new Gson()).fromJson(retrieved, new TypeToken<List<Map<String, String>>>() {}.getType());
 
-                listAdapter = new SimpleAdapter (ViewAuditReportsActivity.this, data,
+                listAdapter = new SimpleAdapter(ViewRatingReportsActivity.this, data,
                         R.layout.listview_row_audit, new String[] {"first", "second", "third"},
                         new int[] {R.id.FIRST_COL, R.id.SECOND_COL, R.id.THIRD_COL});
 
@@ -241,7 +223,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
         @Override
         protected void onPostExecute(String result) {
-            listAudit.setAdapter(listAdapter);
+            listRating.setAdapter(listAdapter);
         }
     }
 
@@ -284,7 +266,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
     private void createPdf() throws FileNotFoundException, DocumentException {
 
         File pdfFolder = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "KERUX AUDIT LOG REPORT");
+                Environment.DIRECTORY_DOCUMENTS), "KERUX USER RATING REPORT");
         if (!pdfFolder.exists()) {
             pdfFolder.mkdir();
             Log.i("LOG_TAG", "Pdf Directory created");
@@ -353,7 +335,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
 
     private void viewPdf(){
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri uri = FileProvider.getUriForFile(ViewAuditReportsActivity.this,
+        Uri uri = FileProvider.getUriForFile(ViewRatingReportsActivity.this,
                 BuildConfig.APPLICATION_ID + ".provider",
                 myFile);
         intent.setDataAndType(uri, "application/pdf");
@@ -367,7 +349,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         Intent email = new Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_SUBJECT,"SUBJECT");
         email.putExtra(Intent.EXTRA_TEXT, "TEXT");
-        Uri uri = FileProvider.getUriForFile(ViewAuditReportsActivity.this,
+        Uri uri = FileProvider.getUriForFile(ViewRatingReportsActivity.this,
                 BuildConfig.APPLICATION_ID + ".provider",
                 myFile);
 
@@ -385,7 +367,7 @@ public class ViewAuditReportsActivity extends AppCompatActivity implements DBUti
         try {
 
 
-            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/AuditReportAdminServlet");
+            URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/RatingReportAdminServlet");
             URLConnection connection = url.openConnection();
 
             connection.setReadTimeout(10000);

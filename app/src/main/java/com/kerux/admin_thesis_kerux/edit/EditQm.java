@@ -24,11 +24,13 @@ import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.ConnectionClass;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
+import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.security.Security;
+import com.kerux.admin_thesis_kerux.security.SecurityWEB;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
 import java.io.BufferedReader;
@@ -221,8 +223,8 @@ public class EditQm extends AppCompatActivity implements DBUtility {
     }
 
     public void ClickEnrollment(View view){
-        //Recreate activity
-        recreate();
+
+        MainActivity.redirectActivity(this, EnrollmentPage.class);
     }
 
     public void ClickRevoke(View view){
@@ -238,7 +240,7 @@ public class EditQm extends AppCompatActivity implements DBUtility {
         MainActivity.redirectActivity(this, ViewAuditReportsActivity.class);
     }
     public void ClickEditQM(View view){
-        MainActivity.redirectActivity(this, EditQm.class);
+        recreate();
     }
 
     public void ClickEditDoctor(View view){
@@ -345,11 +347,19 @@ public class EditQm extends AppCompatActivity implements DBUtility {
                 ArrayList<String> output=new ArrayList<String>();
                 while ((returnString = in.readLine()) != null)
                 {
-                    receivedData.append(returnString+"\n");
+
                     output.add(returnString);
                 }
                 for (int i = 0; i < output.size(); i++) {
-                    message = output.get(i);
+                    try{
+                        message = SecurityWEB.decrypt(output.get(i)).trim();//SecurityWEB dapat
+
+                    }catch (Exception e){
+                        Log.d("ErrorNOww", e.getMessage());
+                        message = output.get(i);
+                    }
+                    Log.d("OUTPUT>GET", output.get(i));
+                    receivedData.append(message+"\n");
                 }
                 in.close();
                 String retrieved=receivedData.toString();

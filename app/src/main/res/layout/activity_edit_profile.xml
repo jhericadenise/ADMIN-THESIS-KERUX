@@ -23,8 +23,8 @@
 
         <EditText
             android:id="@+id/txtboxLastName"
-            android:layout_width="253dp"
-            android:layout_height="49dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:inputType="textPersonName"
@@ -32,14 +32,14 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.762"
+            app:layout_constraintHorizontal_bias="0.812"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.337" />
+            app:layout_constraintVertical_bias="0.331" />
 
         <EditText
             android:id="@+id/txtboxEmail"
-            android:layout_width="299dp"
+            android:layout_width="250dp"
             android:layout_height="47dp"
             android:background="@android:color/transparent"
             android:inputType="textPersonName"
@@ -47,15 +47,15 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.696"
+            app:layout_constraintHorizontal_bias="0.8"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.435" />
+            app:layout_constraintVertical_bias="0.432" />
 
         <EditText
             android:id="@+id/txtboxFirstName"
-            android:layout_width="259dp"
-            android:layout_height="47dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:inputType="textPersonName"
@@ -63,82 +63,70 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.751"
+            app:layout_constraintHorizontal_bias="0.812"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.243" />
+            app:layout_constraintVertical_bias="0.23" />
 
         <EditText
             android:id="@+id/txtboxUsername"
-            android:layout_width="261dp"
+            android:layout_width="210dp"
             android:layout_height="50dp"
             android:inputType="textPersonName"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.748"
+            app:layout_constraintHorizontal_bias="0.813"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.533" />
 
         <EditText
             android:id="@+id/txtboxOldPassword"
-            android:layout_width="233dp"
+            android:layout_width="180dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
-            android:inputType="textPersonName"
+            android:inputType="textPassword"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.781"
+            app:layout_constraintHorizontal_bias="0.813"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.698" />
+            app:layout_constraintVertical_bias="0.704" />
 
         <EditText
             android:id="@+id/txtboxNewPassword"
-            android:layout_width="212dp"
+            android:layout_width="180dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:inputType="textPersonName"
+            android:inputType="textPassword"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.794"
+            app:layout_constraintHorizontal_bias="0.811"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.793" />
+            app:layout_constraintVertical_bias="0.804" />
 
-        <se.aaro.gustav.passwordstrengthmeter.PasswordStrengthMeter
+  <!--      <se.aaro.gustav.passwordstrengthmeter.PasswordStrengthMeter
             android:id="@+id/passwordInputMeter"
-            android:layout_width="401dp"
-            android:layout_height="57dp"
+            android:layout_width="251dp"
+            android:layout_height="49dp"
             app:animateChanges="true"
             app:animationDuration="300"
             app:labelTextSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.881"
+            app:layout_constraintVertical_bias="0.894"
             app:showStrengthBar="true"
             app:showStrengthLabel="true"
-            app:strengthBarHeight="5dp" />
-
-        <Button
-            android:id="@+id/button_save"
-            android:layout_width="175dp"
-            android:layout_height="52dp"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.095"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.957" />
+            app:strengthBarHeight="5dp" />-->
 
         <Button
             android:id="@+id/bttnConfirmPass"
@@ -147,10 +135,22 @@
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.879"
+            app:layout_constraintHorizontal_bias="0.881"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.955" />
+            app:layout_constraintVertical_bias="0.974" />
+
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="175dp"
+            android:layout_height="52dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.097"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.977" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

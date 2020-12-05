@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kerux.admin_thesis_kerux.R;
 import com.kerux.admin_thesis_kerux.dbutility.DBUtility;
 import com.kerux.admin_thesis_kerux.navigation.EditProfile;
+import com.kerux.admin_thesis_kerux.navigation.EnrollmentPage;
 import com.kerux.admin_thesis_kerux.navigation.MainActivity;
 import com.kerux.admin_thesis_kerux.navigation.ManageAccounts;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
@@ -132,7 +133,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
 
     public void ClickEnrollment(View view){
         //Recreate activity
-        recreate();
+        MainActivity.redirectActivity(this, EnrollmentPage.class);
     }
 
     public void ClickRevoke(View view){
@@ -152,7 +153,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
     }
 
     public void ClickEditDoctor(View view){
-        MainActivity.redirectActivity(this, EditDoctor.class);
+        recreate();
     }
     public void ClickLogout(View view){
         MainActivity.logout(this);
@@ -289,7 +290,7 @@ public class EditDoctor extends AppCompatActivity implements DBUtility {
             try {
                 //listview, list the names of all enrolled department
                 docList = findViewById(R.id.listDoctor);
-                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDocServlet");
+                URL url = new URL("https://isproj2a.benilde.edu.ph/Sympl/ListDocEditServlet");
                 URLConnection connection = url.openConnection();
 
                 connection.setReadTimeout(15000);

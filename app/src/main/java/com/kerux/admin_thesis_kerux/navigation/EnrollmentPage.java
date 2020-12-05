@@ -17,6 +17,7 @@ import com.kerux.admin_thesis_kerux.enrollment.EnrollDept;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollDoctor;
 import com.kerux.admin_thesis_kerux.enrollment.EnrollQM;
 import com.kerux.admin_thesis_kerux.reports.ViewAuditReportsActivity;
+import com.kerux.admin_thesis_kerux.reports.ViewRatingReportsActivity;
 import com.kerux.admin_thesis_kerux.reports.ViewStatReportsActivity;
 import com.kerux.admin_thesis_kerux.unenrollment.UnenrollDoc;
 
@@ -116,6 +117,11 @@ public class EnrollmentPage extends AppCompatActivity implements View.OnClickLis
     public void ClickEditDoctor(View view){
         MainActivity.redirectActivity(this, EditDoctor.class);
     }
+
+    public void ClickViewRating(View view){
+        MainActivity.redirectActivity(this, ViewRatingReportsActivity.class);
+    }
+
     public void ClickLogout(View view){
         MainActivity.logout(this);
     }

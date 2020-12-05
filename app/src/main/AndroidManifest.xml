@@ -18,14 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".edit.EditDoctor"></activity>
+        <activity android:name=".reports.ViewRatingReportsActivity"></activity>
+        <activity android:name=".edit.EditDoctor" />
         <activity android:name=".edit.EditQm" />
         <activity android:name=".reports.ViewAuditReportsActivity" />
         <activity android:name=".reports.ViewStatReportsActivity" />
         <activity android:name=".navigation.ManageAccounts" />
         <activity android:name=".navigation.MainActivity" />
         <activity android:name=".navigation.EditProfile" />
-        <activity android:name=".FilePicker"></activity>
+        <activity android:name=".FilePicker" />
         <activity
             android:name=".login.Login"
             android:theme="@style/SplashTheme">
