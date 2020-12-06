@@ -18,20 +18,22 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/blank" />
 
         <ImageButton
             android:id="@+id/docPhoto"
-            android:layout_width="56dp"
-            android:layout_height="52dp"
+            android:layout_width="62dp"
+            android:layout_height="46dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
+            app:layout_constraintHorizontal_bias="0.168"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.096"
+            app:layout_constraintVertical_bias="0.095"
             app:srcCompat="@drawable/ic_acc" />
 
         <TextView
@@ -39,18 +41,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="First Name"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.176"
+            app:layout_constraintHorizontal_bias="0.148"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.164" />
+            app:layout_constraintVertical_bias="0.173" />
 
         <EditText
             android:id="@+id/txtboxDocFName"
-            android:layout_width="230dp"
-            android:layout_height="47dp"
+            android:layout_width="211dp"
+            android:layout_height="42dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:inputType="textPersonName"
@@ -66,18 +68,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Name"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.185"
+            app:layout_constraintHorizontal_bias="0.148"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.231" />
 
         <EditText
             android:id="@+id/txtboxDocLName"
-            android:layout_width="230dp"
-            android:layout_height="47dp"
+            android:layout_width="211dp"
+            android:layout_height="41dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:inputType="textPersonName"
@@ -93,10 +95,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Schedule"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.169"
+            app:layout_constraintHorizontal_bias="0.13"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.307" />
@@ -143,13 +145,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Room No."
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.182"
+            app:layout_constraintHorizontal_bias="0.145"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.381" />
+            app:layout_constraintVertical_bias="0.379" />
 
         <EditText
             android:id="@+id/txtboxRoomNo"
@@ -168,13 +170,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/prc"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.109"
+            app:layout_constraintHorizontal_bias="0.09"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.458" />
+            app:layout_constraintVertical_bias="0.453" />
 
         <EditText
             android:id="@+id/txtboxPRC"
@@ -194,13 +196,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_email"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.215"
+            app:layout_constraintHorizontal_bias="0.144"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.506" />
+            app:layout_constraintVertical_bias="0.532" />
 
         <EditText
             android:id="@+id/txtboxDocEmail"
@@ -316,13 +318,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Doctor Type"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.109"
+            app:layout_constraintHorizontal_bias="0.088"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.771" />
+            app:layout_constraintVertical_bias="0.77" />
 
         <Button
             android:id="@+id/bttnAddDocType"
@@ -353,13 +355,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Department"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.098"
+            app:layout_constraintHorizontal_bias="0.094"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.91" />
+            app:layout_constraintVertical_bias="0.896" />
 
         <Button
             android:id="@+id/bttnEnrollDoc"

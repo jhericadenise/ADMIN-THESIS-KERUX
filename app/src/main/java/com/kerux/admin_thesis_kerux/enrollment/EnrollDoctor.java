@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -222,11 +223,46 @@ public class EnrollDoctor extends AppCompatActivity implements DBUtility{
 
 //                File file = new File(contentUri.getPath());//create path from uri
 //                final String[] split = file.getPath().split(":");//split the path.
-//                uriPhoto = split[1];//assign it to a string(your choice).
+//                uriPhoto = split[0];//assign it to a string(your choice).
 
+//                    Cursor cursor = this.getContentResolver().query(contentUri, new String[] {MediaStore.Images.Media.DATA}, null, null, null);
+//                    cursor.moveToFirst();
+//                    uriPhoto=cursor.getString(0);
+//                    cursor.close();
+
+//               String path = getImageRealPath(getContentResolver(), contentUri, null);
                 uriPhoto=contentUri.toString();
             }
         }
+    }
+
+    private String getImageRealPath(ContentResolver contentResolver, Uri uri, String whereClause) {
+        String ret = "";
+
+        // Query the uri with condition.
+        Cursor cursor = contentResolver.query(uri, null, whereClause, null, null);
+
+        if (cursor != null) {
+            boolean moveToFirst = cursor.moveToFirst();
+            if (moveToFirst) {
+
+                // Get columns name by uri type.
+                String columnName = MediaStore.Images.ImageColumns.DATA;
+                Log.d("UriTest: ", "uri: " + uri);
+                if (uri == MediaStore.Images.Media.EXTERNAL_CONTENT_URI) {
+                    columnName = MediaStore.Images.Media.DATA;
+                }
+
+
+                // Get column index.
+                int imageColumnIndex = cursor.getColumnIndex(columnName);
+
+                // Get column value which is the uri related file local path.
+                ret = cursor.getString(imageColumnIndex);
+            }
+        }
+
+        return ret;
     }
 
     private String getFileExt(Uri contentUri){
